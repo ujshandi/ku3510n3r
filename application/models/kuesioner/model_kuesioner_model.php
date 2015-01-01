@@ -3,7 +3,7 @@
  *INVISI
 */
 
-class Responden_model extends CI_Model
+class Model_kuesioner_model extends CI_Model
 {	
 	/**
 	* constructor
@@ -15,14 +15,14 @@ class Responden_model extends CI_Model
 	
 	function get_datatables(){
 		//$this->datatables->add_column('NOMOR','');
-		$this->datatables->select('r.responden_id,r.nama, r.email,i.nama as nama_instansi')
-		->unset_column('r.responden_id')
-		->add_column('Actions', responden_action('$1'), 'r.responden_id')
-		->from(' responden r left join instansi i on r.instansi_id = i.instansi_id');
+		$this->datatables->select('r.model_kuesioner_id,r.singkatan, r.nama , r.petunjuk ')
+		->unset_column('r.model_kuesioner_id')
+		->add_column('Actions', model_kuesioner_action('$1'), 'r.model_kuesioner_id')
+		->from(' model_kuesioner r ');
 		  
-		if (isset($_POST['instansi_id'])) {
-			if ($_POST['instansi_id']!="-1") $this->datatables->where('r.instansi_id',$_POST['instansi_id']);
-		}
+		// if (isset($_POST['petunjuk'])) {
+			// if ($_POST['petunjuk']!="-1") $this->datatables->where('r.petunjuk',$_POST['petunjuk']);
+		// }
 		 
 		$aOrder =isset($_POST['iSortCol_0'])?$_POST['iSortCol_0']:0;
 		$aOrderDir =isset($_POST['sSortDir_0'])?$_POST['sSortDir_0']:"ASC";
@@ -31,7 +31,8 @@ class Responden_model extends CI_Model
 		return $this->datatables->generate();
 	
 	}
-    public function isExistKode($kode=null){	
+    
+	public function isExistKode($kode=null){	
         if ($kode!=null)//utk update
             $this->db->where('alumni_id',$kode); //buat validasi
 
@@ -46,29 +47,29 @@ class Responden_model extends CI_Model
 	    
     function tampildata()
     {       
-        return $this->db->query("select r.*,i.nama as instansi from responden r left join instansi i on r.instansi_id = i.instansi_id order by responden_id");    
+        return $this->db->query("select r.*,i.singkatan as instansi from model_kuesioner r left join instansi i on r.petunjuk = i.petunjuk order by model_kuesioner_id");    
     }
 
    
 	function simpan($data){
-		$this->mgeneral->save($data,'responden');
+		$this->mgeneral->save($data,'model_kuesioner');
 	}
 
    function edit($data,$whereData){
 		
-		$this->mgeneral->update($whereData,$data,'responden');
+		$this->mgeneral->update($whereData,$data,'model_kuesioner');
 	}
 	
    function hapus($whereData){		
-		$this->mgeneral->delete($whereData,'responden');
+		$this->mgeneral->delete($whereData,'model_kuesioner');
 	}
 
     function pilihdata($params){
 		$where = ' where 1=1 ';
 		if (isset($params)){
-			if (isset($params['responden_id'])) $where .= " and responden_id='".$params['responden_id']."'";
+			if (isset($params['model_kuesioner_id'])) $where .= " and model_kuesioner_id='".$params['model_kuesioner_id']."'";
 		}
-		$sql = "select * from responden ".$where;
+		$sql = "select * from model_kuesioner ".$where;
 		return $this->mgeneral->run_sql($sql);
 	}
 

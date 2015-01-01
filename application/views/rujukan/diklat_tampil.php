@@ -10,7 +10,7 @@
 				<!-- filter area-->
 				<div class="feed-box">
 			 
-					<div class="panel-body">
+					<div class="panel-body" style="border:1px solid;border-radius:10px;padding-bottom:0px;border-color:#dddddd">
 					   
 						<div class="corner-ribon blue-ribon">
 						   <i class="fa fa-cog"></i>
@@ -20,13 +20,13 @@
 							<div class="form-group">
 								<label class="col-md-2 control-label">Tahun Diklat</label>
 								<div class="col-md-2">
-										<?=form_dropdown('tahun',$list_tahun,'0','id="id-tahun" class="populate" style="width:100%"')?>
+										<?=form_dropdown('fil_tahun',$list_tahun,'0','id="fil_tahun" class="populate" style="width:100%"')?>
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-md-2 control-label">Jenis Diklat</label>
 								<div class="col-md-5">
-							   <?=form_dropdown('kode_e1',array("0"=>"Semua Diklat"),'0','id="id-kode_e1" class="populate" style="width:100%"')?>
+							   <?=form_dropdown('fil_jenis_diklat',$list_jenisdiklat,'0','id="fil_jenis_diklat" class="populate" style="width:100%"')?>
 								</div>
 							</div> 
 							<div class="form-group">
@@ -54,41 +54,22 @@
 				   <div class="adv-table">
 					<table class="display table table-bordered table-striped" id="diklat-tbl">
 					<thead>
-						<tr>
-							  <th>No</th>
+						<tr> 
 							  <th>Tahun</th>
 							  <th>Judul Diklat</th>
 							  <th>Jenis Diklat</th>
 							  <th>Referensi di Kuesioner</th>
-							  <th>Aksi</th>
+							  <th style="width:80px;">Aksi</th>
 						</tr>
 					</thead>
-					<tbody>
-					  <?php $no=1; 					 
-						if ($result->result() != null){
-						   foreach($result->result() as $datafield){ ?>
+					<tbody>					 
 							<tr class="odd gradeX">
-							   <td><?php echo $no; ?></td>
-							   <td><?php echo $datafield->tahun; ?></td>
-							   <td><?php echo $datafield->nama; ?></td>
-							   <td><?php echo $datafield->jenis_diklat; ?></td>
-							   <td><?php echo $datafield->kategori_kuesioner;?></td>
-							  <td>
-								 
-								<a href="#diklatModal" data-toggle="modal"  class="btn btn-info btn-xs" title="Edit"  onclick="diklatEdit('<?php echo $datafield->diklat_id;?>')"><i class="fa fa-pencil"></i></a>
-								</span> 
-								<span class="tip">
-								<a id="delete_row" class="btn btn-danger btn-xs" href="#" onclick="diklatDelete('<?php echo $datafield->diklat_id;?>')" title="Delete"><i class="fa fa-times"></i></a>
-								
-							  </td>
-							</tr>
-							<?php $no++; } 
-						}else { ?>
-							<tr class="odd gradeX">
-							   <td colspan="5">Data tidak ditemukan</td>
-							  
-							  </tr>
-						<? }?>
+							   <td>&nbsp;</td>
+							   <td>&nbsp;</td>
+							   <td>&nbsp;</td>
+							   <td>&nbsp;</td>
+							  <td>&nbsp;</td>
+							</tr>				 
 					  </tbody>
 					</table>
 					</div>
@@ -124,9 +105,57 @@
 	select {width:100%;}
 </style>
 <script>
+	var oTable;
+	refreshTable = function(){
+		if (oTable)
+            oTable.fnDestroy();
+		var tahun = $('#fil_tahun').val();	
+		var jenis_diklat = $('#fil_jenis_diklat').val();	
+		oTable= $('#diklat-tbl').dataTable({
+            "bProcessing": true,
+            "searching": false,
+			"autoWidth": false,
+			"sDom": 't<"bottom"plri>',
+            "bServerSide": true,
+            "sAjaxSource": '<?php echo base_url(); ?>rujukan/diklat/datatable',
+            "bJQueryUI": true,
+          //  "sPaginationType": "full_numbers",
+            "iDisplayStart ": 20,
+			
+			"fnServerParams": function (aoData) {
+				aoData.push(
+				{ "name": "tahun", "value": tahun },
+				{ "name": "jenis_diklat", "value": jenis_diklat }
+				);
+			},
+            // "oLanguage": {
+                // "sProcessing": "<img src='<php echo base_url(); ?>assets/images/ajax-loader_dark.gif'>"
+            // },
+            "fnInitComplete": function () {
+                //oTable.fnAdjustColumnSizing();
+				this.fnAdjustColumnSizing(true);
+            },
+			'fnRowCallback ':function(){
+				var index = iDisplayIndex +1;
+				$('td:eq(0)',nRow).html(index);
+				return nRow;
+			},
+            'fnServerData': function (sSource, aoData, fnCallback) {
+                $.ajax
+                ({
+                    'dataType': 'json',
+                    'type': 'POST',
+                    'url': sSource,
+                    'data': aoData,
+                    'success': fnCallback
+                });
+            }
+        });
+	};
 	$(document).ready(function(){
 	//	$("#diklat-tbl").dataTable();
-		 $('select').select2({minimumResultsForSearch: -1, width:'resolve'});
+		refreshTable();
+		$('select').select2({minimumResultsForSearch: -1, width:'resolve'});
 		$( "#diklat-form" ).submit(function( event ) {
 			var tahun 	= $('#tahun').val();
 			var nama		= $('#nama').val();
@@ -187,7 +216,7 @@
 			});
 		}
 		
-		 diklatEdit = function(id){
+		diklatEdit = function(id){
 			$("#diklat_title_form").html('<i class="fa fa-pencil"></i>  Edit Diklat');
 			$("#diklat-form").attr("action",'<?=base_url()?>rujukan/diklat/update');
 			$.ajax({
@@ -203,9 +232,13 @@
 				url:'<?=base_url()?>rujukan/diklat/hapus/'+id,
 					success:function(result) {
 						$.gritter.add({text: result});
-						
+						$("#search-btn").click();
 					}
 			});
 		}
+		
+		$("#search-btn").click(function(){
+			refreshTable();
+		});
 	});
 </script>	

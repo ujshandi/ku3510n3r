@@ -1,6 +1,57 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 
+if ( ! function_exists('model_kuesioner_action'))
+{
+	function model_kuesioner_action($id)
+	{	
+		$CI = & get_instance();
+		$format = '<a href="#model_kuesionerModal" class="btn btn-info btn-xs" data-toggle="modal"   title="Edit" onclick="model_kuesionerEdit('.$id.')"><i class="fa fa-pencil"></i></a>
+				  <a href="#" onclick="model_kuesionerDelete('.$id.')" class="btn btn-danger btn-xs" title="Hapus"><i class="fa fa-times"></i></a>';
+		return $format;
+	}
+}
+if ( ! function_exists('pertanyaan_action'))
+{
+	function pertanyaan_action($id)
+	{	
+		$CI = & get_instance();
+		$format = '<a href="#pertanyaanModal" class="btn btn-info btn-xs" data-toggle="modal"   title="Edit" onclick="pertanyaanEdit('.$id.')"><i class="fa fa-pencil"></i></a>
+				  <a href="#" onclick="pertanyaanDelete('.$id.')" class="btn btn-danger btn-xs" title="Hapus"><i class="fa fa-times"></i></a>';
+		return $format;
+	}
+}
+if ( ! function_exists('diklat_action'))
+{
+	function diklat_action($id)
+	{	
+		$CI = & get_instance();
+		$format = '<a href="#diklatModal" class="btn btn-info btn-xs" data-toggle="modal"   title="Edit" onclick="diklatEdit('.$id.')"><i class="fa fa-pencil"></i></a>
+				  <a href="#" onclick="diklatDelete('.$id.')" class="btn btn-danger btn-xs" title="Hapus"><i class="fa fa-times"></i></a>';
+		return $format;
+	}
+}
+if ( ! function_exists('instansi_action'))
+{
+	function instansi_action($id)
+	{	
+		$CI = & get_instance();
+		$format = '<a href="#instansiModal" class="btn btn-info btn-xs" data-toggle="modal"   title="Edit" onclick="instansiEdit('.$id.')"><i class="fa fa-pencil"></i></a>
+				  <a href="#" onclick="instansiDelete('.$id.')" class="btn btn-danger btn-xs" title="Hapus"><i class="fa fa-times"></i></a>';
+		return $format;
+	}
+}
+if ( ! function_exists('responden_action'))
+{
+	function responden_action($id)
+	{	
+		$CI = & get_instance();
+		$format = '<a href="#respondenModal" class="btn btn-info btn-xs" data-toggle="modal"   title="Edit" onclick="respondenEdit('.$id.')"><i class="fa fa-pencil"></i></a>
+				  <a href="#" onclick="respondenDelete('.$id.')" class="btn btn-danger btn-xs" title="Hapus"><i class="fa fa-times"></i></a>';
+		return $format;
+	}
+}
+	
 if ( ! function_exists('kontak_action'))
 {
 	function kontak_action($id)

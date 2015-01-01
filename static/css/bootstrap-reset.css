@@ -16,10 +16,11 @@ a:hover {
 .panel-heading {
     border-color:#eff2f7 ;
     font-size: 13px;
-    font-weight: 400;
+    font-weight: 700;
     background: #fafafa;
     text-transform: uppercase;
     padding: 15px;
+	color: #e9761c;
 }
 
 .panel-title {

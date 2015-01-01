@@ -24,13 +24,7 @@
             <div class="form-group">
                 <label class="col-sm-4 control-label">Jenis Diklat <span class="text-danger">*</span></label>
                 <div class="col-sm-5">
-                    <select data-placeholder="Pilih Jenis Diklat..." class="chzn-select" tabindex="2" name="jenis_diklat" id="jenis_diklat">	
-					  <option value=""/>	
-					  <option value="1" >Diklat Teknis</option>
-					  <option value="2" >Diklat Terstruktur</option>
-					  <option value="3" >Diklat Prajabatan</option>
-					  
-					</select>    
+                  <?=form_dropdown('jenis_diklat',$list_jenisdiklat,$data[0]->jenis_diklat,'id="jenis_diklat" class="populate" style="width:100%"')?>
                 </div>
             </div>
            
@@ -38,7 +32,7 @@
                  <div class="col-sm-4">
 				 </div>
                 <div class="col-sm-8">
-					<label class="control-label" for="ref"><input type="checkbox"  value="ya" name="ref" id="ref" > Referensi Kuesioner</label>
+					<label class="control-label" for="ref"><input type="checkbox"  value="ya" name="ref" id="ref" <?=($data[0]->kategori_kuesioner=="ya"?'checked="checked"':"")?>> Referensi Kuesioner</label>
                     
                 </div>
             </div>

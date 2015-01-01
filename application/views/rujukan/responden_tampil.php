@@ -10,7 +10,7 @@
 				<!-- filter area-->
 				<div class="feed-box">
 			
-					<div class="panel-body">
+					<div class="panel-body" style="border:1px solid;border-radius:10px;padding-bottom:0px;border-color:#dddddd">
 					   
 						<div class="corner-ribon blue-ribon">
 						   <i class="fa fa-cog"></i>
@@ -49,39 +49,20 @@
 				   <div class="adv-table">
 					<table class="display table table-bordered table-striped" id="responden-tbl">
 					<thead>
-						<tr>
-							  <th>No</th> 
-							  <th>Instansi</th>
+						<tr> 						  
 							  <th>Nama</th>
 							  <th>Email</th>
-							  <th>Aksi</th>
+							  <th>Instansi</th>
+							  <th style="width:80px;">Aksi</th>
 						</tr>
 					</thead>
-					<tbody>
-					  <?php $no=1; 					 
-						if ($result->result() != null){
-						   foreach($result->result() as $datafield){ ?>
+					<tbody>					 
 							<tr class="odd gradeX">
-							   <td><?php echo $no; ?></td>
-							   <td><?php echo $datafield->instansi; ?></td>
-							   <td><?php echo $datafield->nama; ?></td>
-							   <td><?php echo $datafield->email; ?></td>
-							  <td>
-								 
-								<a href="#respondenModal" data-toggle="modal"  class="btn btn-info btn-xs" title="Edit"  onclick="respondenEdit('<?php echo $datafield->responden_id;?>')"><i class="fa fa-pencil"></i></a>
-								</span> 
-								<span class="tip">
-								<a id="delete_row" class="btn btn-danger btn-xs" href="#" onclick="respondenDelete('<?php echo $datafield->responden_id;?>')" title="Delete"><i class="fa fa-times"></i></a>
-								
-							  </td>
-							</tr>
-							<?php $no++; } 
-						}else { ?>
-							<tr class="odd gradeX">
-							   <td colspan="5">Data tidak ditemukan</td>
-							  
-							  </tr>
-						<? }?>
+							   <td>&nbsp;</td>
+							   <td>&nbsp;</td>
+							   <td>&nbsp;</td>
+							  <td>&nbsp;</td>
+							</tr>				 
 					  </tbody>
 					</table>
 					</div>
@@ -117,8 +98,54 @@
 	select {width:100%;}
 </style>
 <script>
+	var oTable;
+	refreshTable = function(){
+		if (oTable)
+            oTable.fnDestroy();
+		var instansi_id = $('#fil_instansi_id').val();	
+		oTable= $('#responden-tbl').dataTable({
+            "bProcessing": true,
+            "searching": false,
+			"autoWidth": false,
+			"sDom": 't<"bottom"plri>',
+            "bServerSide": true,
+            "sAjaxSource": '<?php echo base_url(); ?>rujukan/responden/datatable',
+            "bJQueryUI": true,
+          //  "sPaginationType": "full_numbers",
+            "iDisplayStart ": 20,
+			
+			"fnServerParams": function (aoData) {
+				aoData.push(
+				{ "name": "instansi_id", "value": instansi_id }
+				);
+			},
+            // "oLanguage": {
+                // "sProcessing": "<img src='<php echo base_url(); ?>assets/images/ajax-loader_dark.gif'>"
+            // },
+            "fnInitComplete": function () {
+                //oTable.fnAdjustColumnSizing();
+				this.fnAdjustColumnSizing(true);
+            },
+			'fnRowCallback ':function(){
+				var index = iDisplayIndex +1;
+				$('td:eq(0)',nRow).html(index);
+				return nRow;
+			},
+            'fnServerData': function (sSource, aoData, fnCallback) {
+                $.ajax
+                ({
+                    'dataType': 'json',
+                    'type': 'POST',
+                    'url': sSource,
+                    'data': aoData,
+                    'success': fnCallback
+                });
+            }
+        });
+	};
 	$(document).ready(function(){
 	//	$("#responden-tbl").dataTable();
+		refreshTable();
 		 $('select').select2({minimumResultsForSearch: -1, width:'resolve'});
 		$( "#responden-form" ).submit(function( event ) { 
 			var nama		= $('#nama').val();
@@ -193,5 +220,9 @@
 					}
 			});
 		}
+		
+		$("#search-btn").click(function(){
+			refreshTable();
+		});
 	});
 </script>	

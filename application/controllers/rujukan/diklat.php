@@ -21,6 +21,7 @@ class diklat extends CI_Controller {
 
         $this->load->model('/security/sys_menu_model');
         $this->load->model('/rujukan/diklat_model');
+        $this->load->model('/rujukan/jenisdiklat_model');
         $this->load->model('/rujukan/alumni_model');        
 
     }
@@ -30,11 +31,9 @@ class diklat extends CI_Controller {
         $setting['sd_left']	= array('cur_menu'	=> "MASTER");
 		$setting['page']	= array('pg_aktif'	=> "datatables");
 		$template			= $this->template->load($setting); #load static template file
-		    
-		$data["isi"]  = 'rujukan/diklat_tambah';
-		$data['result'] = $this->diklat_model->tampildata();
-		$data["ket"]  = 'tambah';
-		$data['list_tahun'] = array('-1'=>'Tampilkan semua');
+		     
+		$data['list_tahun'] =$this->diklat_model->get_list_tahun(true);
+		$data['list_jenisdiklat'] =$this->jenisdiklat_model->get_list_jenis(true);
 		$template['konten']	= $this->load->view('rujukan/diklat_tampil',$data,true); #load konten template file
 		#load container for template view
 		$this->load->view('template/container',$template);
@@ -56,6 +55,7 @@ class diklat extends CI_Controller {
             $data['isi'] = 'rujukan/diklat_tambah';
             $data["ket"]  = 'tambah';
 			$data["data"] = $this->initFormData();
+			$data['list_jenisdiklat'] =$this->jenisdiklat_model->get_list_jenis(false);
 			$this->load->view('rujukan/diklat_tambah',$data);
             //$this->load->view('admin/index',$data);  
     }
@@ -64,6 +64,7 @@ class diklat extends CI_Controller {
     {
             $data['isi'] = 'rujukan/diklat_tambah';
             $data["ket"]  = 'edit';
+			$data['list_jenisdiklat'] =$this->jenisdiklat_model->get_list_jenis(false);
 			$data['data']		= $this->diklat_model->pilihdata(array('diklat_id'=>$id));
 			if (!isset($data['data'])){
 				$data['data'] = $this->initFormData( );
@@ -142,5 +143,8 @@ class diklat extends CI_Controller {
     }
 
     
+	function datatable(){
+		echo $this->diklat_model->get_datatables();
+	}
 
 }

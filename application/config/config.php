@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-	$config['base_url'] = "http://".$_SERVER['HTTP_HOST']."/kuesioner/";
+	$config['base_url'] = "http://".$_SERVER['HTTP_HOST']."/ku3510n3r/";
 
 /*
 |--------------------------------------------------------------------------

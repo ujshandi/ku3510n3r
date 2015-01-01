@@ -12,6 +12,21 @@ class Instansi_model extends CI_Model
         parent::__construct();
 		//$this->CI =& get_instance();
     }
+	function get_datatables(){
+		//$this->datatables->add_column('NOMOR','');
+		$this->datatables->select('instansi_id,nama')
+		->unset_column('instansi_id')
+		->add_column('Actions', instansi_action('$1'), 'instansi_id')
+		->from('instansi');
+		  
+	 
+		$aOrder =isset($_POST['iSortCol_0'])?$_POST['iSortCol_0']:0;
+		$aOrderDir =isset($_POST['sSortDir_0'])?$_POST['sSortDir_0']:"ASC";
+		$sOrder = "";
+	
+		return $this->datatables->generate();
+	
+	}
 	
 	function get_list($forFilter=false) {
 		$where = ' where 1=1 ';

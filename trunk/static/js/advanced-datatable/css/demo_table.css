@@ -64,7 +64,7 @@
 }
 
 .dataTables_info {
-	width: 60%;
+	width: 20%;
 	float: left;
 }
 
@@ -270,7 +270,7 @@ tr.even {
 }
 
 .top, .bottom {
-	padding: 15px;
+	padding: 20px;
 	background-color: #F5F5F5;
 	border: 1px solid #CCCCCC;
 }

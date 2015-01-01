@@ -1,8 +1,8 @@
 /*Template Name:BucketAdmin Dashboard build with Bootstrap v3.0.3Template Version:1.0Author:ThemeBucket*/
 /* Import fonts */
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic);
+/*@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic);
 @import url(http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic);
-@import url(bucket-ico-fonts.css);
+@import url(bucket-ico-fonts.css);*/
 
 html {
     text-rendering: optimizeLegibility !important;
@@ -314,7 +314,11 @@ ul.sidebar-menu li a.active i {
     left:0;
     right:0;
     z-index:1002;
-    background:#fff;
+    background-color:#fff;
+	/*background-image:url(../images/title.gif);
+	background-repeat:no-repeat;
+	background-position:40% 50%;*/
+	/*background-position-x: 400px;/*260px;*/
     -webkit-transition:all .3s ease-in-out;
     -moz-transition:all .3s ease-in-out;
     -o-transition:all .3s ease-in-out;
@@ -2798,7 +2802,7 @@ ul.amounts li {
 }
 .dataTables_paginate.paging_bootstrap.pagination {
     float:right;
-    margin-top:-5px;
+    margin-top:-30px;
     margin-bottom:15px;
 }
 .dataTable tr:last-child {
@@ -2932,12 +2936,37 @@ ul.amounts li {
     -webkit-border-radius:5px 5px 0 0;
     border-bottom:none;
 }
-
 .tab-bg-dark-navy-blue li a:hover, .tab-bg-dark-navy-blue li.active a {
     border-radius: 0 !important;
     background: #fff !important;
     color: #1FB5AD !important;
 }
+
+.tab-bg-light ul>li>a {
+    display:block;
+    padding:20px 15px !important;
+}
+.tab-bg-light {
+    background:#C7E6E0 !important;
+    border-radius:5px 5px 0 0;
+    -webkit-border-radius:5px 5px 0 0;
+    border-bottom:none;
+	color:#E9761C;
+	font-size:14px;
+}
+
+.tab-bg-light li a:hover, tab-bg-light li.active a {
+    border-radius: 0 !important;
+    background: #fff !important;
+    color: #1FB5AD !important;
+}
+
+.tab-bg-form {
+    background:#f1f2f7 !important;
+    border-radius:3px;
+    -webkit-border-radius:3px;
+}
+
 .panel-heading .nav>li>a,.panel-heading .nav>li.active>a,.panel-heading .nav>li.active>a:hover,.panel-heading .nav>li.active>a:focus {
     border-width:0;
     border-radius:0;
@@ -2950,8 +2979,8 @@ ul.amounts li {
     background:#fff;
 }
 .panel-heading .nav>li:first-child.active>a,.panel-heading .nav>li:first-child>a:hover {
-    border-radius:4px 0 0 0 !important;
-    -webkit-border-radius:4px 0 0 0 !important;
+    /*border-radius:4px 0 0 0 !important;
+    -webkit-border-radius:4px 0 0 0 !important;*/
 }
 .tab-right {
     height:58px;
@@ -2967,6 +2996,7 @@ ul.amounts li {
 .panel-heading.tab-right .nav-tabs>li>a {
     margin-left:1px;
     margin-right:0px;
+	border-right:1px #F7F5F5 solid;
 }
 .m-bot20 {
     margin-bottom:20px;
@@ -3042,6 +3072,20 @@ ul.amounts li {
 .sm-input {
     width:175px;
 }
+.form-horizontal.grid-form .form-group {
+    border-bottom:1px solid #ffffff;
+    padding-bottom:8px;
+    margin-bottom:8px;
+}
+.form-horizontal.grid-form .form-group:last-child {
+    border-bottom:none;
+    padding-bottom:0px;
+    margin-bottom:0px;
+}
+.form-horizontal.grid-form .form-group .help-block {
+    margin-bottom:0;
+}
+
 .form-horizontal.bucket-form .form-group {
     border-bottom:1px solid #eff2f7;
     padding-bottom:15px;
@@ -3999,10 +4043,12 @@ td.details table tr td,.dataTable tr:last-child {
     width:65px;
 }
 .adv-table .dataTables_info,.dataTables_paginate {
-    /*padding:15px 0;*/
+    padding:15px 0;
+	margin-top:-22px;
 }
 .adv-table .dataTables_length,.adv-table .dataTables_filter {
-    /*padding:15px 0;*/
+    padding:15px 0;
+	margin-top:-31px;
 }
 .cke_chrome {
     border:none !important;

@@ -7,11 +7,11 @@
  */
 
 /**
- * Description of alumni
+ * Description of pertanyaan
  *
  * @author chan
  */
-class instansi extends CI_Controller {
+class pertanyaan extends CI_Controller {
     //put your code here
      function __construct()
     {
@@ -20,8 +20,7 @@ class instansi extends CI_Controller {
         //	$userdata = array ('userLogin' => $userLogin,'logged_in' => TRUE,'groupId'=>$this->sys_login_model->groupId,'fullName'=>$this->sys_login_model->fullName,'userId'=>$this->sys_login_model->userId,'groupLevel'=>$this->sys_login_model->level);
 
         $this->load->model('/security/sys_menu_model');
-        $this->load->model('/rujukan/instansi_model');
-       
+        $this->load->model('/rujukan/pertanyaan_model');            
 
     }
 
@@ -31,19 +30,19 @@ class instansi extends CI_Controller {
 		$setting['page']	= array('pg_aktif'	=> "datatables");
 		$template			= $this->template->load($setting); #load static template file
 		    
-		$data["isi"]  = 'rujukan/instansi_tambah';
-		$data['result'] = $this->instansi_model->tampildata();
-		$data["ket"]  = 'tambah';
-		$data['list_tahun'] = array('-1'=>'Tampilkan semua');
-		$template['konten']	= $this->load->view('rujukan/instansi_tampil',$data,true); #load konten template file
+		$data["isi"]  = 'rujukan/pertanyaan_tambah'; 
+		$data["ket"]  = 'tambah'; 
+		$template['konten']	= $this->load->view('rujukan/pertanyaan_tampil',$data,true); #load konten template file
 		#load container for template view
 		$this->load->view('template/container',$template);
             //$this->load->view('admin/index', $data);  
     }
 
 	function initFormData(){
-		$data[0]->instansi_id = '';
-		$data[0]->nama = '';
+		$data[0]->pertanyaan_id = '';
+		$data[0]->tanya = '';
+		$data[0]->tanya_tambahan1 = '';
+		$data[0]->tanya_tambahan2 = '';
 		 
 		return $data;
 	}
@@ -51,51 +50,53 @@ class instansi extends CI_Controller {
 	
     function tambah()
     {
-            $data['isi'] = 'rujukan/instansi_tambah';
+            $data['isi'] = 'rujukan/pertanyaan_tambah';
             $data["ket"]  = 'tambah';
-			$data["data"] = $this->initFormData();
-			$this->load->view('rujukan/instansi_tambah',$data);
+			$data["data"] = $this->initFormData(); 
+			$this->load->view('rujukan/pertanyaan_tambah',$data);
             //$this->load->view('admin/index',$data);  
     }
 	
 	 function edit($id)
     {
-            $data['isi'] = 'rujukan/instansi_tambah';
+            $data['isi'] = 'rujukan/pertanyaan_tambah';
             $data["ket"]  = 'edit';
-			$data['data']		= $this->instansi_model->pilihdata(array('instansi_id'=>$id));
+			$data['data']		= $this->pertanyaan_model->pilihdata(array('pertanyaan_id'=>$id)); 
 			if (!isset($data['data'])){
 				$data['data'] = $this->initFormData( );
 			}else{
 				
-				$data['data'][0]->instansi_id= $data['data'][0]->instansi_id;
+				$data['data'][0]->pertanyaan_id= $data['data'][0]->pertanyaan_id;
 			 
-				$data['data'][0]->nama = $data['data'][0]->nama;
+				$data['data'][0]->tanya = $data['data'][0]->tanya;
 			}
 			  
-			$this->load->view('rujukan/instansi_tambah',$data);
+			$this->load->view('rujukan/pertanyaan_tambah',$data);
             //$this->load->view('admin/index',$data);  
     }
 
 
     function tampil()
     {
-            $data['isi'] = 'rujukan/instansi_tampil';
-            $data['result'] = $this->instansi_model->tampildata();
+            $data['isi'] = 'rujukan/pertanyaan_tampil';
+            $data['result'] = $this->pertanyaan_model->tampildata();
             $this->load->view('admin/index',$data);   
     }
 
     
     function save()
     {
-            $data['nama']=$this->input->post('nama'); 
+            $data['tanya']=$this->input->post('tanya'); 
+            $data['tanya_tambahan1']=$this->input->post('tanya_tambahan1'); 
+            $data['tanya_tambahan2']=$this->input->post('tanya_tambahan2'); 
             try{
-				$this->instansi_model->simpan($data);
+				$this->pertanyaan_model->simpan($data);
 				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
-					<p>Data Instansi berhasil ditambahkan.</p>';
+					<p>Data Pertanyaan berhasil ditambahkan.</p>';
 			}
 			catch (Exception $e){
 				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
-					<p>Data Instansi gagal ditambahkan.</p>';
+					<p>Data Pertanyaan gagal ditambahkan.</p>';
 			}
 			echo $msg;
             
@@ -103,37 +104,38 @@ class instansi extends CI_Controller {
 
     function update()
     {
-            $instansi_id=$this->input->post('instansi_id');
-            $data['nama']=$this->input->post('nama'); 
+            $pertanyaan_id=$this->input->post('pertanyaan_id');
+            $data['tanya_tambahan2']=$this->input->post('tanya_tambahan2'); 
+            $data['tanya']=$this->input->post('tanya'); 
+            $data['tanya_tambahan1']=$this->input->post('tanya_tambahan1'); 
             try{
-				$this->instansi_model->edit($data,array("instansi_id"=>$instansi_id));
+				$this->pertanyaan_model->edit($data,array("pertanyaan_id"=>$pertanyaan_id));
 				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
-					<p>Data Instansi berhasil diupdate.</p>';
+					<p>Data Pertanyaan berhasil diupdate.</p>';
 			}
 			catch (Exception $e){
 				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
-					<p>Data Instansi gagal diupdate.</p>';
+					<p>Data Pertanyaan gagal diupdate.</p>';
 			}
 			echo $msg;
     }
 
-    function hapus($instansi_id)
+    function hapus($pertanyaan_id)
     {
         try{
-			$this->instansi_model->hapus(array("instansi_id"=>$instansi_id)); 
+			$this->pertanyaan_model->hapus(array("pertanyaan_id"=>$pertanyaan_id)); 
 			$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
-					<p>Data Instansi berhasil dihapus.</p>';
+					<p>Data Pertanyaan berhasil dihapus.</p>';
 		}
 		catch(Exception $e){
 			$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
-					<p>Data Instansi berhasil dihapus.</p>';
+					<p>Data Pertanyaan berhasil dihapus.</p>';
 		}
 		echo $msg;
     }
-	
-	function datatable(){
-		echo $this->instansi_model->get_datatables();
+
+    function datatable(){
+		echo $this->pertanyaan_model->get_datatables();
 	}
-    
 
 }

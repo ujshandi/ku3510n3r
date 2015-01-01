@@ -5,7 +5,7 @@
                         
 			<section class="panel">
 				<header class="panel-heading">
-					Daftar Instansi
+					Daftar Pertanyaan
 				</header>
 				
 				
@@ -15,42 +15,28 @@
 							<div class="pull-right">
 							 
 								 <a href="#" data-toggle="modal" class="btn btn-primary btn-sm hide" style="margin-top:-5px;"  ><i class="fa fa-check-square-o"></i> Refresh</a>
-								 <a href="#instansiModal" data-toggle="modal" class="btn btn-primary btn-sm" style="margin-top:-5px;" onclick="instansiAdd();"><i class="fa fa-plus-circle"></i> Tambah</a>
+								 <a href="#pertanyaanModal" data-toggle="modal" class="btn btn-primary btn-sm" style="margin-top:-5px;" onclick="pertanyaanAdd();"><i class="fa fa-plus-circle"></i> Tambah</a>
 							 </div>
 						</div>
 					</div>	
 					  <br />
 				   <div class="adv-table">
-					<table class="display table table-bordered table-striped" id="instansi-tbl">
+					<table class="display table table-bordered table-striped" id="pertanyaan-tbl"  width="100%">
 					<thead>
 						<tr> 
-							  <th>Nama Instansi</th>
-							  <th>Aksi</th>
+							  <th>Pertanyaan</th>
+							  <th>Pertanyaan Tambahan 1</th>
+							  <th>Pertanyaan Tambahan 2</th>
+							  <th style="width:5%">Aksi</th>
 						</tr>
 					</thead>
 					<tbody>
-					  <?php $no=1; 					 
-						if ($result->result() != null){
-						   foreach($result->result() as $datafield){ ?>
-							<tr class="odd gradeX">
-							   <td><?php echo $no; ?></td>
-							   <td><?php echo $datafield->nama; ?></td>
-							  <td>
-								 
-								<a href="#instansiModal" data-toggle="modal"  class="btn btn-info btn-xs" title="Edit"  onclick="instansiEdit('<?php echo $datafield->instansi_id;?>')"><i class="fa fa-pencil"></i></a>
-								</span> 
-								<span class="tip">
-								<a id="delete_row" class="btn btn-danger btn-xs" href="#" onclick="instansiDelete('<?php echo $datafield->instansi_id;?>')" title="Delete"><i class="fa fa-times"></i></a>
-								
-							  </td>
-							</tr>
-							<?php $no++; } 
-						}else { ?>
-							<tr class="odd gradeX">
-							   <td colspan="5">Data tidak ditemukan</td>
-							  
-							  </tr>
-						<? }?>
+						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
 					  </tbody>
 					</table>
 					</div>
@@ -62,15 +48,15 @@
 	</section>
 </section>
 
-<div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="instansiModal" class="modal fade">
+<div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="pertanyaanModal" class="modal fade">
         <div class="modal-dialog">
-        <form method="post" id="instansi-form" class="form-horizontal bucket-form" role="form">    
+        <form method="post" id="pertanyaan-form" class="form-horizontal bucket-form" role="form">    
             <div class="modal-content">
                 <div class="modal-header">
                     <button aria-hidden="true" data-dismiss="modal" class="close" type="button">x</button>
-                    <h5 class="modal-title" id="instansi_title_form"></h5>
+                    <h5 class="modal-title" id="pertanyaan_title_form"></h5>
                 </div>
-                <div class="modal-body" id="instansi_form_konten">
+                <div class="modal-body" id="pertanyaan_form_konten">
                 </div>
                 <div class="modal-footer">
                 	<div class="pull-right">
@@ -91,14 +77,20 @@
 		if (oTable)
             oTable.fnDestroy();
 	 
-		oTable= $('#instansi-tbl').dataTable({
+		oTable= $('#pertanyaan-tbl').dataTable({
             "bProcessing": true,
             "searching": false,
-			"autoWidth": false,
+			"autoWidth": true,
 			"sDom": 't<"bottom"plri>',
             "bServerSide": true,
-            "sAjaxSource": '<?php echo base_url(); ?>rujukan/instansi/datatable',
+            "sAjaxSource": '<?php echo base_url(); ?>rujukan/pertanyaan/datatable',
             "bJQueryUI": true,
+			"aoColumns" : [
+					{ sWidth: '50%' },
+					{ sWidth: '20%' },
+					{ sWidth: '20%' },
+					{ sWidth: '10%' }
+				],
           //  "sPaginationType": "full_numbers",
             "iDisplayStart ": 20,
 			
@@ -130,14 +122,14 @@
         });
 	};
 	$(document).ready(function(){
-	//	$("#instansi-tbl").dataTable();
+	//	$("#pertanyaan-tbl").dataTable();
 		refreshTable(); 
-		$( "#instansi-form" ).submit(function( event ) { 
-			var nama		= $('#nama').val(); 
+		$( "#pertanyaan-form" ).submit(function( event ) { 
+			var pertanyaan		= $('#tanya').val(); 
 			
-			 if(nama==""){
-				alert("Nama Instansi belum ditentukan");
-				$('#nama').focus();
+			 if(pertanyaan==""){
+				alert("Pertanyaan belum ditentukan");
+				$('#tanya').focus();
 				return false;
 			 
 			}else{
@@ -171,32 +163,32 @@
 		});
 		
 		
-		instansiAdd =function(){
-			$("#instansi_title_form").html('<i class="fa fa-plus-square"></i>  Tambah Instansi');
-			$("#instansi-form").attr("action",'<?=base_url()?>rujukan/instansi/save');
+		pertanyaanAdd =function(){
+			$("#pertanyaan_title_form").html('<i class="fa fa-plus-square"></i>  Tambah Pertanyaan');
+			$("#pertanyaan-form").attr("action",'<?=base_url()?>rujukan/pertanyaan/save');
 			$.ajax({
-				url:'<?=base_url()?>rujukan/instansi/tambah',
+				url:'<?=base_url()?>rujukan/pertanyaan/tambah',
 					success:function(result) {
 						//$.gritter.add({text: data});
-						$('#instansi_form_konten').html(result);
+						$('#pertanyaan_form_konten').html(result);
 					}
 			});
 		}
 		
-		 instansiEdit = function(id){
-			$("#instansi_title_form").html('<i class="fa fa-pencil"></i>  Edit Instansi');
-			$("#instansi-form").attr("action",'<?=base_url()?>rujukan/instansi/update');
+		 pertanyaanEdit = function(id){
+			$("#pertanyaan_title_form").html('<i class="fa fa-pencil"></i>  Edit Pertanyaan');
+			$("#pertanyaan-form").attr("action",'<?=base_url()?>rujukan/pertanyaan/update');
 			$.ajax({
-				url:'<?=base_url()?>rujukan/instansi/edit/'+id,
+				url:'<?=base_url()?>rujukan/pertanyaan/edit/'+id,
 					success:function(result) {
-						$('#instansi_form_konten').html(result);
+						$('#pertanyaan_form_konten').html(result);
 					}
 			});
 		}
 		
-		instansiDelete = function(id){
+		pertanyaanDelete = function(id){
 			$.ajax({
-				url:'<?=base_url()?>rujukan/instansi/hapus/'+id,
+				url:'<?=base_url()?>rujukan/pertanyaan/hapus/'+id,
 					success:function(result) {
 						$.gritter.add({text: result});
 						refreshTable();

@@ -30,10 +30,7 @@ class responden extends CI_Controller {
         $setting['sd_left']	= array('cur_menu'	=> "MASTER");
 		$setting['page']	= array('pg_aktif'	=> "datatables");
 		$template			= $this->template->load($setting); #load static template file
-		    
-		$data["isi"]  = 'rujukan/responden_tambah';
-		$data['result'] = $this->responden_model->tampildata();
-		$data["ket"]  = 'tambah';
+		     
 		$data['list_instansi'] = $this->instansi_model->get_list(true);
 		$template['konten']	= $this->load->view('rujukan/responden_tampil',$data,true); #load konten template file
 		#load container for template view
@@ -139,6 +136,8 @@ class responden extends CI_Controller {
 		echo $msg;
     }
 
-    
+    function datatable(){
+		echo $this->responden_model->get_datatables();
+	}
 
 }

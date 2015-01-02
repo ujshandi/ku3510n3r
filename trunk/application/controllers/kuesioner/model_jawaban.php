@@ -7,11 +7,11 @@
  */
 
 /**
- * Description of model_kuesioner
+ * Description of model_jawaban
  *
  * @author chan
  */
-class Model_kuesioner extends CI_Controller {
+class Model_jawaban extends CI_Controller {
     //put your code here
      function __construct()
     {
@@ -20,8 +20,7 @@ class Model_kuesioner extends CI_Controller {
         //	$userdata = array ('userLogin' => $userLogin,'logged_in' => TRUE,'groupId'=>$this->sys_login_model->groupId,'fullName'=>$this->sys_login_model->fullName,'userId'=>$this->sys_login_model->userId,'groupLevel'=>$this->sys_login_model->level);
 
         $this->load->model('/security/sys_menu_model');
-        $this->load->model('/kuesioner/model_kuesioner_model');            
-        $this->load->model('/kuesioner/jawaban_model');            
+        $this->load->model('/kuesioner/model_jawaban_model');            
 
     }
 
@@ -31,7 +30,7 @@ class Model_kuesioner extends CI_Controller {
 		$setting['page']	= array('pg_aktif'	=> "datatables");
 		$template			= $this->template->load($setting); #load static template file
 		$data = null;
-		$template['konten']	= $this->load->view('kuesioner/model_kuesioner_tampil',$data,true); #load konten template file
+		$template['konten']	= $this->load->view('kuesioner/model_jawaban_tampil',$data,true); #load konten template file
 		#load container for template view
 		$this->load->view('template/container',$template);
             //$this->load->view('admin/index', $data);  
@@ -39,6 +38,7 @@ class Model_kuesioner extends CI_Controller {
 
 	function initFormData(){
 		$data[0]->model_kuesioner_id = '';
+		$data[0]->jawab_id = '';
 		$data[0]->singkatan = '';
 		$data[0]->nama = '';
 		$data[0]->petunjuk = '';
@@ -47,27 +47,29 @@ class Model_kuesioner extends CI_Controller {
 	}
 	
 	
-    function tambah() {
+    function tambah()
+    {
+            $data['isi'] = 'kuesioner/model_jawaban_tambah';
+            $data["ket"]  = 'tambah';
 			$data["data"] = $this->initFormData(); 
-			$data["multiselect_jawab"] = $this->jawaban_model->get_multiselect();
-			$this->load->view('kuesioner/model_kuesioner_tambah',$data);
+			$this->load->view('kuesioner/model_jawaban_tambah',$data);
             //$this->load->view('admin/index',$data);  
     }
 	
 	 function edit($id)
     {
-           $data["multiselect_jawab"] = $this->jawaban_model->get_multiselect();
-			$data['data']		= $this->model_kuesioner_model->pilihdata(array('model_kuesioner_id'=>$id)); 
+           
+			$data['data']		= $this->model_jawaban_model->pilihdata(array('model_jawaban_id'=>$id)); 
 			if (!isset($data['data'])){
 				$data['data'] = $this->initFormData( );
 			}else{
 				
-				$data['data'][0]->model_kuesioner_id= $data['data'][0]->model_kuesioner_id;
+				$data['data'][0]->model_jawaban_id= $data['data'][0]->model_jawaban_id;
 			 
 				$data['data'][0]->singkatan = $data['data'][0]->singkatan;
 			}
 			  
-			$this->load->view('kuesioner/model_kuesioner_tambah',$data);
+			$this->load->view('kuesioner/model_jawaban_tambah',$data);
             //$this->load->view('admin/index',$data);  
     }
  
@@ -77,9 +79,8 @@ class Model_kuesioner extends CI_Controller {
             $data['singkatan']=$this->input->post('singkatan'); 
             $data['nama']=$this->input->post('nama'); 
             $data['petunjuk']=$this->input->post('petunjuk'); 
-			$data['model_jawaban']=$this->input->post('model_jawaban'); 
             try{
-				$this->model_kuesioner_model->simpan($data);
+				$this->model_jawaban_model->simpan($data);
 				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
 					<p>Data Model Kuesioner berhasil ditambahkan.</p>';
 			}
@@ -93,15 +94,12 @@ class Model_kuesioner extends CI_Controller {
 
     function update()
     {
-            $model_kuesioner_id=$this->input->post('model_kuesioner_id');
+            $model_jawaban_id=$this->input->post('model_jawaban_id');
             $data['petunjuk']=$this->input->post('petunjuk'); 
             $data['singkatan']=$this->input->post('singkatan'); 
             $data['nama']=$this->input->post('nama'); 
-            $data['model_jawaban']=$this->input->post('model_jawaban'); 
-			//var_dump($data['model_jawaban']);die;
             try{
-				//$this->model_kuesioner_model->edit($data,array("model_kuesioner_id"=>$model_kuesioner_id));
-				$this->model_kuesioner_model->edit($data,$model_kuesioner_id);
+				$this->model_jawaban_model->edit($data,array("model_jawaban_id"=>$model_jawaban_id));
 				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
 					<p>Data Model Kuesioner berhasil diupdate.</p>';
 			}
@@ -112,10 +110,10 @@ class Model_kuesioner extends CI_Controller {
 			echo $msg;
     }
 
-    function hapus($model_kuesioner_id)
+    function hapus($model_jawaban_id)
     {
         try{
-			$this->model_kuesioner_model->hapus(array("model_kuesioner_id"=>$model_kuesioner_id)); 
+			$this->model_jawaban_model->hapus(array("model_jawaban_id"=>$model_jawaban_id)); 
 			$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
 					<p>Data Model Kuesioner berhasil dihapus.</p>';
 		}
@@ -127,7 +125,7 @@ class Model_kuesioner extends CI_Controller {
     }
 
     function datatable(){
-		echo $this->model_kuesioner_model->get_datatables();
+		echo $this->model_jawaban_model->get_datatables();
 	}
 
 }

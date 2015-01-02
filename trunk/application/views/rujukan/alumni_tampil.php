@@ -10,7 +10,7 @@
 				<!-- filter area-->
 				<div class="feed-box">
 			
-					<div class="panel-body">
+					<div class="panel-body" style="border:1px solid;border-radius:10px;padding-bottom:0px;border-color:#dddddd">
 					   
 						<div class="corner-ribon blue-ribon">
 						   <i class="fa fa-cog"></i>
@@ -41,47 +41,67 @@
 				   <div class="row">
 						<div class="col-sm-12">
 							<div class="pull-right">
+								 <a href="#" data-toggle="modal" class="btn btn-primary btn-sm" style="margin-top:-5px;" onclick="alumniImport();"><i class="fa fa-download"></i> Import</a>
 								 <a href="#alumniModal" data-toggle="modal" class="btn btn-primary btn-sm" style="margin-top:-5px;" onclick="alumniAdd();"><i class="fa fa-plus-circle"></i> Tambah</a>
 							 </div>
 						</div>
 					</div>	
 					  <br />
 				   <div class="adv-table">
-					<table class="display table table-bordered table-striped" id="alumni-tbl">
+					<table class="display table table-bordered table-striped" id="alumni-tbl" width="100%">
 					<thead>
-						<tr>
-							  <th style="width:1%">No</th> 
+						<tr>    
 							  <th>NIK</th>
 							  <th>Nama</th>
 							  <th>Tempat Lahir</th>
-							  <th>Aksi</th>
+							  <th>Tgl. Lahir</th>
+							  <th>Agama</th>
+							  <th>Jenis Kelamin</th>
+							  <th>Alamat</th>
+							  <th>Email</th>
+							  <th>Telepon</th>
+							  <th>Instansi</th>
+							  <th>Jabatan</th>
+							  <th>Golongan</th>
+							  <th>Alamat Kantor</th>
+							  <th>Telepon Kantor</th>
+							  <th>Provinsi</th>
+							  <th>Kota</th>
+							  <th>Klasifikasi Perusahaan</th>
+							  <th>Riwayat Pendidikan</th>
+							  <th>Pendidikan LN</th>
+							  <th>Pendidikan Khusus</th>
+							  <th>Riwayat Jabatan</th>
+							  <th>Riwayat Diklat Minerba</th> 
+							  <th style="width:80px;">Aksi</th>
 						</tr>
 					</thead>
 					<tbody>
-					  <?php $no=1; 					 
-						if ($result->result() != null){
-						   foreach($result->result() as $datafield){ ?>
-							<tr class="odd gradeX">
-							   <td><?php echo $no; ?></td>
-							   <td><?php echo $datafield->nik; ?></td>
-							   <td><?php echo $datafield->nama; ?></td>
-							   <td><?php echo $datafield->tempat_lahir; ?></td>
-							  <td>
-								 
-								<a href="#alumniModal" data-toggle="modal"  class="btn btn-info btn-xs" title="Edit"  onclick="alumniEdit('<?php echo $datafield->alumni_id;?>')"><i class="fa fa-pencil"></i></a>
-								</span> 
-								<span class="tip">
-								<a id="delete_row" class="btn btn-danger btn-xs" href="#" onclick="alumniDelete('<?php echo $datafield->alumni_id;?>')" title="Delete"><i class="fa fa-times"></i></a>
-								
-							  </td>
-							</tr>
-							<?php $no++; } 
-						}else { ?>
-							<tr class="odd gradeX">
-							   <td colspan="5">Data tidak ditemukan</td>
-							  
-							  </tr>
-						<? }?>
+						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
 					  </tbody>
 					</table>
 					</div>
@@ -122,19 +142,57 @@
 		if (oTable)
             oTable.fnDestroy();
 			
-		oTable= $("#alumni-tbl").dataTable({
-			"searching": false,
-			"sDom": 'rt<"top"lpi>',
-			 // Disable sorting on the first column
-        "aoColumnDefs" : [ {
-            'bSortable' : false,
-            'aTargets' : [ 0 ]
-        } ]
-		});
+		var instansi_id = $('#fil_instansi_id').val();	
+		oTable= $('#alumni-tbl').dataTable({
+            "bProcessing": true,
+            "searching": false,
+			"autoWidth": false,
+		//	"sScrollX": "100%",
+          //    "bScrollCollapse": true,
+			"sDom": 't<"bottom"plri>',
+            "bServerSide": true,
+            "sAjaxSource": '<?php echo base_url(); ?>rujukan/alumni/datatable',
+            "bJQueryUI": true,
+          //  "sPaginationType": "full_numbers",
+            "iDisplayStart ": 20,
+			
+			"fnServerParams": function (aoData) {
+				aoData.push(
+				{ "name": "instansi_id", "value": instansi_id }
+				);
+			},
+            // "oLanguage": {
+                // "sProcessing": "<img src='<php echo base_url(); ?>assets/images/ajax-loader_dark.gif'>"
+            // },
+            "fnInitComplete": function () {
+                //oTable.fnAdjustColumnSizing();
+				this.fnAdjustColumnSizing(true);
+            },
+			'fnRowCallback ':function(){
+				var index = iDisplayIndex +1;
+				$('td:eq(0)',nRow).html(index);
+				return nRow;
+			},
+            'fnServerData': function (sSource, aoData, fnCallback) {
+                $.ajax
+                ({
+                    'dataType': 'json',
+                    'type': 'POST',
+                    'url': sSource,
+                    'data': aoData,
+                    'success': fnCallback
+                });
+            }
+        });//.fnAdjustColumnSizing( false );
+		jQuery('#alumni-tbl').wrap('<div class="dataTables_scroll" style="position:relative;overflow:auto;height:400px;" />');
+		 // setTimeout(function () {
+                // oTable.fnAdjustColumnSizing();
+            // }, 10);
+
 		
 	}
 	$(document).ready(function(){
-		
+		refreshTable();
 		$('select').select2({minimumResultsForSearch: -1, width:'resolve'});
 		$( "#alumni-form" ).submit(function( event ) { 
 			var nama		= $('#nama').val();
@@ -205,7 +263,7 @@
 				url:'<?=base_url()?>rujukan/alumni/hapus/'+id,
 					success:function(result) {
 						$.gritter.add({text: result});
-						
+						refreshTable();
 					}
 			});
 		}

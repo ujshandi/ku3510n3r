@@ -30,10 +30,8 @@ class alumni extends CI_Controller {
         $setting['sd_left']	= array('cur_menu'	=> "MASTER");
 		$setting['page']	= array('pg_aktif'	=> "datatables");
 		$template			= $this->template->load($setting); #load static template file
-		    
-		$data["isi"]  = 'rujukan/alumni_tambah';
-		$data['result'] = $this->alumni_model->tampildata();
-		$data["ket"]  = 'tambah';
+		     
+		$data = null;
 		$data['list_instansi'] = $this->instansi_model->get_list(true);
 		$template['konten']	= $this->load->view('rujukan/alumni_tampil',$data,true); #load konten template file
 		#load container for template view
@@ -53,8 +51,7 @@ class alumni extends CI_Controller {
 	
     function tambah()
     {
-            $data['isi'] = 'rujukan/alumni_tambah';
-            $data["ket"]  = 'tambah';
+          
 			$data["data"] = $this->initFormData();
 			$data['list_instansi'] = $this->instansi_model->get_list();
 			$this->load->view('rujukan/alumni_tambah',$data);
@@ -63,8 +60,7 @@ class alumni extends CI_Controller {
 	
 	 function edit($id)
     {
-            $data['isi'] = 'rujukan/alumni_tambah';
-            $data["ket"]  = 'edit';
+            
 			$data['data']		= $this->alumni_model->pilihdata(array('alumni_id'=>$id));
 			$data['list_instansi'] = $this->instansi_model->get_list();
 			if (!isset($data['data'])){
@@ -80,15 +76,7 @@ class alumni extends CI_Controller {
             //$this->load->view('admin/index',$data);  
     }
 
-
-    function tampil()
-    {
-            $data['isi'] = 'rujukan/alumni_tampil';
-            $data['result'] = $this->alumni_model->tampildata();
-            $this->load->view('admin/index',$data);   
-    }
-
-    
+ 
     function save()
     {
             $data['nama']=$this->input->post('nama'); 
@@ -138,7 +126,10 @@ class alumni extends CI_Controller {
 		}
 		echo $msg;
     }
-
+	
+	function datatable(){
+		echo $this->alumni_model->get_datatables();
+	}
     
 
 }

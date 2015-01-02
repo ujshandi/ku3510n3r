@@ -1,6 +1,28 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 
+if ( ! function_exists('kuesioner_action'))
+{
+	function kuesioner_action($id)
+	{	
+		$CI = & get_instance();
+		$format = '<a href="#kuesionerModal" class="btn btn-info btn-xs" data-toggle="modal"   title="Pertanyaan" onclick="kuesionerPertanyaan('.$id.')"><i class="fa fa-list-alt"></i></a>
+		<a href="#kuesionerModal" class="btn btn-info btn-xs" data-toggle="modal"   title="Edit" onclick="kuesionerEdit('.$id.')"><i class="fa fa-pencil"></i></a>
+				  <a href="#" onclick="kuesionerDelete('.$id.')" class="btn btn-danger btn-xs" title="Hapus"><i class="fa fa-times"></i></a>';
+		return $format;
+	}
+}
+
+if ( ! function_exists('alumni_action'))
+{
+	function alumni_action($id)
+	{	
+		$CI = & get_instance();
+		$format = '<a href="#alumniModal" class="btn btn-info btn-xs" data-toggle="modal"   title="Edit" onclick="alumniEdit('.$id.')"><i class="fa fa-pencil"></i></a>
+				  <a href="#" onclick="alumniDelete('.$id.')" class="btn btn-danger btn-xs" title="Hapus"><i class="fa fa-times"></i></a>';
+		return $format;
+	}
+}
 if ( ! function_exists('model_kuesioner_action'))
 {
 	function model_kuesioner_action($id)

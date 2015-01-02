@@ -13,6 +13,28 @@ class Model_kuesioner_model extends CI_Model
 		//$this->CI =& get_instance();
     }
 	
+	function get_list($forFilter=false) {
+		$where = ' where 1=1 ';
+		if (isset($params)){
+			//if (isset($params['kode_e1'])) $where .= " and kode_e1='".$params['kode_e1']."'";
+		}
+		$sql = "select distinct model_kuesioner_id,nama,singkatan from model_kuesioner ";
+		
+		
+		$result = $this->mgeneral->run_sql($sql);
+		
+		if ($forFilter)
+			$list["-1"] = 'Semua Model Kuesioner';
+		else
+			$list["-1"] = 'Pilih Model Kuesioner';
+		if (isset($result))
+			foreach ($result as $i) {
+				$list[$i->model_kuesioner_id] = $i->nama.' ('.$i->singkatan.')';
+			}
+		return $list;
+	}
+	
+	
 	function get_datatables(){
 		//$this->datatables->add_column('NOMOR','');
 		$this->datatables->select('r.model_kuesioner_id,r.singkatan, r.nama , r.petunjuk ')
@@ -52,12 +74,56 @@ class Model_kuesioner_model extends CI_Model
 
    
 	function simpan($data){
-		$this->mgeneral->save($data,'model_kuesioner');
+		//$this->mgeneral->save($data,'model_kuesioner');
+		$this->db->trans_start();
+		$modeljawab = $data['model_jawaban'];
+		unset($data['model_jawaban']);
+		$this->db->insert('model_kuesioner', $data);
+		$kuesioner_id= $this->db->insert_id();
+		if (isset($modeljawab)){
+			$this->db->flush_cache();			
+			$this->db->where('model_kuesioner_id', $kuesioner_id);
+			$result = $this->db->delete('model_kuesioner_jawaban'); 
+			foreach ($modeljawab as $j){
+				$this->db->flush_cache();
+				$this->db->set('model_kuesioner_id',$kuesioner_id);
+				$this->db->set('jawab_id',$j);
+				$this->db->insert('model_kuesioner_jawaban');				
+			}
+		}
+		
+		//echo $this->db->last_query();
+		
+		 $this->db->trans_complete();
+		return $this->db->trans_status();
 	}
 
    function edit($data,$whereData){
 		
-		$this->mgeneral->update($whereData,$data,'model_kuesioner');
+		//$this->mgeneral->update($whereData,$data,'model_kuesioner');
+		$this->db->trans_start();
+		$modeljawab = $data['model_jawaban'];
+		unset($data['model_jawaban']);
+		$this->db->where('model_kuesioner_id', $whereData);
+		$this->db->update('model_kuesioner', $data);
+		 
+		
+		if (isset($modeljawab)){
+			$this->db->flush_cache();			
+			$this->db->where('model_kuesioner_id', $whereData);
+			$result = $this->db->delete('model_kuesioner_jawaban'); 
+			foreach ($modeljawab as $j){
+				$this->db->flush_cache();
+				$this->db->set('model_kuesioner_id',$whereData);
+				$this->db->set('jawab_id',$j);
+				$this->db->insert('model_kuesioner_jawaban');				
+			}
+		}
+		
+		//echo $this->db->last_query();
+		
+		 $this->db->trans_complete();
+		return $this->db->trans_status();
 	}
 	
    function hapus($whereData){		

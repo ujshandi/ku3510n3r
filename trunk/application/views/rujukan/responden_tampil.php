@@ -47,7 +47,7 @@
 					</div>	
 					  <br />
 				   <div class="adv-table">
-					<table class="display table table-bordered table-striped" id="responden-tbl">
+					<table class="display table table-bordered table-striped" id="responden-tbl" width="100%">
 					<thead>
 						<tr> 						  
 							  <th>Nama</th>
@@ -216,7 +216,7 @@
 				url:'<?=base_url()?>rujukan/responden/hapus/'+id,
 					success:function(result) {
 						$.gritter.add({text: result});
-						
+						refreshTable();
 					}
 			});
 		}

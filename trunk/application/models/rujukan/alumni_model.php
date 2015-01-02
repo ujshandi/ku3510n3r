@@ -12,6 +12,24 @@ class Alumni_model extends CI_Model
         parent::__construct();
 		//$this->CI =& get_instance();
     }
+	function get_datatables(){
+		//$this->datatables->add_column('NOMOR','');
+		$this->datatables->select('	alumni_id, nik, nama, tempat_lahir, tgl_lahir, agama, sex, alamat, email, telepon, instansi, jabatan, golongan, alamat_kantor, 	telepon_kantor, provinsi, kota, klasifikasi_perusahaan, riwayat_pendidikan, pendidikan_ln, pendidikan_khusus, riwayat_jabatan, riwayat_diklat_minerba')
+		->unset_column('alumni_id')
+		->add_column('Actions', alumni_action('$1'), 'alumni_id')
+		->from(' alumni ');
+		  
+		if (isset($_POST['instansi_id'])) {
+			if ($_POST['instansi_id']!="-1") $this->datatables->where('r.instansi_id',$_POST['instansi_id']);
+		}
+		 
+		$aOrder =isset($_POST['iSortCol_0'])?$_POST['iSortCol_0']:0;
+		$aOrderDir =isset($_POST['sSortDir_0'])?$_POST['sSortDir_0']:"ASC";
+		$sOrder = "";
+	
+		return $this->datatables->generate();
+	
+	}
 	
     public function isExistKode($kode=null){	
         if ($kode!=null)//utk update

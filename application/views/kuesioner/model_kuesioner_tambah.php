@@ -28,6 +28,15 @@
 					<textarea cols="45" name="petunjuk" id="petunjuk" ><?=$data[0]->petunjuk?></textarea>
                 </div>
             </div>
+			
+			<div class="form-group">
+                <label class="col-sm-4 control-label">Model Jawaban</label>
+                <div class="col-sm-8">
+					 <select class="populate select2-offscreen" style="width:300px" id="model_jawaban" name="model_jawaban[]" multiple="" tabindex="-1">
+                                       <?=$multiselect_jawab?>
+                                    </select>
+                </div>
+            </div>
           
 <style type="text/css">
 	select {width:100%;}

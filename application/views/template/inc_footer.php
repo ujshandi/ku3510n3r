@@ -14,7 +14,7 @@
 	<script src="<?=base_url("static")?>/js/fs-scroller/jquery.mCustomScrollbar.concat.min.js"></script>
     <script src="<?=base_url("static")?>/js/fuelux/js/spinner.min.js"></script>
     <script src="<?=base_url("static")?>/js/jquery.form.min.js"></script>
-	
+	<script src="<?=base_url("static")?>/js/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
     <?php switch($pg_aktif): 
 		 	case "dashboard":?>
     	            
@@ -39,7 +39,7 @@
 			<script src="<?=base_url("static")?>/js/morris-chart/raphael-min.js"></script>
 			<script src="<?=base_url("static")?>/js/easypiechart/jquery.easypiechart.js"></script>
 			<script src="<?=base_url("static")?>/js/sparkline/jquery.sparkline.js"></script>
-			<script src="<?=base_url("static")?>/js/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+			
     	<?php break; ?>
         <?php case "datatables": ?>
         

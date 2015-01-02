@@ -52,7 +52,7 @@
 					</div>	
 					  <br />
 				   <div class="adv-table">
-					<table class="display table table-bordered table-striped" id="diklat-tbl">
+					<table class="display table table-bordered table-striped" id="diklat-tbl" width="100%">
 					<thead>
 						<tr> 
 							  <th>Tahun</th>

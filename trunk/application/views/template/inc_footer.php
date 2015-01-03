@@ -4,6 +4,8 @@
 	<script src="<?=base_url("static")?>/bs3/js/bootstrap.min.js"></script>
 	<script src="<?=base_url("static")?>/js/jquery.dcjqaccordion.2.7.js"></script>
 	<script src="<?=base_url("static")?>/js/jQuery-slimScroll-1.3.0/jquery.slimscroll.js"></script>
+	<script src="<?=base_url("static")?>/js/jquery-multi-select/js/jquery.multi-select.js"></script>
+	<script src="<?=base_url("static")?>/js/jquery-multi-select/js/jquery.quicksearch.js"></script>
     <script src="<?=base_url("static")?>/js/select2/select2.js"></script>
 	<script src="<?=base_url("static")?>/js/gritter/js/jquery.gritter.js" type="text/javascript"></script>
 	<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="<?=base_url("static")?>/js/flot-chart/excanvas.min.js"></script><![endif]-->

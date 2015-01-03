@@ -22,6 +22,7 @@ class Kuesioner extends CI_Controller {
         $this->load->model('/security/sys_menu_model');
         $this->load->model('/kuesioner/kuesioner_model');          
         $this->load->model('/kuesioner/model_kuesioner_model');          
+        $this->load->model('/rujukan/pertanyaan_model');          
 		$this->load->library("utility");
     }
 
@@ -75,6 +76,7 @@ class Kuesioner extends CI_Controller {
     {
             
 			$data['data']		= $this->kuesioner_model->pilihdata(array('kuesioner_id'=>$kuesioner_id)); 
+			$data['list_pertanyaan'] = array("-1"=>'tes');
 			$data['list_model_kuesioner'] = $this->model_kuesioner_model->get_list();
 			if (!isset($data['data'])){
 				$data['data'] = $this->initFormData( );
@@ -88,6 +90,12 @@ class Kuesioner extends CI_Controller {
 			$this->load->view('kuesioner/kuesioner_pertanyaan',$data);
             //$this->load->view('admin/index',$data);  
     }
+	
+	function get_pertanyaan($kuesioner_id,$model_kuesioner_id){
+		// echo  json_encode($this->pertanyaan_model->get_list(array('kuesioner_id'=>$kuesioner_id)));
+		$list_pertanyaan = $this->pertanyaan_model->get_list(array('kuesioner_id'=>$kuesioner_id));
+		echo form_dropdown('pertanyaan_id[]',$list_pertanyaan,'0','id="pertanyaan_id" class="multi-select" style="width:100%"');
+	}
  
     function get_form_values(){
 		$data['tanggal_buat']=$this->utility->ourDeFormatSQLDate($this->input->post('tanggal_buat')); 

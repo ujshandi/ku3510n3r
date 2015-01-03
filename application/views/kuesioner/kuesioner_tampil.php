@@ -53,7 +53,7 @@
 </section>
 
 <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="kuesionerModal" class="modal fade">
-        <div class="modal-dialog">
+        <div class="modal-dialog" style="width:750px">
         <form method="post" id="kuesioner-form" class="form-horizontal bucket-form" role="form">    
             <div class="modal-content">
                 <div class="modal-header">

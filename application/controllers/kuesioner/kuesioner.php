@@ -21,6 +21,7 @@ class Kuesioner extends CI_Controller {
 
         $this->load->model('/security/sys_menu_model');
         $this->load->model('/kuesioner/kuesioner_model');          
+        $this->load->model('/kuesioner/kuesioner_pertanyaan_model');          
         $this->load->model('/kuesioner/model_kuesioner_model');          
         $this->load->model('/rujukan/pertanyaan_model');          
 		$this->load->library("utility");
@@ -76,7 +77,7 @@ class Kuesioner extends CI_Controller {
     {
             
 			$data['data']		= $this->kuesioner_model->pilihdata(array('kuesioner_id'=>$kuesioner_id)); 
-			$data['list_pertanyaan'] = array("-1"=>'tes');
+			$data['list_pertanyaan'] = array();
 			$data['list_model_kuesioner'] = $this->model_kuesioner_model->get_list();
 			if (!isset($data['data'])){
 				$data['data'] = $this->initFormData( );
@@ -93,8 +94,8 @@ class Kuesioner extends CI_Controller {
 	
 	function get_pertanyaan($kuesioner_id,$model_kuesioner_id){
 		// echo  json_encode($this->pertanyaan_model->get_list(array('kuesioner_id'=>$kuesioner_id)));
-		$list_pertanyaan = $this->pertanyaan_model->get_list(array('kuesioner_id'=>$kuesioner_id));
-		echo form_dropdown('pertanyaan_id[]',$list_pertanyaan,'0','id="pertanyaan_id" class="multi-select" style="width:100%"');
+		$list_pertanyaan = $this->kuesioner_pertanyaan_model->get_list(array('kuesioner_id'=>$kuesioner_id,'model_kuesioner_id'=>$model_kuesioner_id),$listSelected);
+		echo form_dropdown('pertanyaan_idzx[]',$list_pertanyaan,$listSelected,'id="pertanyaan_id" class="multi-select" style="width:100%"');
 	}
  
     function get_form_values(){
@@ -123,6 +124,34 @@ class Kuesioner extends CI_Controller {
 			echo $msg;
             
     }
+	
+	function pertanyaan_submit()
+    {
+			//$this->utility->ourDeFormatSQLDate($data['tanggal'])
+			$data['kuesioner_id']=$this->input->post('kuesioner_id'); 
+			$data['model_kuesioner_id']=$this->input->post('model_kuesioner_id'); 
+			//$data['pertanyaan_id']=explode(',',$this->input->post('daftar_pertanyaan'));  
+			$hidden = $this->input->post('multiple_value'); //get the values from the hidden field
+			$hidden = substr($hidden,1);
+            $hidden_in_array = explode(",", $hidden); //convert the values into array
+            //$filter_array = array_filter($hidden_in_array); //remove empty index 
+            //$reset_keys = array_values($filter_array); 
+			$data['pertanyaan_id'] = $hidden_in_array;
+			//var_dump($data['pertanyaan_id']);die;
+            try{
+				$this->kuesioner_pertanyaan_model->simpan($data);
+				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
+					<p>Data Kuesioner berhasil ditambahkan.</p>';
+			}
+			catch (Exception $e){
+				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
+					<p>Data Kuesioner gagal ditambahkan.</p>';
+			}
+			echo $msg;
+            
+    }
+	
+	
 
     function update()
     {

@@ -54,7 +54,7 @@
 
 <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="kuesionerModal" class="modal fade">
         <div class="modal-dialog" style="width:750px">
-        <form method="post" id="kuesioner-form" class="form-horizontal bucket-form" role="form">    
+        <form method="post" data-purpose="tes" id="kuesioner-form" class="form-horizontal bucket-form" role="form">    
             <div class="modal-content">
                 <div class="modal-header">
                     <button aria-hidden="true" data-dismiss="modal" class="close" type="button">x</button>
@@ -77,6 +77,7 @@
 </style>
 <script>
 	var oTable;
+	
 	refreshTable = function(){
 		if (oTable)
             oTable.fnDestroy();
@@ -132,15 +133,33 @@
 		refreshTable(); 
 		$( "#kuesioner-form" ).submit(function( event ) { 
 			var kuesioner		= $('#tanya').val(); 
+			var purpose = $(this).data('purpose');
 			
-			 if(kuesioner==""){
+			//alert(kuesioner);
+			 if((kuesioner=="")&&(purpose=="kuesioner")){
 				alert("Kuesioner belum ditentukan");
 				$('#tanya').focus();
 				return false;
 			 
 			}else{
 				
-			 var postData = $(this).serializeArray();
+				var postData = $(this).serializeArray();
+				
+				if (purpose=="pertanyaan"){
+					//alert($("#multiple_value").val());
+				//	return false;
+					if ($("#model_kuesioner_id").val()=="-1"){
+						alert("Model Kuesioner belum ditentukan");
+						$('#model_kuesioner_id').focus();
+						return false;
+					}
+					else if ($("#multiple_value").val()==""){
+						alert('Pertanyaan belum ada yang dipilih');
+						return false;
+					}
+					
+				//	postData.push({name:"daftar_pertanyaan",value:ids});
+				}
 				var formURL = $(this).attr("action");
 				$.ajax(
 				{
@@ -172,6 +191,7 @@
 		kuesionerAdd =function(){
 			$("#kuesioner_title_form").html('<i class="fa fa-plus-square"></i>  Tambah Kuesioner');
 			$("#kuesioner-form").attr("action",'<?=base_url()?>kuesioner/kuesioner/save');
+			$("#kuesioner-form").data("purpose","kuesioner");
 			$.ajax({
 				url:'<?=base_url()?>kuesioner/kuesioner/tambah',
 					success:function(result) {
@@ -184,6 +204,7 @@
 		 kuesionerEdit = function(id){
 			$("#kuesioner_title_form").html('<i class="fa fa-pencil"></i>  Edit Kuesioner');
 			$("#kuesioner-form").attr("action",'<?=base_url()?>kuesioner/kuesioner/update');
+			$("#kuesioner-form").data("purpose","kuesioner");
 			$.ajax({
 				url:'<?=base_url()?>kuesioner/kuesioner/edit/'+id,
 					success:function(result) {
@@ -205,6 +226,8 @@
 		 kuesionerPertanyaan = function(id){
 			$("#kuesioner_title_form").html('<i class="fa fa-pencil"></i>  Daftar Pertanyaan Kuesioner');
 			$("#kuesioner-form").attr("action",'<?=base_url()?>kuesioner/kuesioner/pertanyaan_submit/'+id);
+			$("#kuesioner-form").data("purpose","pertanyaan");
+			
 			$.ajax({
 				url:'<?=base_url()?>kuesioner/kuesioner/pertanyaan_add/'+id,
 					success:function(result) {

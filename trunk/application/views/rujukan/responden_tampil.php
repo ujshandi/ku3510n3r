@@ -146,7 +146,7 @@
 	$(document).ready(function(){
 	//	$("#responden-tbl").dataTable();
 		refreshTable();
-		 $('select').select2({minimumResultsForSearch: -1, width:'resolve'});
+		$('select').select2({minimumResultsForSearch: -1, width:'resolve'});
 		$( "#responden-form" ).submit(function( event ) { 
 			var nama		= $('#nama').val();
 			var instansi_id		= $('#instansi_id').val();

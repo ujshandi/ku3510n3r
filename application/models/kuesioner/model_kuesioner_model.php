@@ -37,7 +37,7 @@ class Model_kuesioner_model extends CI_Model
 	
 	function get_datatables(){
 		//$this->datatables->add_column('NOMOR','');
-		$this->datatables->select('r.model_kuesioner_id,r.singkatan, r.nama , r.petunjuk ')
+		$this->datatables->select('r.model_kuesioner_id,r.singkatan, r.nama , r.petunjuk,r.caption_pertanyaan ')
 		->unset_column('r.model_kuesioner_id')
 		->add_column('Actions', model_kuesioner_action('$1'), 'r.model_kuesioner_id')
 		->from(' model_kuesioner r ');
@@ -136,6 +136,12 @@ class Model_kuesioner_model extends CI_Model
 			if (isset($params['model_kuesioner_id'])) $where .= " and model_kuesioner_id='".$params['model_kuesioner_id']."'";
 		}
 		$sql = "select * from model_kuesioner ".$where;
+		return $this->mgeneral->run_sql($sql);
+	}
+
+	function get_list_jawaban($model_kuesioner_id){
+		
+		$sql = "select * from model_kuesioner_jawaban where model_kuesioner_id= ".$model_kuesioner_id;
 		return $this->mgeneral->run_sql($sql);
 	}
 

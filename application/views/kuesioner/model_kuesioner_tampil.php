@@ -27,11 +27,13 @@
 							  <th>Singkatan</th>
 							  <th>Nama</th>
 							  <th>Petunjuk</th>
+							  <th>Caption Pertanyaan</th>
 							  <th style="width:5%">Aksi</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr>
+							<td>&nbsp;</td>
 							<td>&nbsp;</td>
 							<td>&nbsp;</td>
 							<td>&nbsp;</td>
@@ -88,7 +90,8 @@
 			"aoColumns" : [
 					{ sWidth: '10%' },
 					{ sWidth: '30%' },
-					{ sWidth: '50%' },
+					{ sWidth: '40%' },
+					{ sWidth: '10%' },
 					{ sWidth: '10%' }
 				],
           //  "sPaginationType": "full_numbers",

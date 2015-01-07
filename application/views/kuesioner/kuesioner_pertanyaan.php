@@ -72,7 +72,7 @@
 					  }
 				});	
 				//$('#pertanyaan_id').multiSelect('deselect_all');		
-				$('#pertanyaan_id').multiSelect('refresh');		
+				//$('#pertanyaan_id').multiSelect('refresh');		
 				//$('#pertanyaan_id').multiSelect('deselect_all');		
 				 
 			 });

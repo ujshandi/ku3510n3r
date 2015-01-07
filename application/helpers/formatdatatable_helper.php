@@ -6,7 +6,9 @@ if ( ! function_exists('kuesioner_action'))
 	function kuesioner_action($id)
 	{	
 		$CI = & get_instance();
-		$format = '<a href="#kuesionerModal" class="btn btn-info btn-xs" data-toggle="modal"   title="Pertanyaan" onclick="kuesionerPertanyaan('.$id.')"><i class="fa fa-list-alt"></i></a>
+		$format = '
+		<a href="#kuesionerModal" class="btn btn-info btn-xs" data-toggle="modal"   title="Pertanyaan" onclick="kuesionerPertanyaan('.$id.')"><i class="fa fa-list-alt"></i></a>
+		<a href="#" class="btn btn-info btn-xs" data-toggle="modal"   title="Preview" target="blank" onclick="kuesionerPreview('.$id.')"><i class="fa fa-eye"></i></a>
 		<a href="#kuesionerModal" class="btn btn-info btn-xs" data-toggle="modal"   title="Edit" onclick="kuesionerEdit('.$id.')"><i class="fa fa-pencil"></i></a>
 				  <a href="#" onclick="kuesionerDelete('.$id.')" class="btn btn-danger btn-xs" title="Hapus"><i class="fa fa-times"></i></a>';
 		return $format;

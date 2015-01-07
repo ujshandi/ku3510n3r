@@ -92,10 +92,87 @@ class Kuesioner extends CI_Controller {
             //$this->load->view('admin/index',$data);  
     }
 	
+	function pertanyaan_preview($kuesioner_id){
+		$setting['sd_left']	= array('cur_menu'	=> "KUESIONER");
+		$setting['page']	= array('pg_aktif'	=> "datatables");
+		$template			= $this->template->load_popup($setting); #load static template file		
+		$data['data'] = $this->get_pertanyaan_preview($kuesioner_id);
+		 $data['kuesioner']		= $this->kuesioner_model->pilihdata(array('kuesioner_id'=>$kuesioner_id)); 
+		$template['konten']	= $this->load->view('kuesioner/kuesioner_preview',$data,true); #load konten template file
+		
+		#load container for template view
+		$this->load->view('template/container_popup',$template);
+	}
+	
 	function get_pertanyaan($kuesioner_id,$model_kuesioner_id){
 		// echo  json_encode($this->pertanyaan_model->get_list(array('kuesioner_id'=>$kuesioner_id)));
 		$list_pertanyaan = $this->kuesioner_pertanyaan_model->get_list(array('kuesioner_id'=>$kuesioner_id,'model_kuesioner_id'=>$model_kuesioner_id),$listSelected);
-		echo form_dropdown('pertanyaan_idzx[]',$list_pertanyaan,$listSelected,'id="pertanyaan_id" class="multi-select" style="width:100%"');
+		echo form_multiselect('pertanyaan_idzx[]',$list_pertanyaan,$listSelected,'id="pertanyaan_id" class="multi-select" style="width:100%"');
+	}
+	
+	function get_pertanyaan_preview($kuesioner_id){
+		$rs = '';
+		$listmodel = $this->kuesioner_pertanyaan_model->get_distinct_model($kuesioner_id);
+		//var_dump($listmodel);
+		if (!isset($listmodel)){
+			$rs ="Data belum ada";
+		}
+		else{
+			foreach ($listmodel as $model){
+				$rs .= "<b>Nama Model : ".$model->nama." (".$model->singkatan.")</b><br>";
+				$listpertanyaan = $this->kuesioner_pertanyaan_model->get_complete_pertanyaan($kuesioner_id,$model->model_kuesioner_id);
+				if (!isset($listpertanyaan)){
+					$rs .= 'Belum ada Pertanyaan';
+				}else {
+					$listjawab = $this->kuesioner_pertanyaan_model->get_model_jawab($model->model_kuesioner_id);
+					$rs .= '<table class="table table-bordered">';
+					$rs .= '<thead><tr  align="center">						
+						
+						<th rowspan="2" style="vertical-align:middle;text-align:center;width:1%"  width="30">NO.</th>
+						<th rowspan="2"  style="vertical-align:middle;text-align:center" width="230" >'.strtoupper($model->caption_pertanyaan).'</th>';
+						
+					if (!isset($listjawab)){
+						$rs .= '<th style="vertical-align:middle;text-align:center" width="100" >JAWABAN</th>
+					</tr>';				
+						$rs .= '<th style="vertical-align:middle;text-align:center" width="100" >Model Jawaban Belum di Setting</th>'	;
+					}
+					else{
+						$rs .= '<th colspan="'.count($listjawab).'" style="vertical-align:middle;text-align:center" width="100" >JAWABAN</th>
+					</tr>';				
+						$rs .= '<tr  align="center">';
+						foreach ($listjawab as $jawab){
+							$rs .= '<th style="vertical-align:middle;text-align:center" width="'.(round(100/count($listjawab))).'" >'.$jawab->singkatan.'</th>'	;
+						}
+						$rs .= '</tr>';
+					}
+					$rs .= 	'</thead>';	
+					$rs .= '<tbody>';		
+					$i=1;
+					foreach($listpertanyaan as $pertanyaan){
+						$rs .= '<tr>';
+						$rs .= '<td>'.$i++.'</td>';
+						$rs .= '<td>'.$pertanyaan->tanya.'</td>';
+						$rs .= '</tr>';
+						if ($pertanyaan->tanya_tambahan1!=""){
+							$rs .= '<tr>';
+							$rs .= '<td>&nbsp;</td>';
+							$rs .= '<td>'.$pertanyaan->tanya_tambahan1.'</td>';
+							$rs .= '</tr>';
+						}
+						if ($pertanyaan->tanya_tambahan2!=""){
+							$rs .= '<tr>';
+							$rs .= '<td>&nbsp;</td>';
+							$rs .= '<td>'.$pertanyaan->tanya_tambahan2.'</td>';
+							$rs .= '</tr>';
+						}
+					}//end foreach pertanyaan
+					$rs .= '</tbody>';		
+					$rs .= '</table><br>';		
+				}//end if isset pertanyaan
+			}//end foreach model
+		}//end if isset model
+		return $rs;
+		
 	}
  
     function get_form_values(){

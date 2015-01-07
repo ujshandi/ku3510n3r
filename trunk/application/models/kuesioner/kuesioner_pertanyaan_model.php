@@ -34,6 +34,32 @@ where p.pertanyaan_id not in (select pertanyaan_id from kuesioner_pertanyaan whe
 		return $list;
 	}
 	
+	function get_distinct_model($kuesioner_id){
+		$sql = "SELECT DISTINCT kp.model_kuesioner_id,mp.nama,mp.singkatan, mp.petunjuk,mp.caption_pertanyaan  
+				FROM kuesioner_pertanyaan kp INNER JOIN model_kuesioner mp ON kp.model_kuesioner_id = mp.model_kuesioner_id 
+				WHERE kp.kuesioner_id=".$kuesioner_id;
+		$result = $this->mgeneral->run_sql($sql);
+		return $result;
+	}
+	
+	function get_model_jawab($model_kuesioner_id){
+		$sql = "SELECT j.*, p.nama as parent
+			FROM model_kuesioner_jawaban mkj INNER JOIN jawaban j ON mkj.jawab_id = j.jawab_id
+			INNER JOIN jawaban p ON j.parent_id = p.jawab_id
+			WHERE model_kuesioner_id = ".$model_kuesioner_id;
+		$result = $this->mgeneral->run_sql($sql);
+		return $result;
+	}
+	
+	function get_complete_pertanyaan($kuesioner_id,$model_kuesioner_id){
+		$sql = "SELECT p.pertanyaan_id,p.tanya,p.tanya_tambahan1, p.tanya_tambahan2 
+		FROM kuesioner_pertanyaan kp INNER JOIN pertanyaan p ON p.pertanyaan_id = kp.pertanyaan_id
+		WHERE kp.model_kuesioner_id = ".$model_kuesioner_id." AND kp.kuesioner_id = ".$kuesioner_id	;		
+		$result = $this->mgeneral->run_sql($sql);
+		return $result;
+	
+	}
+	
 	
 	function get_datatables(){
 		//$this->datatables->add_column('NOMOR','');

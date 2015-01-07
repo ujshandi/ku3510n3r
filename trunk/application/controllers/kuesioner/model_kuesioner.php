@@ -56,7 +56,7 @@ class Model_kuesioner extends CI_Controller {
 	
 	 function edit($id)
     {
-           $data["multiselect_jawab"] = $this->jawaban_model->get_multiselect();
+          
 			$data['data']		= $this->model_kuesioner_model->pilihdata(array('model_kuesioner_id'=>$id)); 
 			if (!isset($data['data'])){
 				$data['data'] = $this->initFormData( );
@@ -65,19 +65,26 @@ class Model_kuesioner extends CI_Controller {
 				$data['data'][0]->model_kuesioner_id= $data['data'][0]->model_kuesioner_id;
 			 
 				$data['data'][0]->singkatan = $data['data'][0]->singkatan;
+				$listJawaban = $this->model_kuesioner_model->get_list_jawaban($data['data'][0]->model_kuesioner_id);
 			}
-			  
+			
+			 $data["multiselect_jawab"] = $this->jawaban_model->get_multiselect($listJawaban);  
 			$this->load->view('kuesioner/model_kuesioner_tambah',$data);
             //$this->load->view('admin/index',$data);  
     }
  
+	function get_form_values(){
+		$data['singkatan']=$this->input->post('singkatan'); 
+		$data['nama']=$this->input->post('nama'); 
+		$data['petunjuk']=$this->input->post('petunjuk'); 
+		$data['caption_pertanyaan']=$this->input->post('caption_pertanyaan'); 
+		$data['model_jawaban']=$this->input->post('model_jawaban'); 
+		return $data;
+	}
     
     function save()
     {
-            $data['singkatan']=$this->input->post('singkatan'); 
-            $data['nama']=$this->input->post('nama'); 
-            $data['petunjuk']=$this->input->post('petunjuk'); 
-			$data['model_jawaban']=$this->input->post('model_jawaban'); 
+            $data = $this->get_form_values();
             try{
 				$this->model_kuesioner_model->simpan($data);
 				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
@@ -94,10 +101,7 @@ class Model_kuesioner extends CI_Controller {
     function update()
     {
             $model_kuesioner_id=$this->input->post('model_kuesioner_id');
-            $data['petunjuk']=$this->input->post('petunjuk'); 
-            $data['singkatan']=$this->input->post('singkatan'); 
-            $data['nama']=$this->input->post('nama'); 
-            $data['model_jawaban']=$this->input->post('model_jawaban'); 
+             $data = $this->get_form_values();
 			//var_dump($data['model_jawaban']);die;
             try{
 				//$this->model_kuesioner_model->edit($data,array("model_kuesioner_id"=>$model_kuesioner_id));

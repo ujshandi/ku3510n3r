@@ -235,5 +235,10 @@
 					}
 			});
 		}
+		
+		kuesionerPreview=function(id){
+			window.open('<?=base_url()?>kuesioner/kuesioner/pertanyaan_preview/'+id,'_blank');			
+		};
+			
 	});
 </script>	

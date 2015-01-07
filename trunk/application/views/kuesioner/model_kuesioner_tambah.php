@@ -28,7 +28,12 @@
 					<textarea cols="45" name="petunjuk" id="petunjuk" ><?=$data[0]->petunjuk?></textarea>
                 </div>
             </div>
-			
+			 <div class="form-group">
+                <label class="col-sm-4 control-label">Caption Pertanyaan <span class="text-danger">*</span></label>
+                <div class="col-sm-8">
+                	<input type="text" name="caption_pertanyaan" id="caption_pertanyaan" value="<?=$data[0]->caption_pertanyaan?>"/>
+                </div>
+            </div>
 			<div class="form-group">
                 <label class="col-sm-4 control-label">Model Jawaban</label>
                 <div class="col-sm-8">

@@ -237,7 +237,8 @@
 		}
 		
 		kuesionerPreview=function(id){
-			window.open('<?=base_url()?>kuesioner/kuesioner/pertanyaan_preview/'+id,'_blank');			
+			//window.open('<?=base_url()?>kuesioner/kuesioner/pertanyaan_preview/'+id,'_blank');			
+			window.open('<?=base_url()?>kuesioner/publish/load/'+id,'_blank');			
 		};
 			
 	});

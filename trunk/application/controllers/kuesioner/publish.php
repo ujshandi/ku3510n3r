@@ -86,7 +86,107 @@ class Publish extends CI_Controller {
                                         </div>
                                     </form>
                             </section>*/
+	
 	function get_pertanyaan_preview($kuesioner_id){
+		$rs = '';
+		$listmodel = $this->kuesioner_pertanyaan_model->get_distinct_model($kuesioner_id);
+		//var_dump($listmodel);
+		if (!isset($listmodel)){
+			$rs ="Data belum ada";
+		}
+		else{
+			foreach ($listmodel as $model){
+				$rs .= "<h2>".$model->nama." (".$model->singkatan.")</h2>";
+				$listpertanyaan = $this->kuesioner_pertanyaan_model->get_complete_pertanyaan($kuesioner_id,$model->model_kuesioner_id);
+				if (!isset($listpertanyaan)){
+					$rs .= 'Belum ada Pertanyaan';
+				}else {
+					$listjawab = $this->kuesioner_pertanyaan_model->get_model_jawab($model->model_kuesioner_id);
+					$listparent = $this->kuesioner_pertanyaan_model->get_distinct_parent_jawab($model->model_kuesioner_id);
+					$rs .= '<section>
+                                <form class="form">';
+				 	
+					$i=1;
+					foreach($listpertanyaan as $pertanyaan){
+						$rs .= ' <div class="form-group">
+                                            <label class="col-lg-12 control-label">'.$i++.'. '.$pertanyaan->tanya.'</label>
+                                            <div class="col-lg-12">';
+                        if (isset($listjawab)){                         
+							$component = '';            
+							if (count($listparent)==1){
+								$component = ' <div class="col-sm-9 icheck ">
+												<div class="square single-row">
+													<div class="radio">';        
+								foreach ($listjawab as $jawab){
+									switch ($jawab->tipe){
+										case 'radio':
+											 $component .=' <label class="control-label">                                    <input  type="radio"  name="radio-'.$kuesioner_id.'-'.$model->model_kuesioner_id.'-'.$pertanyaan->pertanyaan_id.'"/>'.$jawab->nama.'</label>&nbsp;&nbsp;';
+										break;
+										default : $component .= '';
+									}
+									
+									//$rs .= $component ;
+								}//end foreach listjawab
+								$component .= '</div>
+												</div>
+												</div>';	
+							}//end jika jumlah distinct parent model jawab cuman 1
+							else {  //jika parent model jawab >1
+								foreach ($listparent as $parent){
+									//$component .= '<div class="form-group">'.$parent->nama;
+									$component .= '  <div class="form-group" style="margin-left:20px">
+										<label class="col-sm-3 control-label" style="padding-top:10px"><b>'.$parent->nama.'&nbsp;:</b>&nbsp;</label>
+										<div class="col-sm-9">';
+									$component .= ' <div class="col-sm-8 icheck ">
+												<div class="square single-row">
+													<div class="radio">'; 
+									foreach ($listjawab as $jawab){	
+										if ($jawab->parent_id != $parent->parent_id) continue;
+										switch ($jawab->tipe){
+											case 'radio':
+												 $component .=' <label class="control-label">                                    <input  type="radio"  name="radio-'.$kuesioner_id.'-'.$model->model_kuesioner_id.'-'.$pertanyaan->pertanyaan_id.'-'.$jawab->parent_id.'"/>'.$jawab->nama.'</label>&nbsp;&nbsp;';
+											break;
+											default : $component .= '';
+										}
+									}//end foreach listjawab
+									$component .= '</div>
+												</div>
+												</div>';
+									$component .='</div></div>';
+									
+								}//end foreach listparent
+							}//end jika parent model jawab >1
+							
+							$rs .= $component ;	
+						}//end if isset listjawab	
+						$rs .= '</div>
+                                        </div>';
+						 
+						 
+						if ($pertanyaan->tanya_tambahan1!=""){
+							$rs .= ' <div class="form-group" style="margin-left:20px">
+                                            <label class="col-sm-12 control-label"> '.$pertanyaan->tanya_tambahan1.'</label>
+                                            <div class="col-sm-12"><input type="text" size="100"/>';
+							$rs .= '</div></div>' ;
+						}
+						if ($pertanyaan->tanya_tambahan2!=""){
+							$rs .= ' <div class="form-group" style="margin-left:20px">
+                                            <label class="col-sm-12 control-label"> '.$pertanyaan->tanya_tambahan2.'</label>
+                                            <div class="col-sm-12"><input type="text" size="100"/>';
+							$rs .= '</div></div>' ;
+						}
+					}//end foreach pertanyaan
+				 
+					$rs .= ' </form>
+                            </section>';		
+				}//end if isset pertanyaan
+			}//end foreach model
+		}//end if isset model
+		return $rs;
+		
+	}
+	
+	function get_pertanyaan_preview_old($kuesioner_id){
 		$rs = '';
 		$listmodel = $this->kuesioner_pertanyaan_model->get_distinct_model($kuesioner_id);
 		//var_dump($listmodel);

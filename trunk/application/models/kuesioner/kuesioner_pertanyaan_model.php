@@ -42,6 +42,17 @@ where p.pertanyaan_id not in (select pertanyaan_id from kuesioner_pertanyaan whe
 		return $result;
 	}
 	
+	
+	function get_distinct_parent_jawab($model_kuesioner_id){
+	//untuk mencari apakah model kuesioner ini memiliki lebih dari 1 group model jawaban Kasus (F5)
+		$sql = "select distinct j.parent_id,p.nama
+from jawaban j inner join model_kuesioner_jawaban mkj on j.jawab_id = mkj.jawab_id inner join jawaban p on j.parent_id = p.jawab_id
+
+where mkj.model_kuesioner_id = ".$model_kuesioner_id;
+		$result = $this->mgeneral->run_sql($sql);
+		return $result;
+	}
+	
 	function get_model_jawab($model_kuesioner_id){
 		$sql = "SELECT j.*, p.nama as parent
 			FROM model_kuesioner_jawaban mkj INNER JOIN jawaban j ON mkj.jawab_id = j.jawab_id

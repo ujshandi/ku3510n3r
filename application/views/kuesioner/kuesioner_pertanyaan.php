@@ -25,6 +25,8 @@
                 <label class="col-sm-4 control-label">Model Kuesioner <span class="text-danger">*</span></label>
                 <div class="col-sm-8">
                 	 <?=form_dropdown('model_kuesioner_id',$list_model_kuesioner,'0','id="model_kuesioner_id" class="populate" style="width:100%"')?>
+					 <p class="help-block" id="model_info"></p>
+					 <input type="hidden" id="tipe_jawaban" name="tipe_jawaban"/>
                 </div>
             </div>
              <div class="form-group">
@@ -52,8 +54,20 @@
 		$('#model_kuesioner_id').change(function(){
 			 var kuesioner_id = $('#kuesioner_id').val();
 			 var model_kuesioner_id = $('#model_kuesioner_id').val();
-			
-			 $("#divPertanyaan").load("<?=base_url()?>kuesioner/kuesioner/get_pertanyaan/"+kuesioner_id+"/"+model_kuesioner_id,function(){
+			 $('#model_info').text('');
+			 $('#tipe_jawaban').val('');
+			 $.ajax({
+                url:"<?php echo site_url(); ?>kuesioner/model_kuesioner/get_model_info/"+model_kuesioner_id,
+                success:function(result) {
+					 
+						
+				 
+					$('#tipe_jawaban').val(result);
+					$('#model_info').text('Tipe jawaban : '+result);
+				}
+			});
+			 
+			$("#divPertanyaan").load("<?=base_url()?>kuesioner/kuesioner/get_pertanyaan/"+kuesioner_id+"/"+model_kuesioner_id,function(){
 				$('#pertanyaan_id').multiSelect({
 					selectableHeader: "<div class='custom-header'>Daftar pertanyaan yang ada</div>",
 					selectionHeader: "<div class='custom-header'>Daftar pertanyaan yang dipilih</div>",					
@@ -71,36 +85,10 @@
 						$("#multiple_value").val(new_val);
 					  }
 				});	
-				//$('#pertanyaan_id').multiSelect('deselect_all');		
-				//$('#pertanyaan_id').multiSelect('refresh');		
-				//$('#pertanyaan_id').multiSelect('deselect_all');		
 				 
-			 });
+			});//end divpertanyaan load
 			 
-			 // $.ajax({
-                    // url:"<?php echo site_url(); ?>kuesioner/kuesioner/get_pertanyaan/"+kuesioner_id+"/"+model_kuesioner_id,
-                    // success:function(result) {
-                       // $('#pertanyaan_id').empty();
-						// $('#pertanyaan_id').multiSelect({
-							// selectableHeader: "<div class='custom-header'>Daftar pertanyaan yang ada</div>",
-							// selectionHeader: "<div class='custom-header'>Daftar pertanyaan yang dipilih</div>"
-						// });
-                        // result = JSON.parse(result);
-                      //  for (k in result) {
-                           // $('#pertanyaan_id').append(new Option(result[k],k));// , nested: 'optgroup_label'
-						  // alert(result[k]);
-						   // var selectValues = "10=one more test\n11=and another test"
-                            // $('#pertanyaan_id').multiSelect('addOption', { value: 14, text: 'tes'  });
-							//{ value: k, text: 'tes', index: 0 }
-                      //  }
-                        //sasaran.select2({minimumResultsForSearch: -1, width:'resolve'});
-						// $('#pertanyaan_id').multiSelect({
-			// selectableHeader: "<div class='custom-header'>Daftar pertanyaan yang ada</div>",
-			// selectionHeader: "<div class='custom-header'>Daftar pertanyaan yang dipilih</div>"
-		// });
-						//$('#pertanyaan_id').multiSelect('deselect_all');
-                    // }
-                //});
+			
 		});
     });
 	

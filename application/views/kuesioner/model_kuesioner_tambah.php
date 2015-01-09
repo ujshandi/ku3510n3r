@@ -35,6 +35,12 @@
                 </div>
             </div>
 			<div class="form-group">
+                <label class="col-sm-4 control-label">Tipe Jawaban</label>
+                <div class="col-sm-8">
+					<?=form_dropdown('tipe_jawaban',$list_tipejawaban,$data[0]->tipe_jawaban,'id="tipe_jawaban" class="populate" style="width:100%"')?>
+                </div>
+            </div>
+			<div class="form-group">
                 <label class="col-sm-4 control-label">Model Jawaban</label>
                 <div class="col-sm-8">
 					 <select class="populate select2-offscreen" style="width:300px" id="model_jawaban" name="model_jawaban[]" multiple="" tabindex="-1">

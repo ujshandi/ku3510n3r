@@ -42,14 +42,25 @@ class Model_kuesioner extends CI_Controller {
 		$data[0]->singkatan = '';
 		$data[0]->nama = '';
 		$data[0]->petunjuk = '';
+		$data[0]->caption_pertanyaan = '';
+		$data[0]->tipe_jawaban = '';
 		 
 		return $data;
 	}
 	
+	function get_model_info($model_kuesioner_id){
+		$rs = '';
+		$data =  $this->model_kuesioner_model->pilihdata(array('model_kuesioner_id'=>$model_kuesioner_id)); 
+		if (isset($data)){
+			$rs =  $data[0]->tipe_jawaban;
+		}
+		echo $rs;
+	}
 	
     function tambah() {
 			$data["data"] = $this->initFormData(); 
 			$data["multiselect_jawab"] = $this->jawaban_model->get_multiselect();
+			$data["list_tipejawaban"] = array('Pilihan'=>"Pilihan",'Pendapat'=>'Pendapat');
 			$this->load->view('kuesioner/model_kuesioner_tambah',$data);
             //$this->load->view('admin/index',$data);  
     }
@@ -58,6 +69,7 @@ class Model_kuesioner extends CI_Controller {
     {
           
 			$data['data']		= $this->model_kuesioner_model->pilihdata(array('model_kuesioner_id'=>$id)); 
+			$data["list_tipejawaban"] = array('Pilihan'=>"Pilihan",'Pendapat'=>'Pendapat');
 			if (!isset($data['data'])){
 				$data['data'] = $this->initFormData( );
 			}else{
@@ -78,6 +90,7 @@ class Model_kuesioner extends CI_Controller {
 		$data['nama']=$this->input->post('nama'); 
 		$data['petunjuk']=$this->input->post('petunjuk'); 
 		$data['caption_pertanyaan']=$this->input->post('caption_pertanyaan'); 
+		$data['tipe_jawaban']=$this->input->post('tipe_jawaban'); 
 		$data['model_jawaban']=$this->input->post('model_jawaban'); 
 		return $data;
 	}

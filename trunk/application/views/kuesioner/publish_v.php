@@ -6,12 +6,14 @@
 			.wizard, .tabcontrol {
 				 
 				width: 95%;
+				padding:0;
 			}
 			.wizard > .steps > ul > li {
-				width: 20%;
+				width: 16%;
 			}
 			.wizard > .content > .body{
 				position:unset;
+				padding:0;
 			}
 		</style>
         <!-- page start-->
@@ -26,13 +28,15 @@
                             
                          </span> 
                     </header>
-					 			
+					
+					
                     <div class="panel-body">
 					
-						<div id="wizard">
+						<form  id="wizard" method="post" action="<?=base_url()?>/kuesioner/publish/submit">
                             <?=$data?>
-						</div> 
+						</form > 
                     </div>
+					 
                 </section> 
         </div>
     <!--main content end-->
@@ -41,6 +45,7 @@
 	<script src="<?=base_url('static')?>/js/iCheck/jquery.icheck.js"></script>
 	<script src="<?=base_url('static')?>/js/bootstrap-switch.js"></script>
 	<script  type="text/javascript" language="javascript">
+		var pendapatCounter = 1;
 		$(document).ready(function() {
 
 			
@@ -56,11 +61,101 @@
 							radioClass: 'iradio_square',
 							increaseArea: '20%' // optional
 						});
+					},
+					onFinishing: function (event, currentIndex) { 
+						alert('validation here...');
+						return true; 
+					}, 
+					onFinished: function (event, currentIndex) { 
+						 var form = $(this);
+						var postData = form.serializeArray();
+						// Submit form input
+						alert(postData);
+						form.submit();
+						alert('finish uy');	
+							alert('action : '+ $(this).attr("action"));
+						$("#frmPublish").submit(function( event ) { 
+							  
+								
+								var postData = $(this).serializeArray();
+								
+								// if (purpose=="pertanyaan"){
+									// alert($("#multiple_value").val());
+									// return false;
+									// if ($("#model_kuesioner_id").val()=="-1"){
+										// alert("Model Kuesioner belum ditentukan");
+										// $('#model_kuesioner_id').focus();
+										// return false;
+									// }
+									// else if ($("#multiple_value").val()==""){
+										// alert('Pertanyaan belum ada yang dipilih');
+										// return false;
+									// }
+									
+								//	postData.push({name:"daftar_pertanyaan",value:ids});
+								 alert(postData);
+								var formURL = $(this).attr("action");
+								$.ajax(
+								{
+									url : formURL,
+									type: "POST",
+									data : postData,
+									success:function(data, textStatus, jqXHR) 
+									{
+										//data: return data from server
+										$.gritter.add({text: data});
+										//$("#btn-close").click();
+									},	
+									error: function(jqXHR, textStatus, errorThrown) 
+									{
+										//if fails   
+										$.gritter.add({text: '<h5><i class="fa fa-exclamation-triangle"></i> <b>Eror !!</b></h5> <p>'+errorThrown+'</p>'});
+									//	$('#btn-close').click();   
+										
+									}
+								});
+							
+							  event.preventDefault();
+							
+							
+						});//end form submit
+					},
+				 
+						
+					
+					 
+					 /* Labels */
+					labels: {
+						cancel: "Cancel",
+						current: "current step:",
+						pagination: "Pagination",
+						finish: "Selesai",
+						next: "Selanjutnya",
+						previous: "Sebelumnya",
+						loading: "Loading ..."
 					}
 				});
 
 			$('#cetakpdf_kuesioner').click(function(){				
 			//	window.open('<=base_url()?>laporan/renstra_eselon1/target_print_pdf/<=$periode?>/<=$e1?>','_blank');			
 			});
+			
+			
+			pendapatAdd = function (model_kuesioner_id){
+				var klone = $('#divPendapat-1').clone();
+				pendapatCounter++;				
+				klone.attr('id','divPendapat-'+pendapatCounter);
+				//input[id], textarea[id], 
+				klone.find('#labelPendapat-1').each(function() {
+					if($(this).is('label')) {
+						$(this).html('<h4>Pendapat ke-'+pendapatCounter+'</h4>');
+					} else {
+						
+					}
+				});     
+				$(klone).insertBefore("#divTambahPendapat");
+				
+			
+			};
 		});
 	</script>

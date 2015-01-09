@@ -24,6 +24,7 @@ where p.pertanyaan_id not in (select pertanyaan_id from kuesioner_pertanyaan whe
 		$result = $this->mgeneral->run_sql($sql);
 		
 		$listSelected  = array();
+		$list  = array();
 	//	var_dump($result);die;
 		if (isset($result))
 			foreach ($result as $i) {
@@ -35,7 +36,7 @@ where p.pertanyaan_id not in (select pertanyaan_id from kuesioner_pertanyaan whe
 	}
 	
 	function get_distinct_model($kuesioner_id){
-		$sql = "SELECT DISTINCT kp.model_kuesioner_id,mp.nama,mp.singkatan, mp.petunjuk,mp.caption_pertanyaan  
+		$sql = "SELECT DISTINCT kp.model_kuesioner_id,mp.nama,mp.singkatan, mp.petunjuk,mp.caption_pertanyaan,mp.tipe_jawaban  
 				FROM kuesioner_pertanyaan kp INNER JOIN model_kuesioner mp ON kp.model_kuesioner_id = mp.model_kuesioner_id 
 				WHERE kp.kuesioner_id=".$kuesioner_id;
 		$result = $this->mgeneral->run_sql($sql);
@@ -63,7 +64,7 @@ where mkj.model_kuesioner_id = ".$model_kuesioner_id;
 	}
 	
 	function get_complete_pertanyaan($kuesioner_id,$model_kuesioner_id){
-		$sql = "SELECT p.pertanyaan_id,p.tanya,p.tanya_tambahan1, p.tanya_tambahan2 
+		$sql = "SELECT kp.kuesioner_pertanyaan_id,p.pertanyaan_id,p.tanya,p.tanya_tambahan1, p.tanya_tambahan2 
 		FROM kuesioner_pertanyaan kp INNER JOIN pertanyaan p ON p.pertanyaan_id = kp.pertanyaan_id
 		WHERE kp.model_kuesioner_id = ".$model_kuesioner_id." AND kp.kuesioner_id = ".$kuesioner_id	;		
 		$result = $this->mgeneral->run_sql($sql);

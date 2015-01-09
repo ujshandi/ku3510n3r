@@ -37,7 +37,7 @@ class Model_kuesioner_model extends CI_Model
 	
 	function get_datatables(){
 		//$this->datatables->add_column('NOMOR','');
-		$this->datatables->select('r.model_kuesioner_id,r.singkatan, r.nama , r.petunjuk,r.caption_pertanyaan ')
+		$this->datatables->select('r.model_kuesioner_id,r.singkatan, r.nama , r.petunjuk,r.caption_pertanyaan,r.tipe_jawaban ')
 		->unset_column('r.model_kuesioner_id')
 		->add_column('Actions', model_kuesioner_action('$1'), 'r.model_kuesioner_id')
 		->from(' model_kuesioner r ');

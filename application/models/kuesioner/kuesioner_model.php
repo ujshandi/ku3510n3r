@@ -13,6 +13,29 @@ class Kuesioner_model extends CI_Model
 		//$this->CI =& get_instance();
     }
 	
+	
+	function get_list($forFilter=false) {
+		$where = ' where 1=1 ';
+		if (isset($params)){
+			//if (isset($params['kode_e1'])) $where .= " and kode_e1='".$params['kode_e1']."'";
+		}
+		$sql = "select distinct  kuesioner_id,tema from kuesioner ";
+		
+		
+		$result = $this->mgeneral->run_sql($sql);
+		
+		if ($forFilter)
+			$list["-1"] = 'Semua Tema Kuesioner';
+		else
+			$list["-1"] = 'Pilih Tema Kuesioner';
+		if (isset($result))
+			foreach ($result as $i) {
+				$list[$i->kuesioner_id] = $i->tema;
+			}
+		return $list;
+	}
+	
+	
 	function get_datatables(){
 		//$this->datatables->add_column('NOMOR','');
 		$this->datatables->select("k.kuesioner_id,date_format(k.tanggal_buat,'%d-%m-%Y') as tanggal_buat, k.tema ,date_format(k.periode_awal,'%d-%m-%Y') as periode_awal  , date_format(k.periode_akhir,'%d-%m-%Y') as periode_akhir, k.keterangan",false)

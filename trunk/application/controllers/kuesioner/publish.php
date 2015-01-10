@@ -22,6 +22,7 @@ class Publish extends CI_Controller {
         $this->load->model('/security/sys_menu_model');
         $this->load->model('/kuesioner/kuesioner_model');          
         $this->load->model('/kuesioner/kuesioner_pertanyaan_model');          
+        $this->load->model('/kuesioner/kuesioner_jawaban_model');          
         $this->load->model('/kuesioner/model_kuesioner_model');          
         $this->load->model('/rujukan/pertanyaan_model');          
 		$this->load->library("utility");
@@ -74,6 +75,7 @@ class Publish extends CI_Controller {
 			$rs .="Data belum ada";
 		}
 		else{
+			$idx=0;
 			foreach ($listmodel as $model){
 				$rs .= "<h2>".$model->nama." (".$model->singkatan.")</h2>";
 				if ($model->tipe_jawaban=='Pilihan'){
@@ -94,7 +96,7 @@ class Publish extends CI_Controller {
 						$i=1;
 						foreach($listpertanyaan as $pertanyaan){
 							$rs .= ' <div class="form-group">
-										<input type="text" name="kuesioner_pertanyaan_id['.$pertanyaan->kuesioner_pertanyaan_id.']" value="'.$pertanyaan->kuesioner_pertanyaan_id.'"/>
+										<input type="text" name="pertanyaan['.$idx.'][id]" value="'.$pertanyaan->kuesioner_pertanyaan_id.'"/>
 												<label class="col-lg-12 control-label">'.$i++.'. '.$pertanyaan->tanya.'</label>
 												<div class="col-lg-12">';
 							if (isset($listjawab)){                         
@@ -106,7 +108,7 @@ class Publish extends CI_Controller {
 									foreach ($listjawab as $jawab){
 										switch ($jawab->tipe){
 											case 'radio':
-												 $component .=' <label class="control-label">                                    <input  type="radio"  name="kuesioner_pertanyaan_id['.$pertanyaan->kuesioner_pertanyaan_id.']['.$jawab->parent_id.']'.'"/>'.$jawab->nama.'</label>&nbsp;&nbsp;';
+												 $component .=' <label class="control-label">                                    <input  type="radio"  name="pertanyaan['.$idx.'][jawab]" value="'.$jawab->jawab_id.';'.$jawab->singkatan.'"/>'.$jawab->nama.'</label>&nbsp;&nbsp;';
 											break;
 											default : $component .= '';
 										}
@@ -130,7 +132,7 @@ class Publish extends CI_Controller {
 											if ($jawab->parent_id != $parent->parent_id) continue;
 											switch ($jawab->tipe){
 												case 'radio':
-													 $component .=' <label class="control-label">                                    <input  type="radio"  name="kuesioner_pertanyaan_id['.$pertanyaan->kuesioner_pertanyaan_id.']['.$jawab->parent_id.']'.'"/>'.$jawab->nama.'</label>&nbsp;&nbsp;';
+													 $component .=' <label class="control-label">                                    <input  type="radio"  name="pertanyaan['.$idx.'][jawab]" value="'.$jawab->jawab_id.';'.$jawab->singkatan.'"/>'.$jawab->nama.'</label>&nbsp;&nbsp;';
 												break;
 												default : $component .= '';
 											}
@@ -152,15 +154,16 @@ class Publish extends CI_Controller {
 							if ($pertanyaan->tanya_tambahan1!=""){
 								$rs .= ' <div class="form-group" style="margin-left:20px">
 												<label class="col-sm-12 control-label"> '.$pertanyaan->tanya_tambahan1.'</label>
-												<div class="col-sm-12"><input type="text" size="100"/>';
+												<div class="col-sm-12"><input type="text" size="100" name="pertanyaan['.$idx.'][tambahan1]"/>';
 								$rs .= '</div></div>' ;
 							}
 							if ($pertanyaan->tanya_tambahan2!=""){
 								$rs .= ' <div class="form-group" style="margin-left:20px">
 												<label class="col-sm-12 control-label"> '.$pertanyaan->tanya_tambahan2.'</label>
-												<div class="col-sm-12"><input type="text" size="100"/>';
+												<div class="col-sm-12"><input type="text" size="100" name="pertanyaan['.$idx.'][tambahan2]"/>';
 								$rs .= '</div></div>' ;
 							}
+							$idx++;
 						}//end foreach pertanyaan
 					 
 						
@@ -206,18 +209,27 @@ class Publish extends CI_Controller {
 	function get_form_values(){
 		$data['kuesioner_id'] = $this->input->post('kuesioner_id');
 		$data['responden_id'] = $this->input->post('responden_id');
-		$data['kuesioner_pertanyaan_id'] = $this->input->post('kuesioner_pertanyaan_id');
-		if (isset($data['kuesioner_pertanyaan_id'])){
-			for ($i=0;$i<count($data['kuesioner_pertanyaan_id'])-1;$i++){
-				$data['kuesioner_pertanyaan_id'][] = $data['kuesioner_pertanyaan_id'][$i];
+		$data['pertanyaan'] = $this->input->post('pertanyaan');
+		if (isset($data['pertanyaan'])){
+			for ($i=0;$i<count($data['pertanyaan'])-1;$i++){
+				//$data[$data['kuesioner_pertanyaan_id']]['jawab'] = $data['kuesioner_pertanyaan_id'][$i];
 			}
 		}
 		return $data;
 	}
 	function submit(){
-		$data = $this->get_form_values();
-		var_dump($data);
-	
+		 $data = $this->get_form_values();
+		// var_dump($data);die;
+            try{
+				$this->kuesioner_jawaban_model->simpan($data);
+				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
+					<p>Data Kuesioner telah tersimpan.</p>';
+			}
+			catch (Exception $e){
+				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
+					<p>Data Kuesioner gagal tersimpan.</p>';
+			}
+			echo $msg;
 	}
 	
 

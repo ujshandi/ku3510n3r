@@ -70,10 +70,10 @@
 						 var form = $(this);
 						var postData = form.serializeArray();
 						// Submit form input
-						alert(postData);
+						//alert(postData);
 						form.submit();
-						alert('finish uy');	
-							alert('action : '+ $(this).attr("action"));
+						//alert('finish uy');	
+						//	alert('action : '+ $(this).attr("action"));
 						$("#frmPublish").submit(function( event ) { 
 							  
 								

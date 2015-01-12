@@ -36,11 +36,11 @@ class Pertanyaan_model extends CI_Model
 	
 	function get_datatables(){
 		//$this->datatables->add_column('NOMOR','');
-		$this->datatables->select('r.pertanyaan_id,r.tanya, r.tanya_tambahan1 , r.tanya_tambahan2 ')
+		$this->datatables->select("r.pertanyaan_id,r.tanya, r.tanya_tambahan1 , r.tanya_tambahan2,,GROUP_CONCAT(o.opsi SEPARATOR ',') as opsi_jawaban ",false)
 		->unset_column('r.pertanyaan_id')
 		->add_column('Actions', pertanyaan_action('$1'), 'r.pertanyaan_id')
-		->from(' pertanyaan r ');
-		  
+		->from(' pertanyaan r LEFT JOIN pertanyaan_opsi o ON r.pertanyaan_id = o.pertanyaan_id ')
+		->group_by('r.pertanyaan_id'); 
 		// if (isset($_POST['tanya_tambahan2'])) {
 			// if ($_POST['tanya_tambahan2']!="-1") $this->datatables->where('r.tanya_tambahan2',$_POST['tanya_tambahan2']);
 		// }
@@ -65,20 +65,56 @@ class Pertanyaan_model extends CI_Model
         $query->free_result();
         return ($rs>0);
     }
-	    
-    function tampildata()
-    {       
-        return $this->db->query("select r.*,i.tanya as instansi from pertanyaan r left join instansi i on r.tanya_tambahan2 = i.tanya_tambahan2 order by pertanyaan_id");    
-    }
+	     
 
    
 	function simpan($data){
+		$this->db->trans_start();
+		$opsijawab = explode(',',$data['opsi_jawaban']);
+		unset($data['opsi_jawaban']);
 		$this->mgeneral->save($data,'pertanyaan');
+		$pertanyaan_id= $this->db->insert_id();
+		if (isset($opsijawab)){
+			$this->db->flush_cache();			
+			$this->db->where('pertanyaan_id', $pertanyaan_id);
+			$result = $this->db->delete('pertanyaan_opsi'); 
+			foreach ($opsijawab as $j){
+				$this->db->flush_cache();
+				$this->db->set('pertanyaan_id',$pertanyaan_id);
+				$this->db->set('opsi',$j);
+				$this->db->insert('pertanyaan_opsi');				
+			}
+		}
+		
+		//echo $this->db->last_query();
+		
+		 $this->db->trans_complete();
+		return $this->db->trans_status();
 	}
 
    function edit($data,$whereData){
-		
+		$this->db->trans_start();
+		$opsijawab = explode(',',$data['opsi_jawaban']);
+		unset($data['opsi_jawaban']);
 		$this->mgeneral->update($whereData,$data,'pertanyaan');
+		
+		if (isset($opsijawab)){
+			$this->db->flush_cache();			
+			$this->db->where($whereData);
+			$result = $this->db->delete('pertanyaan_opsi'); 
+			foreach ($opsijawab as $j){
+				$this->db->flush_cache();
+				$this->db->set($whereData);
+				$this->db->set('opsi',$j);
+				$this->db->insert('pertanyaan_opsi');				
+			}
+		}
+		
+		//echo $this->db->last_query();
+		
+		 $this->db->trans_complete();
+		return $this->db->trans_status();
+		
 	}
 	
    function hapus($whereData){		
@@ -91,6 +127,11 @@ class Pertanyaan_model extends CI_Model
 			if (isset($params['pertanyaan_id'])) $where .= " and pertanyaan_id='".$params['pertanyaan_id']."'";
 		}
 		$sql = "select * from pertanyaan ".$where;
+		return $this->mgeneral->run_sql($sql);
+	}
+	
+	function get_opsijawaban($pertanyaan_id){
+		$sql = "select * from pertanyaan_opsi where pertanyaan_id=".$pertanyaan_id;
 		return $this->mgeneral->run_sql($sql);
 	}
 

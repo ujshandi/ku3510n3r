@@ -27,11 +27,13 @@
 							  <th>Pertanyaan</th>
 							  <th>Pertanyaan Tambahan 1</th>
 							  <th>Pertanyaan Tambahan 2</th>
+							  <th>Opsi Jawaban</th>
 							  <th style="width:5%">Aksi</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr>
+							<td>&nbsp;</td>
 							<td>&nbsp;</td>
 							<td>&nbsp;</td>
 							<td>&nbsp;</td>
@@ -86,7 +88,8 @@
             "sAjaxSource": '<?php echo base_url(); ?>rujukan/pertanyaan/datatable',
             "bJQueryUI": true,
 			"aoColumns" : [
-					{ sWidth: '50%' },
+					{ sWidth: '30%' },
+					{ sWidth: '20%' },
 					{ sWidth: '20%' },
 					{ sWidth: '20%' },
 					{ sWidth: '10%' }

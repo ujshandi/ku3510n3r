@@ -3,7 +3,7 @@
  *INVISI
 */
 
-class Kuesioner_pertanyaan_model extends CI_Model
+class Kuesioner_responden_model extends CI_Model
 {	
 	/**
 	* constructor
@@ -16,9 +16,9 @@ class Kuesioner_pertanyaan_model extends CI_Model
 	function get_list($params, & $listSelected) {
 		$where = ' where 1=1 ';
 		
-		$sql = "select distinct p.pertanyaan_id,p.tanya , kp.pertanyaan_id as kp_pertanyaan, kp.model_kuesioner_id
-from pertanyaan p left join kuesioner_pertanyaan kp on p.pertanyaan_id= kp.pertanyaan_id and kp.kuesioner_id = ".$params['kuesioner_id']." and kp.model_kuesioner_id = ".$params['model_kuesioner_id']."
-where p.pertanyaan_id not in (select pertanyaan_id from kuesioner_pertanyaan where kuesioner_id = ".$params['kuesioner_id']." and model_kuesioner_id <> ".$params['model_kuesioner_id'].")";
+		$sql = "select distinct r.responden_id,r.nama,i.nama as instansi_nama , kr.responden_id as kr_responden,kr.kuesioner_id 
+from responden r inner join instansi i on i.instansi_id = r.instansi_id left join kuesioner_responden kr on r.responden_id= kr.responden_id and kr.kuesioner_id = ".$params['kuesioner_id'];
+//where r.responden_id not in (select responden_id from kuesioner_responden where kuesioner_id = ".$params['kuesioner_id']."x)";
 		
 		
 		$result = $this->mgeneral->run_sql($sql);
@@ -28,9 +28,9 @@ where p.pertanyaan_id not in (select pertanyaan_id from kuesioner_pertanyaan whe
 	//	var_dump($result);die;
 		if (isset($result))
 			foreach ($result as $i) {
-				$list[$i->pertanyaan_id] = $i->tanya;
-				if ($i->model_kuesioner_id==$params['model_kuesioner_id'])
-					$listSelected[] = $i->pertanyaan_id;
+				$list[$i->responden_id] = $i->nama.', '.$i->instansi_nama;
+				if ($i->kuesioner_id==$params['kuesioner_id'])
+					$listSelected[] = $i->responden_id;
 			}
 		return $list;
 	}
@@ -64,8 +64,8 @@ where mkj.model_kuesioner_id = ".$model_kuesioner_id;
 	}
 	
 	function get_complete_pertanyaan($kuesioner_id,$model_kuesioner_id){
-		$sql = "SELECT kp.kuesioner_pertanyaan_id,p.pertanyaan_id,p.tanya,p.tanya_tambahan1, p.tanya_tambahan2 
-		FROM kuesioner_pertanyaan kp INNER JOIN pertanyaan p ON p.pertanyaan_id = kp.pertanyaan_id
+		$sql = "SELECT kp.kuesioner_responden_id,p.responden_id,p.tanya,p.tanya_tambahan1, p.tanya_tambahan2 
+		FROM kuesioner_pertanyaan kp INNER JOIN pertanyaan p ON p.responden_id = kp.responden_id
 		WHERE kp.model_kuesioner_id = ".$model_kuesioner_id." AND kp.kuesioner_id = ".$kuesioner_id	;		
 		$result = $this->mgeneral->run_sql($sql);
 		return $result;
@@ -113,9 +113,9 @@ where mkj.model_kuesioner_id = ".$model_kuesioner_id;
    
 	function simpan($data){
 		$this->db->trans_start();
-		$pertanyaan = $data['pertanyaan_id'];
+		$pertanyaan = $data['responden_id'];
 		//var_dump($pertanyaan);die;
-		unset($data['pertanyaan_id']);
+		unset($data['responden_id']);
 		//$this->db->insert('model_kuesioner', $data);
 		//$kuesioner_id= $this->db->insert_id();
 		if (isset($pertanyaan)){
@@ -124,10 +124,9 @@ where mkj.model_kuesioner_id = ".$model_kuesioner_id;
 			//$result = $this->db->delete('model_kuesioner_jawaban'); 
 			foreach ($pertanyaan as $j){
 				$this->db->flush_cache();
-				$this->db->set('kuesioner_id',$data['kuesioner_id']);
-				$this->db->set('model_kuesioner_id',$data['model_kuesioner_id']);
-				$this->db->set('pertanyaan_id',$j);
-				$this->db->insert('kuesioner_pertanyaan');				
+				$this->db->set('kuesioner_id',$data['kuesioner_id']); 
+				$this->db->set('responden_id',$j);
+				$this->db->insert('kuesioner_responden');				
 			}
 		}
 		

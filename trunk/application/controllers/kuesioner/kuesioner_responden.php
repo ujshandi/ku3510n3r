@@ -11,7 +11,7 @@
  *
  * @author chan
  */
-class Kuesioner extends CI_Controller {
+class Kuesioner_responden extends CI_Controller {
     //put your code here
      function __construct()
     {
@@ -22,6 +22,7 @@ class Kuesioner extends CI_Controller {
         $this->load->model('/security/sys_menu_model');
         $this->load->model('/kuesioner/kuesioner_model');          
         $this->load->model('/kuesioner/kuesioner_pertanyaan_model');          
+        $this->load->model('/kuesioner/kuesioner_responden_model');          
         $this->load->model('/kuesioner/model_kuesioner_model');          
         $this->load->model('/rujukan/pertanyaan_model');          
 		$this->load->library("utility");
@@ -38,47 +39,12 @@ class Kuesioner extends CI_Controller {
 		$this->load->view('template/container',$template);
             //$this->load->view('admin/index', $data);  
     }
-
-	function initFormData(){
-		$data[0]->kuesioner_id = '';
-		$data[0]->tanggal_buat = '';
-		$data[0]->tema = '';
-		$data[0]->keterangan = '';
-		$data[0]->periode_awal = '';
-		$data[0]->periode_akhir = '';
-		 
-		return $data;
-	}
-	
-	
-    function tambah() {
-			$data["data"] = $this->initFormData();  
-			$this->load->view('kuesioner/kuesioner_tambah',$data);
-            //$this->load->view('admin/index',$data);  
-    }
-	
-	 function edit($id)
-    {          
-		$data['data']		= $this->kuesioner_model->pilihdata(array('kuesioner_id'=>$id)); 
-		if (!isset($data['data'])){
-			$data['data'] = $this->initFormData( );
-		}else{
-			
-			// $data['data'][0]->kuesioner_id= $data['data'][0]->kuesioner_id;
-		 
-			// $data['data'][0]->tanggal_buat = $data['data'][0]->tanggal_buat;
-		}
-		  
-		$this->load->view('kuesioner/kuesioner_tambah',$data);
-            //$this->load->view('admin/index',$data);  
-    }
-  
-	function pertanyaan_add($kuesioner_id)
+ 
+	function responden_add($kuesioner_id)
     {
             
 			$data['data']		= $this->kuesioner_model->pilihdata(array('kuesioner_id'=>$kuesioner_id)); 
-			$data['list_pertanyaan'] = array();
-			$data['list_model_kuesioner'] = $this->model_kuesioner_model->get_list();
+			$data['list_responden'] = array();
 			if (!isset($data['data'])){
 				$data['data'] = $this->initFormData( );
 			}else{
@@ -88,11 +54,11 @@ class Kuesioner extends CI_Controller {
 				// $data['data'][0]->tanggal_buat = $data['data'][0]->tanggal_buat;
 			}
 			  
-			$this->load->view('kuesioner/kuesioner_pertanyaan',$data);
+			$this->load->view('kuesioner/kuesioner_responden',$data);
             //$this->load->view('admin/index',$data);  
     }
 	
-	function pertanyaan_preview($kuesioner_id){
+	function responden_preview($kuesioner_id){
 		$setting['sd_left']	= array('cur_menu'	=> "KUESIONER");
 		$setting['page']	= array('pg_aktif'	=> "datatables");
 		$template			= $this->template->load_popup($setting); #load static template file		
@@ -104,7 +70,11 @@ class Kuesioner extends CI_Controller {
 		$this->load->view('template/container_popup',$template);
 	}
 	
- 
+	function get_responden($kuesioner_id){
+		// echo  json_encode($this->pertanyaan_model->get_list(array('kuesioner_id'=>$kuesioner_id)));
+		$list_responden = $this->kuesioner_responden_model->get_list(array('kuesioner_id'=>$kuesioner_id ),$listSelected);
+		echo form_multiselect('responden_id[]',$list_responden,$listSelected,'id="responden_id" class="multi-select" style="width:100%"');
+	}
 	
 	function get_pertanyaan_preview($kuesioner_id){
 		$rs = '';
@@ -170,84 +140,40 @@ class Kuesioner extends CI_Controller {
 		return $rs;
 		
 	}
- 
-    function get_form_values(){
-		$data['tanggal_buat']=$this->utility->ourDeFormatSQLDate($this->input->post('tanggal_buat')); 
-		$data['tema']=$this->input->post('tema'); 
-		$data['keterangan']=$this->input->post('keterangan');  
-		$data['periode_awal']=$this->utility->ourDeFormatSQLDate($this->input->post('periode_awal')); 
-		$data['periode_akhir']=$this->utility->ourDeFormatSQLDate($this->input->post('periode_akhir')); 
-		return $data;
-	}
+  
 	
-	
-    function save()
+   
+	function responden_submit()
     {
 			//$this->utility->ourDeFormatSQLDate($data['tanggal'])
-			$data = $this->get_form_values();
-            try{
-				$this->kuesioner_model->simpan($data);
-				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
-					<p>Data Kuesioner berhasil ditambahkan.</p>';
-			}
-			catch (Exception $e){
-				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
-					<p>Data Kuesioner gagal ditambahkan.</p>';
-			}
-			echo $msg;
-            
-    }
-	
-	function pertanyaan_submit()
-    {
-			//$this->utility->ourDeFormatSQLDate($data['tanggal'])
-			$data['kuesioner_id']=$this->input->post('kuesioner_id'); 
-			$data['model_kuesioner_id']=$this->input->post('model_kuesioner_id'); 
-			//$data['pertanyaan_id']=explode(',',$this->input->post('daftar_pertanyaan'));  
+			$data['kuesioner_id']=$this->input->post('kuesioner_id');   
+			//$data['responden_id']=explode(',',$this->input->post('daftar_pertanyaan'));  
 			$hidden = $this->input->post('multiple_value'); //get the values from the hidden field
 			$hidden = substr($hidden,1);
             $hidden_in_array = explode(",", $hidden); //convert the values into array
             //$filter_array = array_filter($hidden_in_array); //remove empty index 
             //$reset_keys = array_values($filter_array); 
-			$data['pertanyaan_id'] = $hidden_in_array;
-			//var_dump($data['pertanyaan_id']);die;
+			$data['responden_id'] = $hidden_in_array;
+			//var_dump($data['responden_id']);die;
             try{
-				$this->kuesioner_pertanyaan_model->simpan($data);
+				$this->kuesioner_responden_model->simpan($data);
 				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
-					<p>Data Kuesioner berhasil ditambahkan.</p>';
+					<p>Data Responden Kuesioner berhasil ditambahkan.</p>';
 			}
 			catch (Exception $e){
 				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
-					<p>Data Kuesioner gagal ditambahkan.</p>';
+					<p>Data Responden Kuesioner gagal ditambahkan.</p>';
 			}
 			echo $msg;
             
     }
 	
-	
-
-    function update()
+	 
+    function hapus($model_kuesioner_id,$kuesioner_id) 
     {
-            $kuesioner_id=$this->input->post('kuesioner_id');
-            
-			//var_dump($data['model_jawaban']);die;
-            try{
-				//$this->kuesioner_model->edit($data,array("kuesioner_id"=>$kuesioner_id));
-				$this->kuesioner_model->edit($data,$kuesioner_id);
-				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
-					<p>Data Model Kuesioner berhasil diupdate.</p>';
-			}
-			catch (Exception $e){
-				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
-					<p>Data Model Kuesioner gagal diupdate.</p>';
-			}
-			echo $msg;
-    }
-
-    function hapus($kuesioner_id)
-    {
+		//hapus model kuesioner dari master kuesioner
         try{
-			$this->kuesioner_model->hapus(array("kuesioner_id"=>$kuesioner_id)); 
+			$this->kuesioner_pertanyaan_model->hapus(array("model_kuesioner_id"=>$model_kuesioner_id,"kuesioner_id"=>$kuesioner_id)); 
 			$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
 					<p>Data Model Kuesioner berhasil dihapus.</p>';
 		}

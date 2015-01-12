@@ -43,6 +43,7 @@ class pertanyaan extends CI_Controller {
 		$data[0]->tanya = '';
 		$data[0]->tanya_tambahan1 = '';
 		$data[0]->tanya_tambahan2 = '';
+		$data[0]->opsi_jawaban = '';
 		 
 		return $data;
 	}
@@ -69,6 +70,15 @@ class pertanyaan extends CI_Controller {
 				$data['data'][0]->pertanyaan_id= $data['data'][0]->pertanyaan_id;
 			 
 				$data['data'][0]->tanya = $data['data'][0]->tanya;
+				$opsi = $this->pertanyaan_model->get_opsijawaban($id);
+				if (isset($opsi)){
+					foreach ($opsi as $o){
+						$data['data'][0]->opsi_jawaban .= $o->opsi.',';
+					}
+				}	
+				else {
+					$data['data'][0]->opsi_jawaban .= '';
+				}
 			}
 			  
 			$this->load->view('rujukan/pertanyaan_tambah',$data);
@@ -76,38 +86,33 @@ class pertanyaan extends CI_Controller {
     }
 
 
-    function tampil()
-    {
-            $data['isi'] = 'rujukan/pertanyaan_tampil';
-            $data['result'] = $this->pertanyaan_model->tampildata();
-            $this->load->view('admin/index',$data);   
-    }
-
+    function get_form_values(){
+		$data['tanya']=$this->input->post('tanya'); 
+		$data['tanya_tambahan1']=$this->input->post('tanya_tambahan1'); 		
+		$data['tanya_tambahan2']=$this->input->post('tanya_tambahan2'); 
+		$data['opsi_jawaban']=$this->input->post('opsi_jawaban'); 
+		return $data;
+	}
     
-    function save()
-    {
-            $data['tanya']=$this->input->post('tanya'); 
-            $data['tanya_tambahan1']=$this->input->post('tanya_tambahan1'); 
-            $data['tanya_tambahan2']=$this->input->post('tanya_tambahan2'); 
-            try{
-				$this->pertanyaan_model->simpan($data);
-				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
-					<p>Data Pertanyaan berhasil ditambahkan.</p>';
-			}
-			catch (Exception $e){
-				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
-					<p>Data Pertanyaan gagal ditambahkan.</p>';
-			}
-			echo $msg;
+    function save(){   
+		$data = $this->get_form_values();		
+		try{
+			$this->pertanyaan_model->simpan($data);
+			$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
+				<p>Data Pertanyaan berhasil ditambahkan.</p>';
+		}
+		catch (Exception $e){
+			$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
+				<p>Data Pertanyaan gagal ditambahkan.</p>';
+		}
+		echo $msg;
             
     }
 
     function update()
     {
+			$data = $this->get_form_values();
             $pertanyaan_id=$this->input->post('pertanyaan_id');
-            $data['tanya_tambahan2']=$this->input->post('tanya_tambahan2'); 
-            $data['tanya']=$this->input->post('tanya'); 
-            $data['tanya_tambahan1']=$this->input->post('tanya_tambahan1'); 
             try{
 				$this->pertanyaan_model->edit($data,array("pertanyaan_id"=>$pertanyaan_id));
 				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>

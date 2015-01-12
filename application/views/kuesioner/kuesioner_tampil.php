@@ -64,7 +64,8 @@
                 </div>
                 <div class="modal-footer">
                 	<div class="pull-right">
-                		<button type="button" id="btn-close" class="btn btn-danger" data-dismiss="modal" class="close">Batalkan</button>
+                		<button type="button" id="btn-delete" class="btn btn-danger" data-dismiss="modal" class="close" onClick="hapusModel();">Hapus Model Kuesioner</button>
+                		<button type="button" id="btn-close" class="btn btn-warning" data-dismiss="modal" class="close">Batalkan</button>
                     	<button type="submit" id="btn-save" class="btn btn-info">Simpan</button>
                 	</div>
                 </div>
@@ -192,6 +193,7 @@
 			$("#kuesioner_title_form").html('<i class="fa fa-plus-square"></i>  Tambah Kuesioner');
 			$("#kuesioner-form").attr("action",'<?=base_url()?>kuesioner/kuesioner/save');
 			$("#kuesioner-form").data("purpose","kuesioner");
+			$("#btn-delete").addClass("hide");
 			$.ajax({
 				url:'<?=base_url()?>kuesioner/kuesioner/tambah',
 					success:function(result) {
@@ -205,6 +207,7 @@
 			$("#kuesioner_title_form").html('<i class="fa fa-pencil"></i>  Edit Kuesioner');
 			$("#kuesioner-form").attr("action",'<?=base_url()?>kuesioner/kuesioner/update');
 			$("#kuesioner-form").data("purpose","kuesioner");
+			$("#btn-delete").addClass("hide");
 			$.ajax({
 				url:'<?=base_url()?>kuesioner/kuesioner/edit/'+id,
 					success:function(result) {
@@ -225,11 +228,26 @@
 		
 		 kuesionerPertanyaan = function(id){
 			$("#kuesioner_title_form").html('<i class="fa fa-pencil"></i>  Daftar Pertanyaan Kuesioner');
-			$("#kuesioner-form").attr("action",'<?=base_url()?>kuesioner/kuesioner/pertanyaan_submit/'+id);
+			$("#kuesioner-form").attr("action",'<?=base_url()?>kuesioner/kuesioner_pertanyaan/pertanyaan_submit/'+id);
 			$("#kuesioner-form").data("purpose","pertanyaan");
+			$("#btn-delete").removeClass("hide");
 			
 			$.ajax({
-				url:'<?=base_url()?>kuesioner/kuesioner/pertanyaan_add/'+id,
+				url:'<?=base_url()?>kuesioner/kuesioner_pertanyaan/pertanyaan_add/'+id,
+					success:function(result) {
+						$('#kuesioner_form_konten').html(result);
+					}
+			});
+		}
+		
+		kuesionerResponden = function(id){
+			$("#kuesioner_title_form").html('<i class="fa fa-pencil"></i>  Daftar Responden Kuesioner');
+			$("#kuesioner-form").attr("action",'<?=base_url()?>kuesioner/kuesioner_responden/responden_submit/'+id);
+			$("#kuesioner-form").data("purpose","responden");
+			$("#btn-delete").addClass("hide");
+			
+			$.ajax({
+				url:'<?=base_url()?>kuesioner/kuesioner_responden/responden_add/'+id,
 					success:function(result) {
 						$('#kuesioner_form_konten').html(result);
 					}
@@ -241,5 +259,33 @@
 			window.open('<?=base_url()?>kuesioner/publish/load/'+id,'_blank');			
 		};
 			
+		hapusModel = function(){
+			if ($("#model_kuesioner_id").val()=="-1"){
+				alert("Model Kuesioner belum ditentukan");
+				$('#model_kuesioner_id').focus();
+				return false;
+			}
+			if (confirm("Apakah Model kuesioner akan dihapus?")){
+				$.ajax(
+				{
+					url : '<?=base_url()?>/kuesioner/kuesioner_pertanyaan/hapus/'+$("#model_kuesioner_id").val()+"/"+$('#kuesioner_id').val(),
+					type: "POST",					 
+					success:function(data, textStatus, jqXHR) 
+					{
+						//data: return data from server
+						$.gritter.add({text: data});
+						$("#btn-close").click();
+						 refreshTable();
+					},
+					error: function(jqXHR, textStatus, errorThrown) 
+					{
+						//if fails   
+						$.gritter.add({text: '<h5><i class="fa fa-exclamation-triangle"></i> <b>Eror !!</b></h5> <p>'+errorThrown+'</p>'});
+						$('#btn-close').click();   
+						refreshTable();
+					}
+				});	
+			}
+		}	
 	});
 </script>	

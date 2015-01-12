@@ -11,7 +11,7 @@
  *
  * @author chan
  */
-class rpt_pemahaman_visimis extends CI_Controller {
+class rpt_pemahaman_visimisi extends CI_Controller {
     //put your code here
      function __construct()
     {
@@ -21,6 +21,8 @@ class rpt_pemahaman_visimis extends CI_Controller {
 
         $this->load->model('/security/sys_menu_model');
         $this->load->model('/kuesioner/kuesioner_model');   
+        $this->load->model('/kuesioner/kuesioner_pertanyaan_model');   
+        $this->load->model('/report/pemahaman_visimisi_m');   
 
     }
 
@@ -31,7 +33,7 @@ class rpt_pemahaman_visimis extends CI_Controller {
 		$template			= $this->template->load($setting); #load static template file
 		     
 		$data['list_kuesioner'] =$this->kuesioner_model->get_list(); 
-		$template['konten']	= $this->load->view('report/pemahaman_vismisi_v',$data,true); #load konten template file
+		$template['konten']	= $this->load->view('report/pemahaman_visimisi_v',$data,true); #load konten template file
 		#load container for template view
 		$this->load->view('template/container',$template);
             //$this->load->view('admin/index', $data);  
@@ -39,7 +41,7 @@ class rpt_pemahaman_visimis extends CI_Controller {
  
     
 	function datatable(){
-		echo $this->kuesioner_model->get_datatables();
+		echo $this->pemahaman_visimisi_m->get_datatables();
 	}
 
 }

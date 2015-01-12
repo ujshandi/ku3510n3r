@@ -14,8 +14,8 @@ class pemahaman_visimisi_m extends CI_Model
     }
 	function get_datatables(){
 		//$this->datatables->add_column('NOMOR','');
-		$model_kuesioner_id = $this->mgeneral->getValue('model_kuesioner_visimisi','id=1','konstanta');  
-		$listjawab = $this->kuesioner_pertanyaan_model->get_model_jawab($model->model_kuesioner_id);
+		$model_kuesioner_id = $this->mgeneral->getValue('model_kuesioner_visimisi',array('id'=>'1'),'konstanta');  
+		$listjawab = $this->kuesioner_pertanyaan_model->get_model_jawab($model_kuesioner_id);
 		$select = 'p.tanya,';
 		foreach ($listjawab as $j){
 			$select .= $j->jawab_id.', ';
@@ -24,7 +24,7 @@ class pemahaman_visimisi_m extends CI_Model
 		$this->datatables->select('@curRow:=@curRow+1 AS No,tanya,  Ya, Tidak, Kosong,
 (Ya/jml_responden*100) as persen_ya,
 (Tidak/jml_responden*100) as persen_tidak,
-(Kosong/jml_responden*100) as persen_kosong')
+(Kosong/jml_responden*100) as persen_kosong',false)
 		//->unset_column('alumni_id')
 		//->add_column('Actions', alumni_action('$1'), 'alumni_id')
 		->from(" (
@@ -35,7 +35,7 @@ kuesioner_pertanyaan kp on kj.kuesioner_pertanyaan_id = kp.kuesioner_pertanyaan_
 inner join pertanyaan p on p.pertanyaan_id=kp.pertanyaan_id
 where kp.model_kuesioner_id = ".$model_kuesioner_id." and kp.kuesioner_id = ".$_POST['kuesioner_id']."
 group by kj.kuesioner_pertanyaan_id
-) as t1 join (SELECT @curRow := 0) r");
+) as t1 join (SELECT @curRow := 0) r",false);
 		//$this->datatables->where('kp.model_kuesioner_id',$model_kuesioner_id);
 		
 		// if (isset($_POST['kuesioner_id'])) {

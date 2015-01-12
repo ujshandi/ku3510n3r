@@ -80,11 +80,13 @@ class Publish extends CI_Controller {
 				$rs .= "<h2>".$model->nama." (".$model->singkatan.")</h2>";
 				if ($model->tipe_jawaban=='Pilihan'){
 					$listpertanyaan = $this->kuesioner_pertanyaan_model->get_complete_pertanyaan($kuesioner_id,$model->model_kuesioner_id);
+					
 					if (!isset($listpertanyaan)){
 						$rs .= 'Belum ada Pertanyaan';
 					}else {
 						$listjawab = $this->kuesioner_pertanyaan_model->get_model_jawab($model->model_kuesioner_id);
 						$listparent = $this->kuesioner_pertanyaan_model->get_distinct_parent_jawab($model->model_kuesioner_id);
+					
 						$rs .= '<section>
 									<div class="form" id="content-'.$model->model_kuesioner_id.'">';
 						$rs .= '<div class="alert alert-block alert-danger fade in">
@@ -95,11 +97,29 @@ class Publish extends CI_Controller {
 						
 						$i=1;
 						foreach($listpertanyaan as $pertanyaan){
+							$opsijawaban = $this->pertanyaan_model->get_opsijawaban($pertanyaan->pertanyaan_id);
 							$rs .= ' <div class="form-group">
-										<input type="text" name="pertanyaan['.$idx.'][id]" value="'.$pertanyaan->kuesioner_pertanyaan_id.'"/>
+										<input type="hidden" name="pertanyaan['.$idx.'][id]" value="'.$pertanyaan->kuesioner_pertanyaan_id.'"/>
 												<label class="col-lg-12 control-label">'.$i++.'. '.$pertanyaan->tanya.'</label>
 												<div class="col-lg-12">';
-							if (isset($listjawab)){                         
+							if (isset($opsijawaban)){
+								//jika ada opsi jawaban buat check box utk opsi jawaban dan abaikan model jawaban dari model kuesionernya
+								$component = ' <div class="col-sm-9 icheck ">
+													<div class="square single-row">
+														<div class="checkbox ">';  
+								foreach ($opsijawaban as $jawab){
+										 
+									$component .=' <label class="control-label"> <input  type="checkbox"  name="pertanyaan['.$idx.'][opsijawab]" value="'.$jawab->opsi_id.';'.$jawab->opsi.'"/>'.$jawab->opsi.'</label>&nbsp;&nbsp;';
+							 
+										
+										//$rs .= $component ;
+									}//end foreach listjawab
+								$component .= '</div>
+												</div>
+												</div>';	
+								$rs .= $component ;					
+							}
+							else if (isset($listjawab)){                         
 								$component = '';            
 								if (count($listparent)==1){
 									$component = ' <div class="col-sm-9 icheck ">

@@ -17,6 +17,7 @@
     <script src="<?=base_url("static")?>/js/fuelux/js/spinner.min.js"></script>
     <script src="<?=base_url("static")?>/js/jquery.form.min.js"></script>
 	<script src="<?=base_url("static")?>/js/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+	<script src="<?=base_url("static")?>/js/jquery-tags-input/jquery.tagsinput.js"></script>
     <?php switch($pg_aktif): 
 		 	case "dashboard":?>
     	            

@@ -50,6 +50,7 @@
 					<table class="display table table-bordered table-striped" id="responden-tbl" width="100%">
 					<thead>
 						<tr> 						  
+							  <th>No.</th>
 							  <th>Nama</th>
 							  <th>Email</th>
 							  <th>Instansi</th>
@@ -58,6 +59,7 @@
 					</thead>
 					<tbody>					 
 							<tr class="odd gradeX">
+							   <td>&nbsp;</td>
 							   <td>&nbsp;</td>
 							   <td>&nbsp;</td>
 							   <td>&nbsp;</td>
@@ -108,9 +110,16 @@
             "searching": false,
 			"autoWidth": false,
 			"sDom": 't<"bottom"plri>',
-            "bServerSide": true,
+            "bServerSide": false,
             "sAjaxSource": '<?php echo base_url(); ?>rujukan/responden/datatable',
             "bJQueryUI": true,
+			"aoColumns" : [
+					{ sWidth: '1%'  },					
+					{ sWidth: '30%' },
+					{ sWidth: '20%' },
+					{ sWidth: '20%' },
+					{ sWidth: '10%' } 
+				],
           //  "sPaginationType": "full_numbers",
             "iDisplayStart ": 20,
 			
@@ -126,8 +135,9 @@
                 //oTable.fnAdjustColumnSizing();
 				this.fnAdjustColumnSizing(true);
             },
-			'fnRowCallback ':function(){
-				var index = iDisplayIndex +1;
+			"aoColumnDefs": [{ 'bSortable': false, 'aTargets': [ 0 ] }],
+			'fnRowCallback':function(nRow, aData, iDisplayIndex, iDisplayIndexFull){
+				var index = iDisplayIndexFull  +1;
 				$('td:eq(0)',nRow).html(index);
 				return nRow;
 			},

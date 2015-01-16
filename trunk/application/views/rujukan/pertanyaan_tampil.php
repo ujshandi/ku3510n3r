@@ -24,15 +24,19 @@
 					<table class="display table table-bordered table-striped" id="pertanyaan-tbl"  width="100%">
 					<thead>
 						<tr> 
+							  <th>No.</th>
 							  <th>Pertanyaan</th>
 							  <th>Pertanyaan Tambahan 1</th>
 							  <th>Pertanyaan Tambahan 2</th>
 							  <th>Opsi Jawaban</th>
+							  <th>Diklat</th>
 							  <th style="width:5%">Aksi</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
 							<td>&nbsp;</td>
 							<td>&nbsp;</td>
 							<td>&nbsp;</td>
@@ -84,21 +88,26 @@
             "searching": false,
 			"autoWidth": true,
 			"sDom": 't<"bottom"plri>',
-            "bServerSide": true,
+            "bServerSide": false,
             "sAjaxSource": '<?php echo base_url(); ?>rujukan/pertanyaan/datatable',
             "bJQueryUI": true,
 			"aoColumns" : [
+					{ sWidth: '1%'  },
 					{ sWidth: '30%' },
-					{ sWidth: '20%' },
-					{ sWidth: '20%' },
-					{ sWidth: '20%' },
+					{ sWidth: '15%' },
+					{ sWidth: '15%' },
+					{ sWidth: '15%' },
+					{ sWidth: '15%' },
 					{ sWidth: '10%' }
 				],
-          //  "sPaginationType": "full_numbers",
-            "iDisplayStart ": 20,
-			
-			"fnServerParams": function (aoData) {
-				 
+			"aoColumnDefs": [{ 'bSortable': false, 'aTargets': [ 0 ] }],
+			'fnRowCallback':function(nRow, aData, iDisplayIndex, iDisplayIndexFull){
+				var index = iDisplayIndexFull  +1;
+				$('td:eq(0)',nRow).html(index);
+				return nRow;
+			},
+            "iDisplayStart ": 20,			
+			"fnServerParams": function (aoData) {				 
 			},
             // "oLanguage": {
                 // "sProcessing": "<img src='<php echo base_url(); ?>assets/images/ajax-loader_dark.gif'>"
@@ -107,11 +116,7 @@
                 //oTable.fnAdjustColumnSizing();
 				this.fnAdjustColumnSizing(true);
             },
-			'fnRowCallback ':function(){
-				var index = iDisplayIndex +1;
-				$('td:eq(0)',nRow).html(index);
-				return nRow;
-			},
+			
             'fnServerData': function (sSource, aoData, fnCallback) {
                 $.ajax
                 ({

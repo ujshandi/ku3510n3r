@@ -68,7 +68,8 @@
 			});
 			 
 			$("#divPertanyaan").load("<?=base_url()?>kuesioner/kuesioner_pertanyaan/get_pertanyaan/"+kuesioner_id+"/"+model_kuesioner_id,function(){
-				$('#pertanyaan_id').multiSelect({
+				
+				/*$('#pertanyaan_id').multiSelect({
 					selectableHeader: "<div class='custom-header'>Daftar pertanyaan yang ada</div>",
 					selectionHeader: "<div class='custom-header'>Daftar pertanyaan yang dipilih</div>",					
 					dblClick:true,
@@ -84,7 +85,46 @@
 						var new_val = $("#multiple_value").val().replace(","+value, "");
 						$("#multiple_value").val(new_val);
 					  }
-				});	
+				});	*/
+				
+				$('#pertanyaan_id').multiSelect({
+					selectableHeader: "<div class='custom-header'>Daftar pertanyaan yang ada</div><input type='text' class='form-control search-input' autocomplete='off' placeholder='search...'>",
+					selectionHeader: "<div class='custom-header'>Daftar pertanyaan yang dipilih</div><input type='text' class='form-control search-input' autocomplete='off' placeholder='search...'>",
+					dblClick:true,
+					afterInit: function (ms) {
+						var that = this,
+						$selectableSearch = that.$selectableUl.prev(),
+						$selectionSearch = that.$selectionUl.prev(),
+						selectableSearchString = '#' + that.$container.attr('id') + ' .ms-elem-selectable:not(.ms-selected)',
+						selectionSearchString = '#' + that.$container.attr('id') + ' .ms-elem-selection.ms-selected';
+						that.qs1 = $selectableSearch.quicksearch(selectableSearchString)
+						.on('keydown', function (e) {
+							if (e.which === 40) {
+								that.$selectableUl.focus();
+								return false;
+							}
+						});
+						that.qs2 = $selectionSearch.quicksearch(selectionSearchString)
+						.on('keydown', function (e) {
+							if (e.which == 40) {
+								that.$selectionUl.focus();
+								return false;
+							}
+						});
+					},
+					afterSelect: function () {
+						this.qs1.cache();
+						this.qs2.cache();
+						var hidden_val = $("#multiple_value").val();
+						$("#multiple_value").val(hidden_val+","+value);
+					},
+					afterDeselect: function () {
+						this.qs1.cache();
+						this.qs2.cache();
+						var new_val = $("#multiple_value").val().replace(","+value, "");
+						$("#multiple_value").val(new_val);
+					}
+				});//end multiselect
 				 
 			});//end divpertanyaan load
 			 

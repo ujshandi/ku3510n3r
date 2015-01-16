@@ -15,7 +15,7 @@ class Responden_model extends CI_Model
 	
 	function get_datatables(){
 		//$this->datatables->add_column('NOMOR','');
-		$this->datatables->select('r.responden_id,r.nama, r.email,i.nama as nama_instansi')
+		$this->datatables->select("'' as No,r.responden_id,r.nama, r.email,i.nama as nama_instansi",false)
 		->unset_column('r.responden_id')
 		->add_column('Actions', responden_action('$1'), 'r.responden_id')
 		->from(' responden r left join instansi i on r.instansi_id = i.instansi_id');

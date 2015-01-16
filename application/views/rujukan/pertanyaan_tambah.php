@@ -36,6 +36,12 @@
             <input type="hidden" name="pertanyaan_id" value="<?=$data[0]->pertanyaan_id?>"  />
 			 
             <div class="form-group">
+                <label class="col-sm-4 control-label">Diklat <span class="text-danger">*</span></label>
+                <div class="col-sm-8">
+                	<?=form_dropdown('diklat_id',$list_diklat,$data[0]->diklat_id,'id="diklat_id" class="populate" style="width:100%"')?>
+                </div>
+            </div>
+			<div class="form-group">
                 <label class="col-sm-4 control-label">Pertanyaan <span class="text-danger">*</span></label>
                 <div class="col-sm-8">
                 	<textarea cols="45" name="tanya" id="tanya" ><?=$data[0]->tanya?></textarea>
@@ -64,3 +70,10 @@
 <style type="text/css">
 	select {width:100%;}
 </style>
+<script>
+	$(document).ready(function(){
+	//	$("#diklat-tbl").dataTable();
+		refreshTable();
+		$('select').select2({minimumResultsForSearch: -1, width:'resolve'});
+	});
+</script>

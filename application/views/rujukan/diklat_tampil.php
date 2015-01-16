@@ -17,12 +17,7 @@
 						</div>
 						<form class="form-horizontal" role="form">
 								
-							<div class="form-group">
-								<label class="col-md-2 control-label">Tahun Diklat</label>
-								<div class="col-md-2">
-										<?=form_dropdown('fil_tahun',$list_tahun,'0','id="fil_tahun" class="populate" style="width:100%"')?>
-								</div>
-							</div>
+							 
 							<div class="form-group">
 								<label class="col-md-2 control-label">Jenis Diklat</label>
 								<div class="col-md-5">
@@ -55,6 +50,7 @@
 					<table class="display table table-bordered table-striped" id="diklat-tbl" width="100%">
 					<thead>
 						<tr> 
+							  <th>No.</th>
 							  <th>Tahun</th>
 							  <th>Judul Diklat</th>
 							  <th>Jenis Diklat</th>
@@ -64,6 +60,7 @@
 					</thead>
 					<tbody>					 
 							<tr class="odd gradeX">
+							   <td>&nbsp;</td>
 							   <td>&nbsp;</td>
 							   <td>&nbsp;</td>
 							   <td>&nbsp;</td>
@@ -109,19 +106,31 @@
 	refreshTable = function(){
 		if (oTable)
             oTable.fnDestroy();
-		var tahun = $('#fil_tahun').val();	
+		var tahun = "0";//ga jadi dipake $('#fil_tahun').val();	
 		var jenis_diklat = $('#fil_jenis_diklat').val();	
 		oTable= $('#diklat-tbl').dataTable({
             "bProcessing": true,
             "searching": false,
 			"autoWidth": false,
 			"sDom": 't<"bottom"plri>',
-            "bServerSide": true,
+            "bServerSide": false,
+			"aoColumns" : [
+					{ sWidth: '1%'  },					
+					{ sWidth: '30%' },
+					{ sWidth: '20%' },
+					{ sWidth: '20%' },
+					{ sWidth: '10%' } 
+				],
             "sAjaxSource": '<?php echo base_url(); ?>rujukan/diklat/datatable',
             "bJQueryUI": true,
           //  "sPaginationType": "full_numbers",
             "iDisplayStart ": 20,
-			
+			"aoColumnDefs": [{ 'bSortable': false, 'aTargets': [ 0 ] }],
+			'fnRowCallback':function(nRow, aData, iDisplayIndex, iDisplayIndexFull){
+				var index = iDisplayIndexFull  +1;
+				$('td:eq(0)',nRow).html(index);
+				return nRow;
+			},
 			"fnServerParams": function (aoData) {
 				aoData.push(
 				{ "name": "tahun", "value": tahun },

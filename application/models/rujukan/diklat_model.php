@@ -13,6 +13,27 @@ class Diklat_model extends CI_Model
 		//$this->CI =& get_instance();
     }
 	
+	function get_list($forFilter=false) {
+		$where = ' where 1=1 ';
+		if (isset($params)){
+			//if (isset($params['kode_e1'])) $where .= " and kode_e1='".$params['kode_e1']."'";
+		}
+		$sql = "select distinct diklat_id,nama from diklat ";
+		
+		
+		$result = $this->mgeneral->run_sql($sql);
+		
+		if ($forFilter)
+			$list["-1"] = 'Semua Diklat';
+		else
+			$list["-1"] = 'Pilih Diklat';
+		if (isset($result))
+			foreach ($result as $i) {
+				$list[$i->diklat_id] = $i->nama;
+			}
+		return $list;
+	}
+	
 	function get_list_tahun($forFilter=false) {
 		$where = ' where 1=1 ';
 		if (isset($params)){
@@ -57,11 +78,11 @@ class Diklat_model extends CI_Model
 
    function get_datatables(){
 		//$this->datatables->add_column('NOMOR','');
-		$this->datatables->select('d.diklat_id,d.tahun,d.nama, d.jenis_diklat,j.nama as nama_jenis,d.kategori_kuesioner ')
+		$this->datatables->select("'' as No, d.diklat_id,d.tahun,d.nama, d.jenis_diklat,j.nama as nama_jenis,d.kategori_kuesioner ",false)
 		->unset_column('d.diklat_id')
 		->unset_column('d.jenis_diklat')
 		->add_column('Actions', diklat_action('$1'), 'd.diklat_id')
-		->from(' diklat d left join jenis_diklat j on d.jenis_diklat = j.jenis_id');
+		->from(' diklat d left join jenis_diklat j on d.jenis_diklat = j.nama');
 		
 	 //var_dump($_POST['jenis_diklat']);
 		if (isset($_POST['tahun'])) {

@@ -36,10 +36,10 @@ class Pertanyaan_model extends CI_Model
 	
 	function get_datatables(){
 		//$this->datatables->add_column('NOMOR','');
-		$this->datatables->select("r.pertanyaan_id,r.tanya, r.tanya_tambahan1 , r.tanya_tambahan2,,GROUP_CONCAT(o.opsi SEPARATOR ',') as opsi_jawaban ",false)
+		$this->datatables->select("'' as No,r.pertanyaan_id,r.tanya, r.tanya_tambahan1 , r.tanya_tambahan2,,GROUP_CONCAT(o.opsi SEPARATOR ',') as opsi_jawaban,d.nama as nama_diklat ",false)
 		->unset_column('r.pertanyaan_id')
 		->add_column('Actions', pertanyaan_action('$1'), 'r.pertanyaan_id')
-		->from(' pertanyaan r LEFT JOIN pertanyaan_opsi o ON r.pertanyaan_id = o.pertanyaan_id ')
+		->from(' pertanyaan r LEFT JOIN pertanyaan_opsi o ON r.pertanyaan_id = o.pertanyaan_id left join diklat d on d.diklat_id=r.diklat_id ')
 		->group_by('r.pertanyaan_id'); 
 		// if (isset($_POST['tanya_tambahan2'])) {
 			// if ($_POST['tanya_tambahan2']!="-1") $this->datatables->where('r.tanya_tambahan2',$_POST['tanya_tambahan2']);

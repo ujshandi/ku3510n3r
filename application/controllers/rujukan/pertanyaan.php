@@ -21,6 +21,7 @@ class pertanyaan extends CI_Controller {
 
         $this->load->model('/security/sys_menu_model');
         $this->load->model('/rujukan/pertanyaan_model');            
+        $this->load->model('/rujukan/diklat_model');            
 
     }
 
@@ -44,6 +45,8 @@ class pertanyaan extends CI_Controller {
 		$data[0]->tanya_tambahan1 = '';
 		$data[0]->tanya_tambahan2 = '';
 		$data[0]->opsi_jawaban = '';
+		$data[0]->diklat_id = '0';
+		
 		 
 		return $data;
 	}
@@ -54,6 +57,7 @@ class pertanyaan extends CI_Controller {
             $data['isi'] = 'rujukan/pertanyaan_tambah';
             $data["ket"]  = 'tambah';
 			$data["data"] = $this->initFormData(); 
+			$data['list_diklat'] =$this->diklat_model->get_list(false);;
 			$this->load->view('rujukan/pertanyaan_tambah',$data);
             //$this->load->view('admin/index',$data);  
     }
@@ -62,6 +66,7 @@ class pertanyaan extends CI_Controller {
     {
             $data['isi'] = 'rujukan/pertanyaan_tambah';
             $data["ket"]  = 'edit';
+			$data['list_diklat'] =$this->diklat_model->get_list(false);;
 			$data['data']		= $this->pertanyaan_model->pilihdata(array('pertanyaan_id'=>$id)); 
 			if (!isset($data['data'])){
 				$data['data'] = $this->initFormData( );
@@ -91,6 +96,7 @@ class pertanyaan extends CI_Controller {
 		$data['tanya_tambahan1']=$this->input->post('tanya_tambahan1'); 		
 		$data['tanya_tambahan2']=$this->input->post('tanya_tambahan2'); 
 		$data['opsi_jawaban']=$this->input->post('opsi_jawaban'); 
+		$data['diklat_id']=$this->input->post('diklat_id'); 
 		return $data;
 	}
     

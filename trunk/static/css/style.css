@@ -52,15 +52,16 @@ a,a:hover,a:focus {
     height:100%;
 }
 .form-signin {
-    max-width:330px;
-    margin:100px auto;
+    max-width:450px;
+    /*margin:100px auto;*/
+	margin:25px auto auto 0px;
     background:#fff;
     border-radius:5px;
     -webkit-border-radius:5px;
 }
 .form-signin h2.form-signin-heading {
     margin:0;
-    padding:35px 15px;
+    padding:10px 15px;
     text-align:center;
     background:#aec785;
     border-radius:5px 5px 0 0;
@@ -127,7 +128,7 @@ a,a:hover,a:focus {
 }
 .user-login-info {
     background:#eaeaec;
-    margin:-20px -20px 20px -20px;
+    margin:-20px;/* -20px 20px -20px;*/
     padding:20px;
 }
 .user-login-info .form-control:last-child {

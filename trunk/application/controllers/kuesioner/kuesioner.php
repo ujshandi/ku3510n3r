@@ -16,7 +16,7 @@ class Kuesioner extends CI_Controller {
      function __construct()
     {
         parent::__construct();			
-
+		if ($this->session->userdata('user_id') != TRUE) redirect(base_url().'welcome');
         //	$userdata = array ('userLogin' => $userLogin,'logged_in' => TRUE,'groupId'=>$this->sys_login_model->groupId,'fullName'=>$this->sys_login_model->fullName,'userId'=>$this->sys_login_model->userId,'groupLevel'=>$this->sys_login_model->level);
 
         $this->load->model('/security/sys_menu_model');

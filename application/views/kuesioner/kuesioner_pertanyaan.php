@@ -112,13 +112,13 @@
 							}
 						});
 					},
-					afterSelect: function () {
+					afterSelect: function (value, text) {
 						this.qs1.cache();
 						this.qs2.cache();
 						var hidden_val = $("#multiple_value").val();
 						$("#multiple_value").val(hidden_val+","+value);
 					},
-					afterDeselect: function () {
+					afterDeselect: function (value, text) {
 						this.qs1.cache();
 						this.qs2.cache();
 						var new_val = $("#multiple_value").val().replace(","+value, "");

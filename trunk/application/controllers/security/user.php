@@ -16,24 +16,19 @@ class User extends CI_Controller {
 	}
 	
 	function index(){
-		$data['title'] = 'Pengguna';		
-		$data['objectId'] = 'user';
-	  	$this->load->view('admin/user_v',$data);
-		//$this->load->view('footer_vw',$data);
+		$setting['sd_left']	= array('cur_menu'	=> "ADMIN");
+		$setting['page']	= array('pg_aktif'	=> "datatables");
+		$template			= $this->template->load($setting); #load static template file
+		     
+		$data = null;
+		$template['konten']	= $this->load->view('security/user_tampil',$data,true); #load konten template file
+		#load container for template view
+		$this->load->view('template/container',$template);
 	}
 	
-	function grid($file1=null,$file2=null,$filapptype=null,$fillevel=null){
-		/*
-		//decode filter
-		$filNip =  $this->utility->HexToAscii($filNip);
-		
-		//kalo string=nulll jadiin null 
-		if($filNip == 'null') $filNip = NULL;
-		*/
-		//$this->session->userdata('level')
-		echo $this->user_model->easyGrid($file1,$file2,$filapptype,$fillevel);
+	function datatable(){
+		echo $this->user_model->get_datatables();
 	}
-	
 	
  
 	private function get_form_values() {
@@ -42,10 +37,94 @@ class User extends CI_Controller {
 		$data['user_name'] = $this->input->post("user_name", TRUE);
 		$data['full_name'] = $this->input->post("full_name", TRUE);		
 		$data['passwd'] = $this->input->post("passwd", TRUE);
+		$data['old_passwd'] = $this->input->post("old_passwd", TRUE);
 	 
-		$data['group_id'] = $this->input->post("group_id", TRUE);
-		$data['level_id'] = $this->input->post("level_id", TRUE);
 		return $data;
+    }
+	
+	function initFormData(){
+		$data[0]->user_id = '';
+		$data[0]->user_name = '';
+		$data[0]->full_name = '';
+		$data[0]->passwd = '';
+		$data[0]->old_passwd = '';
+		 
+		return $data;
+	}
+	
+	
+    function tambah()
+    {
+          
+			$data["data"] = $this->initFormData();
+			//$data['list_instansi'] = $this->instansi_model->get_list();
+			$this->load->view('security/user_tambah',$data);
+            //$this->load->view('admin/index',$data);  
+    }
+	
+	 function edit($id)
+    {
+            
+			$data['data']		= $this->user_model->SelectInDb(array('user_id'=>$id));
+			//$data['list_instansi'] = $this->instansi_model->get_list();
+			if (!isset($data['data'])){
+				$data['data'] = $this->initFormData( );
+			}else{
+				
+				$data['data'][0]->user_id= $data['data'][0]->user_id;
+			 
+				$data['data'][0]->user_name = $data['data'][0]->user_name;
+			}
+			  
+			$this->load->view('security/user_tambah',$data);
+            //$this->load->view('admin/index',$data);  
+    }
+
+ 
+    function save()
+    {
+            $data = $this->get_form_values(); 
+            try{
+				$this->user_model->InsertOnDb($data);
+				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
+					<p>Data User berhasil ditambahkan.</p>';
+			}
+			catch (Exception $e){
+				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
+					<p>Data User gagal ditambahkan.</p>';
+			}
+			echo $msg;
+            
+    }
+
+    function update()
+    {
+            $user_id=$this->input->post('user_id');
+			$data = $this->get_form_values(); 
+            try{
+				$this->user_model->UpdateOnDb($data, $user_id);
+				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
+					<p>Data User berhasil diupdate.</p>';
+			}
+			catch (Exception $e){
+				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
+					<p>Data User gagal diupdate.</p>';
+			}
+			echo $msg;
+    }
+
+    function hapus($user_id)
+    {
+        try{
+			$this->user_model->hapus(array("user_id"=>$user_id)); 
+			$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
+					<p>Data User berhasil dihapus.</p>';
+		}
+		catch(Exception $e){
+			$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
+					<p>Data User berhasil dihapus.</p>';
+		}
+		echo $msg;
     }
 	
 	function changePasswd(){
@@ -64,66 +143,14 @@ class User extends CI_Controller {
 		if ($result){
 			echo 'Ubah password berhasil';
 		} else {
-			echo 'Ubah password gaga';
+			echo 'Ubah password gagal';
 		}
 	}
 	
 	
 	
 	
-	function save($aksi="", $kode=""){
-		$this->load->library('form_validation');
-		$data = $this->get_form_values();
-		$status = "";
-		$result = false;
-	
-		$data['pesan_error'] = '';
-		//validasi form
-		$this->form_validation->set_rules("group_id", 'Grup Pengguna', 'trim|required|xss_clean');
-	/*	$this->form_validation->set_rules("user_name", 'Username', 'trim|required|xss_clean');
-		$this->form_validation->set_rules("full_name", 'Nama Lengkap', 'trim|required|xss_clean');
-		$this->form_validation->set_rules("passwd", 'Password', 'trim|required|xss_clean');
-	*/	
-		if ($this->form_validation->run() == FALSE){
-			//jika data tidak valid kembali ke view
-		//	$data["pesan_error"].=(trim(form_error("user_name"," "," "))==""?"":form_error("user_name"," "," ")."<br/>");
-			//$data["pesan_error"].=(trim(form_error("full_name"," "," "))==""?"":form_error("full_name"," "," ")."<br/>");
-		//	$data["pesan_error"].=(trim(form_error("passwd"," "," "))==""?"":form_error("passwd"," "," ")."<br/>");
-			$data["pesan_error"].=(trim(form_error("group_id"," "," "))==""?"":form_error("group_id"," "," ")."<br>");
-			$status = $data["pesan_error"];
-		}else { 
-			if($aksi=="add"){ // add
-				//if (!$this->user_model->isExistKode($data['kode_kl'])){
-					$result = $this->user_model->InsertOnDb($data,$status);
-				//}
-				//else
-					//$data['pesan_error'] .= 'Kode sudah ada';
-					
-			}else { // edit
-				$result=$this->user_model->UpdateOnDb($data,$kode);
-				// if (!$this->dokter_model->isExistKode($data['kode_kl'],null,$data['dokter_id'])){
-					// if (!$this->dokter_model->isExistKode(null,$data['dokter_nip'],$data['dokter_id']))
-						// $result=$this->dokter_model->UpdateOnDb($data,$status);
-					// else						
-						// $data['pesan_error'] .= 'NIP sudah ada';
-				// }
-				// else
-					// $data['pesan_error'] .= 'Kode sudah ada';
-				
-					//$status = "update";
-				$data['pesan_error'] .= 'Update : '.$kode;
-			}
-			$data['pesan_error'] .= $status;	
-		}
-		
-		if ($result){
-			echo json_encode(array('success'=>true));
-		} else {
-			echo json_encode(array('msg'=>$data['pesan_error']));
-		}
-//		echo $status;
-
-	}
+	 
 	
 }
 ?>

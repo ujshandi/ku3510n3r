@@ -45,6 +45,7 @@
 					<thead>
 						<tr> 
 							  <th rowspan="2">No.</th>
+							  <th rowspan="2">kuesioner_responden_id</th>
 							  <th rowspan="2">Responden</th>
 							  <th colspan="2">Status</th>
 							  
@@ -57,6 +58,7 @@
 					</thead>
 					<tbody>					 
 							<tr class="odd gradeX">
+							   <td>&nbsp;</td>
 							   <td>&nbsp;</td>
 							   <td>&nbsp;</td>
 							   <td>&nbsp;</td>
@@ -93,16 +95,17 @@
             "bJQueryUI": true,
 			"aoColumns" : [
 					{ sWidth: '1%'  },					
+					{ sWidth: '0%'  },					
 					{ sWidth: '50%' },
 					{ sWidth: '25%' },
 					{ sWidth: '25%' } 
 				],
 			"columnDefs" :  [
 				{"orderable": false},
+				{"targets": [ 2 ],"visible": false,},
 				{"orderable": false},
 				{"orderable": false},
-				{"orderable": false},
-				{"orderable": false}, 
+				{"orderable": false}
 			
 			],
           //  "sPaginationType": "full_numbers",
@@ -113,11 +116,18 @@
 				{ "name": "kuesioner_id", "value": kuesioner_id }
 				);
 			},
+			"fnCreatedRow": function( nRow, aData, iDataIndex ) {
+				//alert(aData[2]);
+				//var fields = aData.split(',');		
+					if (aData[3]==null)
+					$('td:eq(2)', nRow).append("<div class='col1d'><button class='editBut' onclick='sentEmail("+aData[1]+")'>Click</button></div>");
+			   },
             "fnInitComplete": function () {
                 //oTable.fnAdjustColumnSizing();
 				this.fnAdjustColumnSizing(true);
             },
-			"aoColumnDefs": [{ 'bSortable': false, 'aTargets': [ 0 ] }],
+			"aoColumnDefs": [{ 'bSortable': false, 'aTargets': [ 0 ] },
+				{"aTargets": [ 1 ],"bVisible": false}],
 			'fnRowCallback':function(nRow, aData, iDisplayIndex, iDisplayIndexFull){
 				var index = iDisplayIndexFull  +1;
 				$('td:eq(0)',nRow).html(index);
@@ -139,7 +149,29 @@
 		refreshTable();
 		$('select').select2({minimumResultsForSearch: -1, width:'resolve'});
 		
-		
+		sentEmail = function (id){
+			alert('Ok siap kirim ke-'+id);
+			$.ajax(
+				{
+					url : '<?=base_url()?>kuesioner/status_kuesioner/sent_email/'+id,
+					type: "POST",
+					//data : postData,
+					success:function(data, textStatus, jqXHR) 
+					{
+						//data: return data from server
+						$.gritter.add({text: data});
+						//$("#btn-close").click();
+						//$("#search-btn").click();
+					},
+					error: function(jqXHR, textStatus, errorThrown) 
+					{
+						//if fails   
+						$.gritter.add({text: '<h5><i class="fa fa-exclamation-triangle"></i> <b>Eror !!</b></h5> <p>'+errorThrown+'</p>'});
+					//	$('#btnf-close').click();   
+					}
+				});
+			
+		}
 		$("#search-btn").click(function(){
 			refreshTable();
 		});

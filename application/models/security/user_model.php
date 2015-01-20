@@ -124,84 +124,26 @@ class User_model extends CI_Model
 	}
 	
 	
+	function get_datatables(){
+		//$this->datatables->add_column('NOMOR','');
+		$this->datatables->select("'' as No,u.user_id,u.user_name, u.full_name",false)
+		->unset_column('u.user_id')
+		->add_column('Actions', user_action('$1'), 'u.user_id')
+		->from(' tbl_user u');
+		  
+		// if (isset($_POST['instansi_id'])) {
+			// if ($_POST['instansi_id']!="-1") $this->datatables->where('r.instansi_id',$_POST['instansi_id']);
+		// }
+		 
+		$aOrder =isset($_POST['iSortCol_0'])?$_POST['iSortCol_0']:0;
+		$aOrderDir =isset($_POST['sSortDir_0'])?$_POST['sSortDir_0']:"ASC";
+		$sOrder = "";
 	
+		return $this->datatables->generate();
 	
-	//khusus grid
-	public function easyGrid($file1=null,$file2=null,$filapptype=null,$fillevel=null){
-		
-		$page = isset($_POST['page']) ? intval($_POST['page']) : 1;  
-		$limit = isset($_POST['rows']) ? intval($_POST['rows']) : 10;  
-		
-			
-		$count = $this->GetRecordCount($file1,$file2,$filapptype,$fillevel);
-		$response = new stdClass();
-		$response->total = $count;
-		$sort = isset($_POST['sort']) ? strval($_POST['sort']) : 'user_name';  
-		$order = isset($_POST['order']) ? strval($_POST['order']) : 'asc';  
-		$offset = ($page-1)*$limit;  
-		
-		if ($count>0){
-			
-		/*	if (($fillevel==null)||($fillevel=="-1"))
-			//$fillevel = $this->session->userdata('level');
-				$this->db->where("l.level <=",$this->session->userdata('level'));
-			else	
-				$this->db->where("l.level",$fillevel);
-				
-			
-			if($file1 != '' && $file1 != '-1' && $file1 != null) {
-				
-				$this->db->where("u.unit_kerja_e1",$file1);
-			}	
-			
-			if($file2 != '' && $file2 != '-1' && $file2 != null) {
-				$this->db->where("u.unit_kerja_e2",$file2);
-			}	
-			
-			if($filapptype != '' && $filapptype != '-1' && $filapptype != null) {
-				$this->db->where("g.app_type",$filapptype);
-			}	
-			*/
-			$this->db->order_by($sort." ".$order );
-			$this->db->limit($limit,$offset);
-			$this->db->select("u.*,g.*,l.*",false);
-			
-			$this->db->from('tbl_user u left join tbl_group_user g on u.group_id = g.group_id left join tbl_group_level l on u.level_id = l.level_id',false);
-			//var_dump($file1);
-			$query = $this->db->get();
-			
-			$i=0;
-			foreach ($query->result() as $row)
-			{
-				$response->rows[$i]['user_id']=$row->user_id;
-				$response->rows[$i]['user_name']=$row->user_name;
-				$response->rows[$i]['full_name']=$row->full_name;
-				$response->rows[$i]['passwd']=$row->passwd;
-				$response->rows[$i]['group_id']=$row->group_id;
-				$response->rows[$i]['level_id']=$row->level_id;
-				$response->rows[$i]['group_name']=$row->group_name;
-				$response->rows[$i]['level_name']=$row->level_name;
-				
-
-				$i++;
-			} 
-			
-			$query->free_result();
-		}else {
-				$response->rows[$count]['user_id']='';
-				$response->rows[$count]['user_name']='';
-				$response->rows[$count]['full_name']='';
-				$response->rows[$count]['passwd']='';
-				$response->rows[$count]['group_id']='';
-				$response->rows[$count]['group_name']='';
-				$response->rows[$count]['level_id']='';
-				$response->rows[$count]['level_name']='';
-				
-		}
-		
-		return json_encode($response);
+	}
 	
-	}	
+	 
 	public function isExistKode($user_name)
 	{
 		$this->db->where('user_name',$user_name); //buat validasi
@@ -216,24 +158,15 @@ class User_model extends CI_Model
 	}
 	
 	
-	public function InsertOnDb($data,& $error) {
+	public function InsertOnDb($data ) {
 		//query insert data		
-		$this->db->set('user_id',$data['user_id']);
-		$this->db->set('user_name',$data['user_name']);
-		$this->db->set('full_name',$data['full_name']);
-		$this->db->set('passwd',md5($data['passwd']));
-		$this->db->set('group_id',$data['group_id']);		
-		$this->db->set('level_id',$data['level_id']);		
+	 
+		unset($data['old_passwd']);
+		$data['passwd'] = md5($data['passwd']);
+		$data['log_insert'] = $this->session->userdata('user_id').';'.date('Y-m-d H:i:s');
+		$result = $this->db->insert('tbl_user',$data);
 		
-		$this->db->set('log_insert',$this->session->userdata('user_id').';'.date('Y-m-d H:i:s'));
 		
-		$result = $this->db->insert('tbl_user');
-		$errNo   = $this->db->_error_number();
-	    $errMess = $this->db->_error_message();
-		$error = $errMess;
-		//var_dump($errMess);die;
-	    log_message("error", "Problem Inserting to : ".$errMess." (".$errNo.")"); 
-		//return
 		if($result) {
 			return TRUE;
 		}else {
@@ -244,15 +177,14 @@ class User_model extends CI_Model
 	//update data
 	public function UpdateOnDb($data, $kode) {
 		$this->db->where('user_id',$kode);
-		$this->db->set('user_name',$data['user_name']);
-		$this->db->set('full_name',$data['full_name']);		
-		//$this->db->set('passwd',md5($data['passwd']));
-		$this->db->set('group_id',$data['group_id']);
-		$this->db->set('level_id',$data['level_id']);
-		
-		$this->db->set('log_update',$this->session->userdata('user_id').';'.date('Y-m-d H:i:s'));
-		
-		$result=$this->db->update('tbl_user');
+		if ($data['old_passwd']!=$data['passwd']) 
+			$data['passwd'] = md5($data['passwd']);
+		else 
+			unset($data['passwd']);	
+		unset($data['old_passwd']);	
+		$data['log_update'] = $this->session->userdata('user_id').';'.date('Y-m-d H:i:s');
+		unset($data['old_passwd']);
+		$result=$this->db->update('tbl_user',$data);
 		
 		$errNo   = $this->db->_error_number();
 	    $errMess = $this->db->_error_message();
@@ -294,13 +226,14 @@ class User_model extends CI_Model
 		}
 	}
 
-	public function SelectInDb($id){
+	public function SelectInDb($params){
 
-		$this->db->where('user_id',$id); //buat edit
-		$query = $this->db->get('sys_user');
-		$rs = $query->row_array();
-		$query->free_result();		
-		return $rs;
+	$where = ' where 1=1 ';
+		if (isset($params)){
+			if (isset($params['user_id'])) $where .= " and user_id='".$params['user_id']."'";
+		}
+		$sql = "select * from tbl_user ".$where;
+		return $this->mgeneral->run_sql($sql);
 	}
 	
 	

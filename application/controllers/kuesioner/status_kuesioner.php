@@ -42,5 +42,22 @@ class status_kuesioner extends CI_Controller {
 	function datatable(){
 		echo $this->kuesioner_responden_model->get_datatables();
 	}
+	
+	function sent_email($kuesioner_responden_id){
+		$this->load->library('email');
+		
+		$this->email->from('ujshandi@gmail.com', 'yJs');
+		$this->email->to('ourvisi@yahoo.com'); 
+		//$this->email->cc('another@another-example.com'); 
+		//$this->email->bcc('them@their-example.com'); 
+
+		$this->email->subject('Email Test');
+		$this->email->message('Testing the email class.');	
+
+		$this->email->send();
+
+		echo $this->email->print_debugger();
+	
+	}
 
 }

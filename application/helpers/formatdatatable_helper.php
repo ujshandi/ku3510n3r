@@ -16,6 +16,17 @@ if ( ! function_exists('kuesioner_action'))
 	}
 }
 
+if ( ! function_exists('user_action'))
+{
+	function user_action($id)
+	{	
+		$CI = & get_instance();
+		$format = '<a href="#userModal" class="btn btn-info btn-xs" data-toggle="modal"   title="Edit" onclick="userEdit('.$id.')"><i class="fa fa-pencil"></i></a>
+				  <a href="#" onclick="userDelete('.$id.')" class="btn btn-danger btn-xs" title="Hapus"><i class="fa fa-times"></i></a>';
+		return $format;
+	}
+}
+
 if ( ! function_exists('alumni_action'))
 {
 	function alumni_action($id)

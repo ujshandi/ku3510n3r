@@ -5,19 +5,17 @@
 
 class Alumni_model extends CI_Model
 {	
-	/**
-	* constructor
-	*/
-    public function __construct()    {
+	 public function __construct()    {
         parent::__construct();
 		//$this->CI =& get_instance();
     }
+	
 	function get_datatables(){
 		//$this->datatables->add_column('NOMOR','');
-		$this->datatables->select('	alumni_id, nik, nama, tempat_lahir, tgl_lahir, agama, sex, alamat, email, telepon, instansi, jabatan, golongan, alamat_kantor, 	telepon_kantor, provinsi, kota, klasifikasi_perusahaan, riwayat_pendidikan, pendidikan_ln, pendidikan_khusus, riwayat_jabatan, riwayat_diklat_minerba')
-		->unset_column('alumni_id')
-		->add_column('Actions', alumni_action('$1'), 'alumni_id')
-		->from(' alumni ');
+		$this->datatables->select("'' as No,r.alumni_id,r.nama, r.email,i.nama as nama_instansi",false)
+		->unset_column('r.alumni_id')
+		->add_column('Actions', alumni_action('$1'), 'r.alumni_id')
+		->from(' alumni r left join instansi i on r.instansi_id = i.instansi_id');
 		  
 		if (isset($_POST['instansi_id'])) {
 			if ($_POST['instansi_id']!="-1") $this->datatables->where('r.instansi_id',$_POST['instansi_id']);
@@ -30,7 +28,6 @@ class Alumni_model extends CI_Model
 		return $this->datatables->generate();
 	
 	}
-	
     public function isExistKode($kode=null){	
         if ($kode!=null)//utk update
             $this->db->where('alumni_id',$kode); //buat validasi
@@ -46,12 +43,16 @@ class Alumni_model extends CI_Model
 	    
     function tampildata()
     {       
-        return $this->db->query("select r.*  from alumni r   order by alumni_id");    
+        return $this->db->query("select r.*,i.nama as instansi from alumni r left join instansi i on r.instansi_id = i.instansi_id order by alumni_id");    
     }
 
    
 	function simpan($data){
 		$this->mgeneral->save($data,'alumni');
+	}
+
+	function import($data){
+		$this->mgeneral->import($data,'alumni');
 	}
 
    function edit($data,$whereData){

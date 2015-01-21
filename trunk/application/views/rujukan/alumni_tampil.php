@@ -41,7 +41,7 @@
 				   <div class="row">
 						<div class="col-sm-12">
 							<div class="pull-right">
-								 <a href="#" data-toggle="modal" class="btn btn-primary btn-sm" style="margin-top:-5px;" onclick="alumniImport();"><i class="fa fa-download"></i> Import</a>
+								 <a href="#alumniModal" data-toggle="modal" class="btn btn-primary btn-sm" style="margin-top:-5px;" onclick="alumniImport();"><i class="fa fa-download"></i> Import</a>
 								 <a href="#alumniModal" data-toggle="modal" class="btn btn-primary btn-sm" style="margin-top:-5px;" onclick="alumniAdd();"><i class="fa fa-plus-circle"></i> Tambah</a>
 							 </div>
 						</div>
@@ -50,58 +50,22 @@
 				   <div class="adv-table">
 					<table class="display table table-bordered table-striped" id="alumni-tbl" width="100%">
 					<thead>
-						<tr>    
-							  <th>NIK</th>
+						<tr> 						  
+							  <th>No.</th>
 							  <th>Nama</th>
-							  <th>Tempat Lahir</th>
-							  <th>Tgl. Lahir</th>
-							  <th>Agama</th>
-							  <th>Jenis Kelamin</th>
-							  <th>Alamat</th>
 							  <th>Email</th>
-							  <th>Telepon</th>
 							  <th>Instansi</th>
-							  <th>Jabatan</th>
-							  <th>Golongan</th>
-							  <th>Alamat Kantor</th>
-							  <th>Telepon Kantor</th>
-							  <th>Provinsi</th>
-							  <th>Kota</th>
-							  <th>Klasifikasi Perusahaan</th>
-							  <th>Riwayat Pendidikan</th>
-							  <th>Pendidikan LN</th>
-							  <th>Pendidikan Khusus</th>
-							  <th>Riwayat Jabatan</th>
-							  <th>Riwayat Diklat Minerba</th> 
 							  <th style="width:80px;">Aksi</th>
 						</tr>
 					</thead>
-					<tbody>
-						<tr>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-						</tr>
+					<tbody>					 
+							<tr class="odd gradeX">
+							   <td>&nbsp;</td>
+							   <td>&nbsp;</td>
+							   <td>&nbsp;</td>
+							   <td>&nbsp;</td>
+							  <td>&nbsp;</td>
+							</tr>				 
 					  </tbody>
 					</table>
 					</div>
@@ -141,18 +105,22 @@
 	refreshTable = function(){
 		if (oTable)
             oTable.fnDestroy();
-			
 		var instansi_id = $('#fil_instansi_id').val();	
 		oTable= $('#alumni-tbl').dataTable({
             "bProcessing": true,
             "searching": false,
 			"autoWidth": false,
-		//	"sScrollX": "100%",
-          //    "bScrollCollapse": true,
 			"sDom": 't<"bottom"plri>',
-            "bServerSide": true,
+            "bServerSide": false,
             "sAjaxSource": '<?php echo base_url(); ?>rujukan/alumni/datatable',
             "bJQueryUI": true,
+			"aoColumns" : [
+					{ sWidth: '1%'  },					
+					{ sWidth: '30%' },
+					{ sWidth: '20%' },
+					{ sWidth: '20%' },
+					{ sWidth: '10%' } 
+				],
           //  "sPaginationType": "full_numbers",
             "iDisplayStart ": 20,
 			
@@ -168,8 +136,9 @@
                 //oTable.fnAdjustColumnSizing();
 				this.fnAdjustColumnSizing(true);
             },
-			'fnRowCallback ':function(){
-				var index = iDisplayIndex +1;
+			"aoColumnDefs": [{ 'bSortable': false, 'aTargets': [ 0 ] }],
+			'fnRowCallback':function(nRow, aData, iDisplayIndex, iDisplayIndexFull){
+				var index = iDisplayIndexFull  +1;
 				$('td:eq(0)',nRow).html(index);
 				return nRow;
 			},
@@ -183,22 +152,17 @@
                     'success': fnCallback
                 });
             }
-        });//.fnAdjustColumnSizing( false );
-		jQuery('#alumni-tbl').wrap('<div class="dataTables_scroll" style="position:relative;overflow:auto;height:400px;" />');
-		 // setTimeout(function () {
-                // oTable.fnAdjustColumnSizing();
-            // }, 10);
-
-		
-	}
+        });
+	};
 	$(document).ready(function(){
+	//	$("#alumni-tbl").dataTable();
 		refreshTable();
 		$('select').select2({minimumResultsForSearch: -1, width:'resolve'});
 		$( "#alumni-form" ).submit(function( event ) { 
 			var nama		= $('#nama').val();
 			var instansi_id		= $('#instansi_id').val();
 			 if(nama==""){
-				alert("Nama Alumni belum ditentukan");
+				alert("Nama alumni belum ditentukan");
 				$('#nama').focus();
 				return false;
 			}else if(instansi_id==""){
@@ -236,7 +200,7 @@
 		
 		
 		alumniAdd =function(){
-			$("#alumni_title_form").html('<i class="fa fa-plus-square"></i>  Tambah Alumni');
+			$("#alumni_title_form").html('<i class="fa fa-plus-square"></i>  Tambah alumni');
 			$("#alumni-form").attr("action",'<?=base_url()?>rujukan/alumni/save');
 			$.ajax({
 				url:'<?=base_url()?>rujukan/alumni/tambah',
@@ -246,9 +210,21 @@
 					}
 			});
 		}
+
+		alumniImport =function(){
+			$("#alumni_title_form").html('<i class="fa fa-plus-square"></i>  Import Data alumni');
+			$("#alumni-form").attr("action",'<?=base_url()?>rujukan/alumni/importdata');
+			$.ajax({
+				url:'<?=base_url()?>rujukan/alumni/import',
+					success:function(result) {
+						//$.gritter.add({text: data});
+						$('#alumni_form_konten').html(result);
+					}
+			});
+		}
 		
 		 alumniEdit = function(id){
-			$("#alumni_title_form").html('<i class="fa fa-pencil"></i>  Edit Alumni');
+			$("#alumni_title_form").html('<i class="fa fa-pencil"></i>  Edit alumni');
 			$("#alumni-form").attr("action",'<?=base_url()?>rujukan/alumni/update');
 			$.ajax({
 				url:'<?=base_url()?>rujukan/alumni/edit/'+id,
@@ -268,11 +244,8 @@
 			});
 		}
 		
-		
-		
 		$("#search-btn").click(function(){
 			refreshTable();
-		
 		});
 	});
 </script>	

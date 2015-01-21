@@ -52,6 +52,12 @@ class mgeneral extends CI_Model
 		//echo $this->db->last_query();
 		return $this->db->insert_id();
 	}
+
+	function import($varData,$tabel){
+		$this->db->insert($tabel, $varData);
+		//echo $this->db->last_query();
+		return $this->db->insert_id();
+	}
 	
 	#fungsi update data
 		#ex akses : $this->mgeneral->update(array('field1'=>'data','field2'=>'data'),array_data_udate,nama_tabel);

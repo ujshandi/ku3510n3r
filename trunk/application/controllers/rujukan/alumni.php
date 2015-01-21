@@ -11,7 +11,8 @@
  *
  * @author chan
  */
-class alumni extends CI_Controller {
+class alumni extends CI_Controller 
+{
     //put your code here
      function __construct()
     {
@@ -58,6 +59,16 @@ class alumni extends CI_Controller {
             //$this->load->view('admin/index',$data);  
     }
 	
+
+     function import()
+    {
+          
+			$data["data"] = $this->initFormData();
+			$data['list_instansi'] = $this->instansi_model->get_list();
+			$this->load->view('rujukan/alumni_import',$data);
+            //$this->load->view('admin/index',$data);  
+    }
+
 	 function edit($id)
     {
             
@@ -130,6 +141,40 @@ class alumni extends CI_Controller {
 	function datatable(){
 		echo $this->alumni_model->get_datatables();
 	}
-    
 
+
+	function importdata()
+    {   
+        include_once ( APPPATH."libraries/excel_reader2.php");
+            try{
+            	$excel = new Spreadsheet_Excel_Reader($_FILES['fileexcel']['tmp_name']);
+        		$hasildata = $excel->rowcount($sheet_index=0);
+
+        		$sukses = 0;
+        		$gagal = 0;
+
+        		for ($i=2; $i<=$hasildata; $i++)
+        		{
+           			$data['nama'] = $excel->val($i,2); 
+            		$data['email'] = $excel->val($i,3);
+            		$data['instansi_id'] = $excel->val($i,3);
+           
+            		$this->alumni_model->import($data);
+           
+           				if ($hasildata) $sukses++;
+            			else $gagal++;
+        		}
+
+				
+				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
+					<p>Import data selesai</p>';
+        
+			}
+			catch (Exception $e){
+				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
+					<p>Data Alumni gagal dimport.</p>';
+			}
+			echo $msg;
+
+	}
 }

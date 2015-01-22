@@ -15,6 +15,22 @@
 				position:unset;
 				padding:0;
 			}
+			
+			input {
+				border: 1px solid #494949;
+				padding: 10px;
+				outline: 0;
+				color: #494949;
+				font-size: 14px;
+			  width: 100%
+			}
+			label.label-floatlabel {
+				font-weight: bold;
+				font-size: 11px;
+			}
+			label.red-label {
+				color: red !important;
+			}
 		</style>
         <!-- page start-->
                 
@@ -44,9 +60,11 @@
 	<script src="<?=base_url('static')?>/js/jquery-steps/jquery.steps.js"></script>
 	<script src="<?=base_url('static')?>/js/iCheck/jquery.icheck.js"></script>
 	<script src="<?=base_url('static')?>/js/bootstrap-switch.js"></script>
+	<script src="<?=base_url('static')?>/js/floatlabels.js"></script>
 	<script  type="text/javascript" language="javascript">
 		var pendapatCounter = 1;
 		$(document).ready(function() {
+			
 
 			
 
@@ -157,5 +175,7 @@
 				
 			
 			};
+			
+			$('.floatlabel').floatlabel();
 		});
 	</script>

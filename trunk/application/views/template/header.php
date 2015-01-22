@@ -11,7 +11,13 @@
         </div>
     </div>
     <!--logo end-->
-    
+     <div class="nav notify-row hide" id="top_menu">
+    	<ul class="nav top-menu">
+    		<li>
+            	<img src="<?=base_url()?>static/images/logo.png" id="title-img" height="80" style="margin-top:-23px;"/>
+            </li>
+        </ul>
+	</div>
     <div class="top-nav clearfix">
     
         <ul class="nav pull-right top-menu">

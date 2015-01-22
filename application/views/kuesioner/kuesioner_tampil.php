@@ -231,6 +231,7 @@
 			$("#kuesioner-form").attr("action",'<?=base_url()?>kuesioner/kuesioner_pertanyaan/pertanyaan_submit/'+id);
 			$("#kuesioner-form").data("purpose","pertanyaan");
 			$("#btn-delete").removeClass("hide");
+			$('#kuesioner_form_konten').empty();
 			
 			$.ajax({
 				url:'<?=base_url()?>kuesioner/kuesioner_pertanyaan/pertanyaan_add/'+id,
@@ -245,7 +246,7 @@
 			$("#kuesioner-form").attr("action",'<?=base_url()?>kuesioner/kuesioner_responden/responden_submit/'+id);
 			$("#kuesioner-form").data("purpose","responden");
 			$("#btn-delete").addClass("hide");
-			
+			$('#kuesioner_form_konten').empty();
 			$.ajax({
 				url:'<?=base_url()?>kuesioner/kuesioner_responden/responden_add/'+id,
 					success:function(result) {

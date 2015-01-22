@@ -11,7 +11,7 @@
  *
  * @author chan
  */
-class rpt_pemahaman_visimisi extends CI_Controller {
+class rpt_pencapaian_target extends CI_Controller {
     //put your code here
      function __construct()
     {
@@ -22,9 +22,8 @@ class rpt_pemahaman_visimisi extends CI_Controller {
         $this->load->model('/security/sys_menu_model');
         $this->load->model('/kuesioner/kuesioner_model');   
         $this->load->model('/kuesioner/kuesioner_pertanyaan_model');   
-        $this->load->model('/report/pemahaman_visimisi_m');   
-        $this->load->library('utility');   
-
+        $this->load->model('/report/pencapaian_target_m');   
+		$this->load->library('utility');   
 
     }
 
@@ -35,7 +34,7 @@ class rpt_pemahaman_visimisi extends CI_Controller {
 		$template			= $this->template->load($setting); #load static template file
 		     
 		$data['list_kuesioner'] =$this->kuesioner_model->get_list(); 
-		$template['konten']	= $this->load->view('report/pemahaman_visimisi_v',$data,true); #load konten template file
+		$template['konten']	= $this->load->view('report/pencapaian_target_v',$data,true); #load konten template file
 		#load container for template view
 		$this->load->view('template/container',$template);
             //$this->load->view('admin/index', $data);  
@@ -43,13 +42,13 @@ class rpt_pemahaman_visimisi extends CI_Controller {
  
     
 	function datatable(){
-		echo $this->pemahaman_visimisi_m->get_datatables();
+		echo $this->pencapaian_target_m->get_datatables();
 	}
 	
 	function getdata($kuesioner_id){
 		$rs = '';
 		$params = array("kuesioner_id"=>$kuesioner_id);
-		$data = $this->pemahaman_visimisi_m->getdata($params);
+		$data = $this->pencapaian_target_m->getdata($params);
 		$i=1;
 		//var_dump($data);
 		foreach ($data as $d){

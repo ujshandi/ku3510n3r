@@ -3,7 +3,7 @@
  *INVISI
 */
 
-class pemahaman_visimisi_m extends CI_Model
+class pencapaian_target_m extends CI_Model
 {	
 	/**
 	* constructor
@@ -12,9 +12,36 @@ class pemahaman_visimisi_m extends CI_Model
         parent::__construct();
 		//$this->CI =& get_instance();
     }
+	
+	
+	function getdata($params){
+		$model_kuesioner_id = $this->mgeneral->getValue('model_kuesioner_target',array('id'=>'1'),'konstanta');  
+		$listjawab = $this->kuesioner_pertanyaan_model->get_model_jawab($model_kuesioner_id);
+		$select = 'p.tanya,';
+		foreach ($listjawab as $j){
+			$select .= $j->jawab_id.', ';
+		}
+		
+		$sql = "select tanya,  Ya, Tidak, Kosong,
+(Ya/jml_responden*100) as persen_ya,
+(Tidak/jml_responden*100) as persen_tidak,
+(Kosong/jml_responden*100) as persen_kosong
+ from  (
+select distinct p.tanya,kj.kuesioner_pertanyaan_id, count(*) as jml_responden, count(case when jawaban='Ya' then jawaban end) as Ya
+, count(case when jawaban='Tidak' then jawaban end) as Tidak,  count(case when jawaban='' then jawaban end) as Kosong
+from kuesioner_jawaban kj inner join
+kuesioner_pertanyaan kp on kj.kuesioner_pertanyaan_id = kp.kuesioner_pertanyaan_id
+inner join pertanyaan p on p.pertanyaan_id=kp.pertanyaan_id
+where kp.model_kuesioner_id = ".$model_kuesioner_id." and kp.kuesioner_id = ".$params['kuesioner_id']."
+group by kj.kuesioner_pertanyaan_id
+) as t1";
+		return $this->db->query($sql)->result();
+	
+	}
+	
 	function get_datatables(){
 		//$this->datatables->add_column('NOMOR','');
-		$model_kuesioner_id = $this->mgeneral->getValue('model_kuesioner_visimisi',array('id'=>'1'),'konstanta');  
+		$model_kuesioner_id = $this->mgeneral->getValue('model_kuesioner_target',array('id'=>'1'),'konstanta');  
 		$listjawab = $this->kuesioner_pertanyaan_model->get_model_jawab($model_kuesioner_id);
 		$select = 'p.tanya,';
 		foreach ($listjawab as $j){
@@ -48,31 +75,6 @@ group by kj.kuesioner_pertanyaan_id
 		$sOrder = "";
 	
 		return $this->datatables->generate();
-	
-	}
-	
-	function getdata($params){
-		$model_kuesioner_id = $this->mgeneral->getValue('model_kuesioner_visimisi',array('id'=>'1'),'konstanta');  
-		$listjawab = $this->kuesioner_pertanyaan_model->get_model_jawab($model_kuesioner_id);
-		$select = 'p.tanya,';
-		foreach ($listjawab as $j){
-			$select .= $j->jawab_id.', ';
-		}
-		
-		$sql = "select tanya,  Ya, Tidak, Kosong,
-(Ya/jml_responden*100) as persen_ya,
-(Tidak/jml_responden*100) as persen_tidak,
-(Kosong/jml_responden*100) as persen_kosong
- from  (
-select distinct p.tanya,kj.kuesioner_pertanyaan_id, count(*) as jml_responden, count(case when jawaban='Ya' then jawaban end) as Ya
-, count(case when jawaban='Tidak' then jawaban end) as Tidak,  count(case when jawaban='' then jawaban end) as Kosong
-from kuesioner_jawaban kj inner join
-kuesioner_pertanyaan kp on kj.kuesioner_pertanyaan_id = kp.kuesioner_pertanyaan_id
-inner join pertanyaan p on p.pertanyaan_id=kp.pertanyaan_id
-where kp.model_kuesioner_id = ".$model_kuesioner_id." and kp.kuesioner_id = ".$params['kuesioner_id']."
-group by kj.kuesioner_pertanyaan_id
-) as t1";
-		return $this->db->query($sql)->result();
 	
 	}
 	 

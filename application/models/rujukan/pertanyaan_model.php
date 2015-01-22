@@ -103,6 +103,7 @@ class Pertanyaan_model extends CI_Model
 			$this->db->where($whereData);
 			$result = $this->db->delete('pertanyaan_opsi'); 
 			foreach ($opsijawab as $j){
+				if ($j=="") continue;
 				$this->db->flush_cache();
 				$this->db->set($whereData);
 				$this->db->set('opsi',$j);

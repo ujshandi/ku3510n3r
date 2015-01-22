@@ -170,17 +170,19 @@ class Publish extends CI_Controller {
 							$rs .= '</div>
 											</div>';
 							 
-							 
+							 // class="floatlabel_3" placeholder="Floated Label" data-label="This is floated"
+							 //<label class="col-sm-12 control-label"> '.$pertanyaan->tanya_tambahan1.'</label>
 							if ($pertanyaan->tanya_tambahan1!=""){
 								$rs .= ' <div class="form-group" style="margin-left:20px">
-												<label class="col-sm-12 control-label"> '.$pertanyaan->tanya_tambahan1.'</label>
-												<div class="col-sm-12"><input type="text" size="100" name="pertanyaan['.$idx.'][tambahan1]"/>';
+												
+												<div class="col-sm-12"><input type="text"  placeholder="'.$pertanyaan->tanya_tambahan1.'" data-label="'.$pertanyaan->tanya_tambahan1.'" class="floatlabel" size="100" name="pertanyaan['.$idx.'][tambahan1]"/>';
 								$rs .= '</div></div>' ;
 							}
+							//<label class="col-sm-12 control-label"> '.$pertanyaan->tanya_tambahan2.'</label>
 							if ($pertanyaan->tanya_tambahan2!=""){
 								$rs .= ' <div class="form-group" style="margin-left:20px">
-												<label class="col-sm-12 control-label"> '.$pertanyaan->tanya_tambahan2.'</label>
-												<div class="col-sm-12"><input type="text" size="100" name="pertanyaan['.$idx.'][tambahan2]"/>';
+												
+												<div class="col-sm-12"><input type="text" placeholder="'.$pertanyaan->tanya_tambahan2.'" data-label="'.$pertanyaan->tanya_tambahan2.'" class="floatlabel" size="100" name="pertanyaan['.$idx.'][tambahan2]"/>';
 								$rs .= '</div></div>' ;
 							}
 							$idx++;

@@ -45,9 +45,10 @@ class status_kuesioner extends CI_Controller {
 	
 	function sent_email($kuesioner_responden_id){
 		$this->load->library('email');
+		$this->load->library('parser');
 		
-		$this->email->from('ujshandi@gmail.com', 'yJs');
-		$this->email->to('ourvisi@yahoo.com'); 
+		$this->email->from('admin@in-visi.com', 'yJs');
+		$this->email->to('ujshandi@gmail.com'); 
 		//$this->email->cc('another@another-example.com'); 
 		//$this->email->bcc('them@their-example.com'); 
 

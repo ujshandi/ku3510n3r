@@ -14,6 +14,18 @@ class Kuesioner_jawaban_model extends CI_Model
     }
 	
 	
+	function get_preview_data($params){
+		$where = " WHERE 1=1 ";
+		if ($params['kuesioner_id']) $where .= " and kp.kuesioner_id = ".$params['kuesioner_id'];
+		if ($params['responden_id']) $where .= " and kj.responden_id = ".$params['responden_id'];
+		$sql = "SELECT kj.responden_id,mk.nama as nama_model,mk.singkatan as singkatan_model, p.tanya,p.tanya_tambahan1, p.tanya_tambahan2,kj.jawaban, kj.jawaban_tambahan1, kj.jawaban_tambahan2
+FROM kuesioner_jawaban kj inner join kuesioner_pertanyaan kp on kj.kuesioner_pertanyaan_id = kp.kuesioner_pertanyaan_id
+INNER JOIN pertanyaan p ON p.pertanyaan_id = kp.pertanyaan_id INNER JOIN model_kuesioner mk ON kp.model_kuesioner_id = mk.model_kuesioner_id ".$where;
+		$sql .= ' ORDER BY mk.singkatan ';
+		return $this->db->query($sql)->result();
+	
+	}
+	
 	
 	function get_datatables(){
 		//$this->datatables->add_column('NOMOR','');
@@ -108,6 +120,12 @@ class Kuesioner_jawaban_model extends CI_Model
 				
 				$this->db->insert('kuesioner_jawaban');				
 			}
+			
+			$this->db->flush_cache();
+			$this->db->where('kuesioner_id',$data['kuesioner_id']);	
+			$this->db->where('responden_id',$data['responden_id']);	
+			$this->db->set('status_respon',date('Y-m-d H:i:s'));//$this->session->userdata('user_id').';'.
+			$this->db->update('kuesioner_responden');
 		}
 		
 		//echo $this->db->last_query();

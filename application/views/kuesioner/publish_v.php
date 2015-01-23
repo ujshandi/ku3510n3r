@@ -37,12 +37,12 @@
         <div class="panel-body"> 
                 <section class="panel">
                     <header class="panel-heading">
-                        <b>PREVIEW DAFTAR PERTANYAAN KUESIONER</b><br>
-						TEMA : <?=$kuesioner[0]->tema?><br>
-						PERIODE : <?=$kuesioner[0]->periode_awal?> s.d <?=$kuesioner[0]->periode_akhir?>
-                        <span class="pull-right">
-                            
-                         </span> 
+						<pre>
+                        <b>
+						<?=$kuesioner[0]->tema?></b><br>
+						RESPONDEN 	: <?=$responden?><br>
+						PERIODE 	: <?=$kuesioner[0]->periode_awal?> s.d <?=$kuesioner[0]->periode_akhir?>
+                        </pre>
                     </header>
 					
 					
@@ -167,12 +167,20 @@
 				klone.find('#labelPendapat-1').each(function() {
 					if($(this).is('label')) {
 						$(this).html('<h4>Pendapat ke-'+pendapatCounter+'</h4>');
-					} else {
+					
+					}else {
 						
 					}
 				});     
-				$(klone).insertBefore("#divTambahPendapat");
+				$(klone).find('input:text').each(function(){
+					$(this).val('');
+					$(this).css('padding-top','10px');
+					$(this).trigger("change");
 				
+				});
+				//$(klone).find('.label-floatlabel ').css('display','none');//hide();
+				$(klone).insertBefore("#divTambahPendapat");
+				$('.floatlabel').floatlabel();	
 			
 			};
 			

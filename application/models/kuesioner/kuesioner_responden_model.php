@@ -37,6 +37,17 @@ from responden r inner join instansi i on i.instansi_id = r.instansi_id left joi
 	
  
  
+	function getdata_status($params){
+		$where = " WHERE 1=1 ";
+		if ($params['kuesioner_id']) {
+			 $where .=' and kr.kuesioner_id = '.$params['kuesioner_id'];
+		}
+		$sql = "SELECT kr.kuesioner_responden_id, r.nama, kr.status_terkirim, kr.status_respon,kr.kuesioner_id, kr.responden_id  
+		FROM kuesioner_responden kr INNER JOIN responden r ON r.responden_id = kr.responden_id ".$where;
+		return $this->db->query($sql)->result();
+	
+	}
+	
 	
 	function get_datatables(){
 		//$this->datatables->add_column('NOMOR','');

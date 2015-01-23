@@ -53,6 +53,7 @@ class Publish extends CI_Controller {
 		 $data['kuesioner']		= $this->kuesioner_model->pilihdata(array('kuesioner_id'=>$kuesioner_id)); 
 		 $data['kuesioner_id'] = $kuesioner_id;
 		 $data['responden_id'] = $responden_id;
+		 $data['responden']		= $this->mgeneral->getValue('nama',array('responden_id'=>$responden_id),'responden');
 		$template['konten']	= $this->load->view('kuesioner/publish_v',$data,true); #load konten template file
 		
 		#load container for template view
@@ -71,6 +72,13 @@ class Publish extends CI_Controller {
 					<input type="hidden" name="responden_id" id="responden_id" value="'.$responden_id.'"/>';
 		$listmodel = $this->kuesioner_pertanyaan_model->get_distinct_model($kuesioner_id);
 		//var_dump($listmodel);
+		
+		//periksa jika sudah pernah isi kuesioner 
+		$sudahIsi = $this->mgeneral->getValue('status_respon',array('kuesioner_id'=>$kuesioner_id,'responden_id'=>$responden_id),'kuesioner_responden');
+		if (isset($sudahIsi)){
+			$rs = 'Maaf, anda sebelumnya sudah menyelesaikan pengisian kuesioner ini.';
+			return $rs;
+		}
 		if (!isset($listmodel)){
 			$rs .="Data belum ada";
 		}
@@ -208,9 +216,9 @@ class Publish extends CI_Controller {
 												<label id="labelPendapat-1" class="col-sm-12 control-label"><h4 color="#3c763d">Pendapat ke-1</h4></label>
 												<div class="col-lg-12" style="border:1px solid;border-radius:10px;padding-top:10px;border-color:#dddddd;padding-bottom:20px">';    
 						foreach ($listjawab as $jawab){
+							//	<label class="col-sm-12 control-label"> '.$jawab->nama.'</label>
 							$component .= ' <div class="form-group" style="margin-left:20px">
-												<label class="col-sm-12 control-label"> '.$jawab->nama.'</label>
-												<div class="col-sm-12"><input name="pendapat[]" type="text" size="100"/>';
+												<div class="col-sm-12"><input name="pendapat[]" type="text"   placeholder="'.$jawab->nama.'" data-label="'.$jawab->nama.'" class="floatlabel" size="100"/>';
 							$component .= '</div></div>' ;
 						}//endforeacch listjawab
 						$component .= '</div></div><br><br>';
@@ -245,13 +253,25 @@ class Publish extends CI_Controller {
             try{
 				$this->kuesioner_jawaban_model->simpan($data);
 				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
-					<p>Data Kuesioner telah tersimpan.</p>';
+					<p>Terima kasih atas partisipasinya.</p>';
 			}
 			catch (Exception $e){
-				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
-					<p>Data Kuesioner gagal tersimpan.</p>';
+				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Error</b></h5>
+					<p>Maaf data kuesioner gagal tersimpan, silahkan hubungi administrator.</p>';
 			}
-			echo $msg;
+			$this->after_submit($msg);
+	}
+	
+	
+	function after_submit($msg){
+		$setting['sd_left']	= array('cur_menu'	=> "KUESIONER");
+		$setting['page']	= array('pg_aktif'	=> "datatables");
+		$template			= $this->template->load_popup($setting); #load static template file		
+		$data['msg'] = $msg;
+		$template['konten']	= $this->load->view('kuesioner/publish_after_v',$data,true); #load konten template file
+		
+		#load container for template view
+		$this->load->view('template/container_popup',$template);
 	}
 	
 

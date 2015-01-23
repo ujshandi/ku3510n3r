@@ -68,7 +68,7 @@
 						</tr>
 						
 					</thead>
-					<tbody id="body-visimisi">					 
+					<tbody id="body-targets">					 
 							<tr class="odd gradeX">
 							   <td>&nbsp;</td>
 							   <td>&nbsp;</td>
@@ -96,7 +96,7 @@
 	refreshTable = function(){
 		 
 		var kuesioner_id = $('#fil_kuesioner_id').val();	
-		$('#body-visimisi').load('<?=base_url()?>report/rpt_pencapaian_target/getdata/'+kuesioner_id);
+		$('#body-targets').load('<?=base_url()?>report/rpt_pencapaian_target/getdata/'+kuesioner_id);
 		
 	};
 	$(document).ready(function(){

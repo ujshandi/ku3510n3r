@@ -22,6 +22,7 @@ class status_kuesioner extends CI_Controller {
         $this->load->model('/security/sys_menu_model');
         $this->load->model('/kuesioner/kuesioner_model');   
         $this->load->model('/kuesioner/kuesioner_responden_model');   
+        $this->load->model('/kuesioner/kuesioner_jawaban_model');   
 
     }
 
@@ -38,9 +39,105 @@ class status_kuesioner extends CI_Controller {
             //$this->load->view('admin/index', $data);  
     }
  
-    
-	function datatable(){
+    function datatable(){
 		echo $this->kuesioner_responden_model->get_datatables();
+	}
+	
+	
+	function getdata($kuesioner_id){
+		$rs = '';
+		$params = array("kuesioner_id"=>$kuesioner_id);
+		$data = $this->kuesioner_responden_model->getdata_status($params);
+		$i=1;
+		//var_dump($data);
+		foreach ($data as $d){
+			$rs .= '<tr class="odd gradeX">';
+			$rs .= '<td>'.($i++).'</td>';
+			$rs .= '<td>'.$d->nama.'</td>';
+			$rs .= '<td>'.$d->status_terkirim.'</td>';
+			$rs .= '<td><a href="#" onclick="detail_jawaban('.$d->kuesioner_id.','.$d->responden_id.')"> '.$d->status_respon.'</a></td>'; 
+			$rs .= '</tr>';
+		}
+		echo $rs;
+	}
+	
+	function get_detail_respon($kuesioner_id,$responden_id){
+	
+		$setting['sd_left']	= array('cur_menu'	=> "KUESIONER");
+		$setting['page']	= array('pg_aktif'	=> "datatables");
+		$template			= $this->template->load_popup($setting); #load static template file		
+		$data['data'] = $this->get_respon_preview($kuesioner_id,$responden_id);
+		$data['kuesioner']		= $this->kuesioner_model->pilihdata(array('kuesioner_id'=>$kuesioner_id)); 
+		$data['responden']		= $this->mgeneral->getValue('nama',array('responden_id'=>$responden_id),'responden'); 
+		$template['konten']	= $this->load->view('kuesioner/kuesioner_respon',$data,true); #load konten template file
+		
+		#load container for template view
+		$this->load->view('template/container_popup',$template);
+	}
+
+	function get_respon_preview($kuesioner_id,$responden_id){
+		$rs = '';
+		$params['kuesioner_id']= $kuesioner_id;
+		$params['responden_id']= $responden_id;
+		 
+			 
+	//	$rs .= "<b>Nama Model : ".$model->nama." (".$model->singkatan.")</b><br>";
+		$respons = $this->kuesioner_jawaban_model->get_preview_data($params);
+		if (!isset($respons)){
+			$rs .= 'Belum ada Respon';
+		}else {
+		 
+			$rs .= '<table class="display table table-bordered table-striped">';
+			$rs .= '<thead><tr  align="center">						
+				
+				<th style="vertical-align:middle;text-align:center;width:1%"  width="20">No.</th>
+				<th  style="vertical-align:middle;text-align:center" width="230" >Pertanyaan / Pernyataan / Uraian</th>';
+				
+			 
+				$rs .= '<th style="vertical-align:middle;text-align:center" width="100" >Jawaban</th>
+			</tr>';				
+			 
+			$rs .= 	'</thead>';	
+			$rs .= '<tbody>';		
+			$i=1;
+			$model = '';
+			foreach($respons as $r){
+				if ($model!=$r->nama_model){
+					$model=$r->nama_model;
+					$rs .= '<tr>';
+					$rs .= '<td colspan="3"><b>'.$r->nama_model.' ('.$r->singkatan_model.')'.'</b></td>';
+					$rs .= '</tr>';
+					$i=1;
+				}
+				$rs .= '<tr>';
+				$rs .= '<td>'.$i++.'</td>';
+				$rs .= '<td>'.$r->tanya.'</td>';
+				$rs .= '<td>'.$r->jawaban.'</td>';
+				$rs .= '</tr>';
+				
+				if ($r->tanya_tambahan1!=""){
+					$rs .= '<tr>';
+					$rs .= '<td>&nbsp;</td>';
+					$rs .= '<td>'.$r->tanya_tambahan1.'</td>';
+					$rs .= '<td>'.$r->jawaban_tambahan1.'</td>';
+					$rs .= '</tr>';
+				}
+				if ($r->tanya_tambahan2!=""){
+					$rs .= '<tr>';
+					$rs .= '<td>&nbsp;</td>';
+					$rs .= '<td>'.$r->tanya_tambahan2.'</td>';
+					$rs .= '<td>'.$r->jawaban_tambahan2.'</td>';
+					$rs .= '</tr>';
+				}
+			
+			}//end foreach pertanyaan
+			$rs .= '</tbody>';		
+			$rs .= '</table><br>';		
+		}//end if isset pertanyaan
+		 
+		 
+		return $rs;
+		
 	}
 	
 	function sent_email($kuesioner_responden_id){

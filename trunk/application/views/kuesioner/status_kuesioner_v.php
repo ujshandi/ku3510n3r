@@ -1,3 +1,11 @@
+
+<style type="text/css">
+	select {width:100%;}
+	th{
+		text-align:center;
+		vertical-align:middle !important;
+	}
+</style>
 <section id="main-content">
 	<section class="wrapper">
 		<div class="row">
@@ -44,26 +52,26 @@
 					<table class="display table table-bordered table-striped" id="rpt-tbl" width="100%">
 					<thead>
 						<tr> 
-							  <th rowspan="2">No.</th>
-							  <th rowspan="2">kuesioner_responden_id</th>
-							  <th rowspan="2">Responden</th>
+							  <th rowspan="2" style="width:1%">No.</th>
+							 
+							  <th style="width:60%" rowspan="2">Responden</th>
 							  <th colspan="2">Status</th>
 							  
 						</tr>
 						<tr>
-							<th>Terkirim</th>
-							<th>Direspon</th>
+							<th style="width:20%">Terkirim</th>
+							<th style="width:20%">Direspon</th>
 						</tr>
 						
 					</thead>
-					<tbody>					 
+					<tbody id="body-status">					 
 							<tr class="odd gradeX">
 							   <td>&nbsp;</td>
+							  
 							   <td>&nbsp;</td>
 							   <td>&nbsp;</td>
 							   <td>&nbsp;</td>
-							   <td>&nbsp;</td>
-							  <td>&nbsp;</td> 
+							  
 							</tr>				 
 					  </tbody>
 					</table>
@@ -76,75 +84,79 @@
 	</section>
 </section>
 
-	<style type="text/css">
-	select {width:100%;}
-</style>
 <script>
 	var oTable;
 	refreshTable = function(){
-		if (oTable)
-            oTable.fnDestroy();
-		var kuesioner_id = $('#fil_kuesioner_id').val();	
-		oTable= $('#rpt-tbl').dataTable({
-            "bProcessing": true,
-            "searching": false,
-			"autoWidth": false,
-			"sDom": 't<"bottom"plri>',
-            "bServerSide": true,
-            "sAjaxSource": '<?php echo base_url(); ?>kuesioner/status_kuesioner/datatable',
-            "bJQueryUI": true,
-			"aoColumns" : [
-					{ sWidth: '1%'  },					
-					{ sWidth: '0%'  },					
-					{ sWidth: '50%' },
-					{ sWidth: '25%' },
-					{ sWidth: '25%' } 
-				],
-			"columnDefs" :  [
-				{"orderable": false},
-				{"targets": [ 2 ],"visible": false,},
-				{"orderable": false},
-				{"orderable": false},
-				{"orderable": false}
+		// if (oTable)
+            // oTable.fnDestroy();
+		var kuesioner_id = $('#fil_kuesioner_id').val();
+		$('#body-status').load('<?=base_url()?>kuesioner/status_kuesioner/getdata/'+kuesioner_id);		
+		// oTable= $('#rpt-tblx').dataTable({
+            // "bProcessing": true,
+            // "searching": false,
+			// "autoWidth": false,
+			// "sDom": 't<"bottom"plri>',
+            // "bServerSide": true,
+            // "sAjaxSource": '<?php echo base_url(); ?>kuesioner/status_kuesioner/datatable',
+            // "bJQueryUI": true,
+			// "aoColumns" : [
+					// { sWidth: '1%'  },					
+					// { sWidth: '0%'  },					
+					// { sWidth: '50%' },
+					// { sWidth: '25%' },
+					// { sWidth: '25%' } 
+				// ],
+			// "columnDefs" :  [
+				// {"orderable": false},
+				// {"targets": [ 2 ],"visible": false,},
+				// {"orderable": false},
+				// {"orderable": false},
+				// {"orderable": false}
 			
-			],
-          //  "sPaginationType": "full_numbers",
-            "iDisplayStart ": 20,
+			// ],
+        
+            // "iDisplayStart ": 20,
 			
-			"fnServerParams": function (aoData) {
-				aoData.push(
-				{ "name": "kuesioner_id", "value": kuesioner_id }
-				);
-			},
-			"fnCreatedRow": function( nRow, aData, iDataIndex ) {
-				//alert(aData[2]);
-				//var fields = aData.split(',');		
-					if (aData[3]==null)
-					$('td:eq(2)', nRow).append("<div class='col1d'><button class='editBut' onclick='sentEmail("+aData[1]+")'>Click</button></div>");
-			   },
-            "fnInitComplete": function () {
-                //oTable.fnAdjustColumnSizing();
-				this.fnAdjustColumnSizing(true);
-            },
-			"aoColumnDefs": [{ 'bSortable': false, 'aTargets': [ 0 ] },
-				{"aTargets": [ 1 ],"bVisible": false}],
-			'fnRowCallback':function(nRow, aData, iDisplayIndex, iDisplayIndexFull){
-				var index = iDisplayIndexFull  +1;
-				$('td:eq(0)',nRow).html(index);
-				return nRow;
-			},
-            'fnServerData': function (sSource, aoData, fnCallback) {
-                $.ajax
-                ({
-                    'dataType': 'json',
-                    'type': 'POST',
-                    'url': sSource,
-                    'data': aoData,
-                    'success': fnCallback
-                });
-            }
-        });
+			// "fnServerParams": function (aoData) {
+				// aoData.push(
+				// { "name": "kuesioner_id", "value": kuesioner_id }
+				// );
+			// },
+			// "fnCreatedRow": function( nRow, aData, iDataIndex ) {
+ 	
+					// if (aData[3]==null)
+					// $('td:eq(2)', nRow).append("<div class='col1d'><button class='editBut' onclick='sentEmail("+aData[1]+")'>Click</button></div>");
+			   // },
+            // "fnInitComplete": function () {
+               
+				// this.fnAdjustColumnSizing(true);
+            // },
+			// "aoColumnDefs": [{ 'bSortable': false, 'aTargets': [ 0 ] },
+				// {"aTargets": [ 1 ],"bVisible": false}],
+			// 'fnRowCallback':function(nRow, aData, iDisplayIndex, iDisplayIndexFull){
+				// var index = iDisplayIndexFull  +1;
+				// $('td:eq(0)',nRow).html(index);
+				// return nRow;
+			// },
+            // 'fnServerData': function (sSource, aoData, fnCallback) {
+                // $.ajax
+                // ({
+                    // 'dataType': 'json',
+                    // 'type': 'POST',
+                    // 'url': sSource,
+                    // 'data': aoData,
+                    // 'success': fnCallback
+                // });
+            // }
+        // });
 	};
+	
+	
+	detail_jawaban = function(kuesioner_id,responden_id){
+		window.open('<?=base_url()?>kuesioner/status_kuesioner/get_detail_respon/'+kuesioner_id+'/'+responden_id,'_blank');			
+	};
+	
+	
 	$(document).ready(function(){
 		refreshTable();
 		$('select').select2({minimumResultsForSearch: -1, width:'resolve'});

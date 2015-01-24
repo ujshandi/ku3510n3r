@@ -49,8 +49,13 @@ class Publish extends CI_Controller {
 		$setting['sd_left']	= array('cur_menu'	=> "KUESIONER");
 		$setting['page']	= array('pg_aktif'	=> "datatables");
 		$template			= $this->template->load_popup($setting); #load static template file		
-		$data['data'] = $this->get_pertanyaan_preview($kuesioner_id,$responden_id);
+		//$data['data'] = $this->get_pertanyaan_preview($kuesioner_id,$responden_id);
 		 $data['kuesioner']		= $this->kuesioner_model->pilihdata(array('kuesioner_id'=>$kuesioner_id)); 
+		if (!isset($data['kuesioner'])){
+			$data['kuesioner'][0]->tema = 'Kuesioner belum diregister';
+			$data['kuesioner'][0]->periode_awal = '-';
+			$data['kuesioner'][0]->periode_akhir = '-';
+		}
 		 $data['kuesioner_id'] = $kuesioner_id;
 		 $data['responden_id'] = $responden_id;
 		 $data['responden']		= $this->mgeneral->getValue('nama',array('responden_id'=>$responden_id),'responden');
@@ -67,23 +72,43 @@ class Publish extends CI_Controller {
 	}
 	
 	
-	function get_pertanyaan_preview($kuesioner_id,$responden_id){
+	function get_pertanyaan_preview($kuesioner_id,$responden_id,$ajaxMode=false){
 		$rs = '<input type="hidden" name="kuesioner_id" id="kuesioner_id" value="'.$kuesioner_id.'"/>
 					<input type="hidden" name="responden_id" id="responden_id" value="'.$responden_id.'"/>';
 		$listmodel = $this->kuesioner_pertanyaan_model->get_distinct_model($kuesioner_id);
-		//var_dump($listmodel);
+		 
+		//periksa expire or terdaftar tidak responden yg bersangkutan
+		$bolehIsi = $this->mgeneral->getValue('kuesioner_responden_id',array('kuesioner_id'=>$kuesioner_id,'responden_id'=>$responden_id),'kuesioner_responden');
+	//	var_dump($bolehIsi);
+		if ($bolehIsi==""){
+			$rs = 'Maaf, anda tidak terdaftar untuk pengisian kuesioner ini.';
+			if ($ajaxMode){
+				echo $rs;
+				return;
+			}
+			else
+				return $rs;
+		}
 		
 		//periksa jika sudah pernah isi kuesioner 
 		$sudahIsi = $this->mgeneral->getValue('status_respon',array('kuesioner_id'=>$kuesioner_id,'responden_id'=>$responden_id),'kuesioner_responden');
-		if (isset($sudahIsi)){
+		//var_dump($sudahIsi);die;
+		if ($sudahIsi!=""){
 			$rs = 'Maaf, anda sebelumnya sudah menyelesaikan pengisian kuesioner ini.';
-			return $rs;
+			if ($ajaxMode){
+				echo $rs;
+				return;
+			}
+			else
+				return $rs;
 		}
 		if (!isset($listmodel)){
 			$rs .="Data belum ada";
+			
 		}
 		else{
-			$idx=0;
+			//var_dump('kadie');die;
+			$idx=0;$idxPendapat=0;
 			foreach ($listmodel as $model){
 				$rs .= "<h2>".$model->nama." (".$model->singkatan.")</h2>";
 				if ($model->tipe_jawaban=='Pilihan'){
@@ -200,6 +225,8 @@ class Publish extends CI_Controller {
 						$rs .= ' </div>						
 								</section>';		
 					}//end if isset pertanyaan
+					
+					
 				}//end if tipejawban Pilihan
 				else if($model->tipe_jawaban=="Pendapat"){
 						//tidak usah ada pertanyaan hanya isian berdasarkan kriteria kriteria pada modeljawaban;
@@ -214,14 +241,17 @@ class Publish extends CI_Controller {
 					if (isset($listjawab)){                         
 						$component = '<div id="divPendapat-1" class="form-group" style="margin-left:20px">
 												<label id="labelPendapat-1" class="col-sm-12 control-label"><h4 color="#3c763d">Pendapat ke-1</h4></label>
+												<input type="hidden" id="seq-1" class="seq" name="pendapat['.$idxPendapat.'][seq]" value="1"/>
 												<div class="col-lg-12" style="border:1px solid;border-radius:10px;padding-top:10px;border-color:#dddddd;padding-bottom:20px">';    
 						foreach ($listjawab as $jawab){
-							//	<label class="col-sm-12 control-label"> '.$jawab->nama.'</label>
+							 
 							$component .= ' <div class="form-group" style="margin-left:20px">
-												<div class="col-sm-12"><input name="pendapat[]" type="text"   placeholder="'.$jawab->nama.'" data-label="'.$jawab->nama.'" class="floatlabel" size="100"/>';
+											<input type="hidden" class="jawab" name="pendapat['.$idxPendapat.'][jawab][]" value="'.$jawab->jawab_id.';'.$jawab->nama.'"/>
+												<div class="col-sm-12"><input name="pendapat['.$idxPendapat.'][pendapat][]" type="text"   placeholder="'.$jawab->nama.'" data-label="'.$jawab->nama.'" class="floatlabel" size="100"/>';
 							$component .= '</div></div>' ;
 						}//endforeacch listjawab
 						$component .= '</div></div><br><br>';
+						$idxPendapat++;
 					}
 					$rs .= $component;
 					$rs .= '<div class="form-group" id="divTambahPendapat">	
@@ -232,7 +262,10 @@ class Publish extends CI_Controller {
 				}//end if tipejawaban Pendapat
 			}//end foreach model
 		}//end if isset model
-		return $rs;
+		if ($ajaxMode)
+			echo $rs;
+		else
+			return $rs;
 		
 	}
 	
@@ -240,6 +273,7 @@ class Publish extends CI_Controller {
 		$data['kuesioner_id'] = $this->input->post('kuesioner_id');
 		$data['responden_id'] = $this->input->post('responden_id');
 		$data['pertanyaan'] = $this->input->post('pertanyaan');
+		$data['pendapat'] = $this->input->post('pendapat');
 		if (isset($data['pertanyaan'])){
 			for ($i=0;$i<count($data['pertanyaan'])-1;$i++){
 				//$data[$data['kuesioner_pertanyaan_id']]['jawab'] = $data['kuesioner_pertanyaan_id'][$i];

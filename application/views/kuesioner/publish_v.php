@@ -47,9 +47,10 @@
 					
 					
                     <div class="panel-body">
-					
+						<div id="loading" style="position:absolute;left:45%" class=""><img src="<?=base_url('static')?>/images/ajax-loader.gif">
+						<br>Loading...</div>
 						<form  id="wizard" method="post" action="<?=base_url()?>/kuesioner/publish/submit">
-                            <?=$data?>
+                            <?='';//$data?>
 						</form > 
                     </div>
 					 
@@ -64,11 +65,18 @@
 	<script  type="text/javascript" language="javascript">
 		var pendapatCounter = 1;
 		$(document).ready(function() {
-			
-
-			
-
-			 $("#wizard").steps({
+			$(document).ajaxStart(function(){
+					$("#loading").fadeIn();
+				}).ajaxStop(function(){
+					$("#loading").fadeOut();	});
+					
+					
+			$.ajax({
+			url:'<?=base_url()?>kuesioner/publish/get_pertanyaan_preview/<?=$kuesioner_id?>/<?=$responden_id?>/true',
+			success : function(data){
+				$("#wizard").html(data);
+				
+				$("#wizard").steps({
 					headerTag: "h2",
 					bodyTag: "section",
 					transitionEffect: "slideLeft",
@@ -81,7 +89,7 @@
 						});
 					},
 					onFinishing: function (event, currentIndex) { 
-						alert('validation here...');
+					//	alert('validation here...');
 						return true; 
 					}, 
 					onFinished: function (event, currentIndex) { 
@@ -111,7 +119,7 @@
 									// }
 									
 								//	postData.push({name:"daftar_pertanyaan",value:ids});
-								 alert(postData);
+								// alert(postData);
 								var formURL = $(this).attr("action");
 								$.ajax(
 								{
@@ -152,7 +160,15 @@
 						previous: "Sebelumnya",
 						loading: "Loading ..."
 					}
-				});
+				});//end step
+				$('.floatlabel').floatlabel();
+			}//end success
+			
+			});
+
+			
+
+			 
 
 			$('#cetakpdf_kuesioner').click(function(){				
 			//	window.open('<=base_url()?>laporan/renstra_eselon1/target_print_pdf/<=$periode?>/<=$e1?>','_blank');			
@@ -168,14 +184,27 @@
 					if($(this).is('label')) {
 						$(this).html('<h4>Pendapat ke-'+pendapatCounter+'</h4>');
 					
-					}else {
+					}
+					else {
 						
 					}
 				});     
+				$(klone).find('.seq').each(function(){
+					$(this).val(pendapatCounter);
+					$(this).attr('name','pendapat['+(pendapatCounter-1)+'][seq]');
+				
+				});
+				
+				$(klone).find('.jawab').each(function(){
+					//$(this).val(pendapatCounter);
+					$(this).attr('name','pendapat['+(pendapatCounter-1)+'][jawab][]');
+				
+				});
 				$(klone).find('input:text').each(function(){
 					$(this).val('');
 					$(this).css('padding-top','10px');
 					$(this).trigger("change");
+					$(this).attr('name','pendapat['+(pendapatCounter-1)+'][pendapat][]');
 				
 				});
 				//$(klone).find('.label-floatlabel ').css('display','none');//hide();
@@ -184,6 +213,6 @@
 			
 			};
 			
-			$('.floatlabel').floatlabel();
+		
 		});
 	</script>

@@ -7,37 +7,21 @@ class User_access extends CI_Controller{
 		//if ($this->session->userdata('logged_in_e_tracking') != TRUE) redirect('security/login');		
 		if ($this->session->userdata('user_id') != TRUE) redirect(base_url().'welcome');	
 		$this->load->model('/security/sys_menu_model');
-		$this->load->model('/admin/user_access_model');
-		
-		$this->load->model('/admin/user_model');		
-		$this->load->helper('form');
-		$tmp = '<script type="text/javascript">
-				$(document).ready(function() {
-					$("#loading").ajaxStart(function(){
-					$(this).fadeIn();
-				}).ajaxStop(function(){
-					$(this).fadeOut();	});
-				});	</script>';
-		$tmp .= '<style type="text/css">#loading { position: absolute; top: 0; left:0; color: white; background-color: red; padding: 5px 10px; font: 12px</style>';		
-		$this->extraHeaderContent= $tmp;		
+		$this->load->model('/security/user_access_model');		
+		$this->load->model('/security/user_model');		
+		 
+	 	
 	}
 		
 	public function index(){
-	    $data['title'] = 'User Akses';	  	 		
-	    $data['objectId'] = 'userAkses';	  	 		
-		$user_id = (isset($user_id)?$user_id:-1);
-		$menu_group = (isset($menu_group)?$menu_group:-2);
-	  $data['extraHeadContent'] = $this->extraHeaderContent;
-	  /* $data['user_id']  = $user_id;
-	  $data['menugroup']  = $menu_group;
-	  $data['menuList'] =  $this->sys_menu_model->prepareMenu($this->session->userdata('groupId'),'');
-	  $data['gotoList'] = $this->sys_menu_model->gotoMenuList;
-	  $data['aksesList'] =  $this->user_access_model->GetListGrid( $user_id,$menu_group);
-	  $data['groupList'] = $this->group_user_model->GetListCombo(false,$this->session->userdata('groupLevel'));	 
-	  $data['menuGroupList'] = $this->sys_menu_model->GetListDistinctGroupModule();	  */
-	  
-	  $this->load->view('admin/user_access_vw',$data);
-	  
+	     $setting['sd_left']	= array('cur_menu'	=> "ADMIN");
+		$setting['page']	= array('pg_aktif'	=> "datatables");
+		$template			= $this->template->load($setting); #load static template file
+		  $data = null;   
+		$data['list_user'] =$this->user_model->get_list(); 
+		$template['konten']	= $this->load->view('security/user_access_v',$data,true); #load konten template file
+		#load container for template view
+		$this->load->view('template/container',$template);
 	}	
 	
 	function loadMenu(){
@@ -63,15 +47,19 @@ class User_access extends CI_Controller{
 		//var_dump($data);
 			$result = $this->user_access_model->saveToDb($data);				
 			if ($result){
-				echo json_encode(array('success'=>true, 'status'=>"Penyimpanan Berhasil"));
+				 $msg = '<h5><i class="fa fa-check-square-o"></i> <b>Sukses</b></h5>
+					<p>Data Hak Pengguna berhasil disimpan.</p>';
 			} else {
-				echo json_encode(array('msg'=>"Data Tidak bisa disimpan"));
+				$msg = '<h5><i class="fa fa-check-square-o"></i> <b>Error</b></h5>
+					<p>Data Hak Pengguna gagal disimpan.</p>';
 			}
+			echo $msg;
 		//}
 	}
 	
-    public 	function get_data($user_id,$objectId){			
-		echo $this->user_access_model->getData($user_id,$objectId);		
+    public 	function get_data($user_id ){			
+		echo $this->user_access_model->getData($user_id);		
+		
 	}
 	
 	

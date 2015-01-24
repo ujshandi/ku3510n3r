@@ -14,7 +14,7 @@
                         
 			<section class="panel">
 				<header class="panel-heading">
-					Pencapaian Target Kerja
+					Hak Pengguna
 				</header>
 				<!-- filter area-->
 				<div class="feed-box">
@@ -29,9 +29,9 @@
 							<div class="form-group">
 							 
 							<div class="form-group">
-								<label class="col-md-2 control-label">Tema Kuesioner</label>
+								<label class="col-md-2 control-label">Pengguna</label>
 								<div class="col-md-5">
-							   <?=form_dropdown('fil_kuesioner_id',$list_kuesioner,'0','id="fil_kuesioner_id" class="populate" style="width:100%"')?>
+							   <?=form_dropdown('fil_user_id',$list_user,'0','id="fil_user_id" class="populate" style="width:100%"')?>
 								</div>
 							</div> 
 							<div class="form-group">
@@ -48,27 +48,27 @@
 				<!-- end filter area-->
 				
 				<div class="panel-body">
-				    
+				   <form id="access-form" method="post" action="<?=base_url()?>security/user_access/save"> 
 				   <div class="adv-table">
 					<table class="display table table-bordered table-striped" id="rpt-tblx" width="100%">
 					<thead>
 						<tr> 
-							  <th  rowspan="2"  align="center" valign="middle">No.</th>
-							  <th rowspan="2">Pertanyaan</th>
-							  <th colspan="3">Jumlah Jawaban</th>
-							  <th colspan="3">Persentase Jawaban Dari Jumlah Responden</th>
+							  <th  rowspan="2"  align="center" width="1%" valign="middle">No.</th>
+							  <th rowspan="2">Menu</th>
+							  <th colspan="6">Hak Akses</th>
 						</tr>
 						<tr>
-							<th>Ya</th>
-							<th>Tidak</th>
-							<th>Kosong</th>
-							<th>Ya</th>
-							<th>Tidak</th>
-							<th>Kosong</th>
+							<th>Tambah</th>
+							<th>Edit</th>
+							<th>Hapus</th>
+							<th>Lihat</th>
+							<th>Cetak</th>
+							<th>Excel</th>
+							<th>Import</th>
 						</tr>
 						
 					</thead>
-					<tbody id="body-targets">					 
+					<tbody id="body-access">					 
 							<tr class="odd gradeX">
 							   <td>&nbsp;</td>
 							   <td>&nbsp;</td>
@@ -78,11 +78,16 @@
 							  <td>&nbsp;</td>
 							  <td>&nbsp;</td>
 							  <td>&nbsp;</td>
+							  <td>&nbsp;</td>
 							</tr>				 
 					  </tbody>
 					</table>
 					</div>
-
+					  <div class="pull-right">
+						<button type="submit" id="btn-save" class="btn btn-info">Simpan</button>       
+					</div>
+					</form>
+					
 				</div>
 			</section>    
             </div>
@@ -95,14 +100,49 @@
 	var oTable;
 	refreshTable = function(){
 		 
-		var kuesioner_id = $('#fil_kuesioner_id').val();	
-		$('#body-targets').load('<?=base_url()?>report/rpt_pencapaian_target/getdata/'+kuesioner_id);
+		var fil_user_id = $('#fil_user_id').val();	
+		$('#body-access').load('<?=base_url()?>security/user_access/get_data/'+fil_user_id);
 		
 	};
 	$(document).ready(function(){
 		refreshTable();
 		$('select').select2({minimumResultsForSearch: -1, width:'resolve'});
-		
+		$( "#access-form" ).submit(function( event ) {
+			var fil_user_id 	= $('#fil_user_id').val();
+		 
+			
+			if(fil_user_id==""){
+				alert("Pengguna belum ditentukan");
+				 $('#fil_user_id').focus();
+				return false; 
+			}else{
+				
+			 var postData = $(this).serializeArray();
+				var formURL = $(this).attr("action");
+				$.ajax(
+				{
+					url : formURL,
+					type: "POST",
+					data : postData,
+					success:function(data, textStatus, jqXHR) 
+					{
+						//data: return data from server
+						$.gritter.add({text: data});
+					 
+						 
+					},
+					error: function(jqXHR, textStatus, errorThrown) 
+					{
+						//if fails   
+						$.gritter.add({text: '<h5><i class="fa fa-exclamation-triangle"></i> <b>Eror !!</b></h5> <p>'+errorThrown+'</p>'});
+					 
+					}
+				});
+			
+			  event.preventDefault();
+			
+			}
+		});
 		
 		$("#search-btn").click(function(){
 			refreshTable();

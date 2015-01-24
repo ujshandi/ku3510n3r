@@ -100,13 +100,13 @@ class User_access_model extends CI_Model
 	
 	
 	
-	public function getData($user_id,$objectId){
+	public function getData($user_id,$objectId=''){
 		
 				
 		/*is_can(1,$user_id,m.menu_id) as can_add, is_can(2,$user_id,m.menu_id) as can_edit,is_can(3,$user_id,m.menu_id) as can_delete,is_can(4,$user_id,m.menu_id) as can_acc , is_can(5,$user_id,m.menu_id) as can_view, is_can(6,$user_id,m.menu_id) as can_print, is_can(7,$user_id,m.menu_id) as can_not_acc
 		and parent_menu_id is not null and has_child = 0 ".($menugroup!=-1?" and menu_group = '$menugroup'":"").
 		*/		
-		$sql = "select m.menu_group,m.menu_id,m.menu_name, m.policy, m.url, g.policy as group_policy, m.menu_parent from tbl_menu m left join tbl_user_access g on g.menu_id = m.menu_id  and g.user_id = '$user_id'   where (hide=0 or hide is null)  order by m.menu_id ";
+		$sql = "select m.menu_group,m.menu_id,m.menu_name, m.policy, m.url, g.policy as group_policy, m.menu_parent from menu m left join tbl_user_access g on g.menu_id = m.menu_id  and g.user_id = '$user_id'   where (hide=0 or hide is null)  order by m.menu_id ";
 		//
 		//left join tbl_group_user gu on gu.user_id = g.user_id
 				
@@ -138,6 +138,7 @@ class User_access_model extends CI_Model
 				</tr>';
 		//chan
 		$i=1; $no=1;
+		$tmp ='';
 		if ($query->num_rows()==0){
                     $tmp .= '<tr>
                       <td>&nbsp;</td>
@@ -153,13 +154,15 @@ class User_access_model extends CI_Model
                       <td>&nbsp;</td>			
                     </tr>';
 		}else {
+			$hidden = '	<input type="hidden" name="rowcount" value="'.$query->num_rows().'">					
+					<input type="hidden" name="user_id" value="'.$user_id.'">';
                     foreach($query->result() as $r){
             //	var_dump(strpos(strtolower($r->policy),'add;'));
                         if (($r->menu_parent != "") && ($r->url=="#")) continue;
                         $tmp .= '<tr> ';
                         if ($r->url=='#'){
                                 $no=1;
-                                $tmp .= '<td>&nbsp;<input type="hidden" name="menu_id'.$i.'" value="'.$r->menu_id.'"></td>';
+                                $tmp .= '<td>&nbsp;<input type="hidden" name="menu_id'.$i.'" value="'.$r->menu_id.'">'.($i==1?$hidden:'').'</td>';
                         }
                         else {
                                 $tmp .= '<td>'.$no++.'&nbsp;<input type="hidden" name="menu_id'.$i.'" value="'.$r->menu_id.'"></td>';
@@ -188,9 +191,9 @@ class User_access_model extends CI_Model
                           <td align="center">'.(strpos($r->policy,'DELETE;')===false?'':'<input type="checkbox" id="chkDelete'.$r->menu_group.$i.'" name="chkDelete'.$i.'" '.(strpos($r->group_policy,'DELETE;')=== false?'':'checked="checked"').'>').'&nbsp;</td>				  
                           <td align="center">'.(strpos($r->policy,'PRINT;')===false?'':'<input type="checkbox" id="chkPrint'.$r->menu_group.$i.'" name="chkPrint'.$i.'" '.(strpos($r->group_policy,'PRINT;')=== false?'':'checked="checked"').'>').'&nbsp;</td>				  
                           <td align="center">'.(strpos($r->policy,'EXCEL;')===false?'':'<input type="checkbox" id="chkExcel'.$r->menu_group.$i.'" name="chkExcel'.$i.'" '.(strpos($r->group_policy,'EXCEL;')=== false?'':'checked="checked"').'>').'&nbsp;</td>				  
-                          <td align="center">'.(strpos($r->policy,'IMPORT;')===false?'':'<input type="checkbox" id="chkImport'.$r->menu_group.$i.'" name="chkImport'.$i.'" '.(strpos($r->group_policy,'IMPORT;')=== false?'':'checked="checked"').'>').'&nbsp;</td>				  
-                          <td align="center">'.(strpos($r->policy,'PROSES;')===false?'':'<input type="checkbox" id="chkProses'.$r->menu_group.$i.'" name="chkProses'.$i.'"'.(strpos($r->group_policy,'PROSES;')=== false?'':'checked="checked"').'>').'&nbsp;</td>				  
-                          <td align="center">'.(strpos($r->policy,'AUTOTAB;')===false?'':'<input type="checkbox" id="chkAuto'.$r->menu_group.$i.'" class="chkAutoTab" name="chkAuto'.$i.'"'.(strpos($r->group_policy,'AUTOTAB;')=== false?'':'checked="checked"').'>').'&nbsp;</td>';				  
+                          <td align="center">'.(strpos($r->policy,'IMPORT;')===false?'':'<input type="checkbox" id="chkImport'.$r->menu_group.$i.'" name="chkImport'.$i.'" '.(strpos($r->group_policy,'IMPORT;')=== false?'':'checked="checked"').'>').'&nbsp;</td>';				  
+                          //<td align="center">'.(strpos($r->policy,'PROSES;')===false?'':'<input type="checkbox" id="chkProses'.$r->menu_group.$i.'" name="chkProses'.$i.'"'.(strpos($r->group_policy,'PROSES;')=== false?'':'checked="checked"').'>').'&nbsp;</td>				  
+                          //<td align="center">'.(strpos($r->policy,'AUTOTAB;')===false?'':'<input type="checkbox" id="chkAuto'.$r->menu_group.$i.'" class="chkAutoTab" name="chkAuto'.$i.'"'.(strpos($r->group_policy,'AUTOTAB;')=== false?'':'checked="checked"').'>').'&nbsp;</td>';				  
                           //<td align="center">'.(strpos($r->policy,'COPY;')===false?'':'<input type="checkbox" id="chkCopy'.$r->menu_group.$i.'" name="chkCopy'.$i.'"'.(strpos($r->group_policy,'COPY;')=== false?'':'checked="checked"').'>').'&nbsp;</td>				  
 
                         }
@@ -198,8 +201,8 @@ class User_access_model extends CI_Model
                         $i++;
                     }		
 		}		
-		$tmp .='</table>
-			</div>  ';
+		// $tmp .='</table>
+			// </div>  ';
 				$query->free_result();
 		return $tmp;
 	}

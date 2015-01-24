@@ -22,6 +22,27 @@ class User_model extends CI_Model
 		$this->user_name = "";
 	}
 	
+	function get_list($forFilter=false) {
+		$where = ' where 1=1 ';
+		if (isset($params)){
+			//if (isset($params['kode_e1'])) $where .= " and kode_e1='".$params['kode_e1']."'";
+		}
+		$sql = "select distinct user_id,full_name from tbl_user where user_id <> 1 ";
+		
+		
+		$result = $this->mgeneral->run_sql($sql);
+		
+		// if ($forFilter)
+			// $list["-1"] = 'Semua Instansi';
+		// else
+			// $list["-1"] = 'Pilih Instansi';
+		if (isset($result))
+			foreach ($result as $i) {
+				$list[$i->user_id] = $i->full_name;
+			}
+		return $list;
+	}
+	
 	public function GetList() {
 		
 		$pdfdata = array();

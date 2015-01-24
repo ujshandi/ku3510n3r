@@ -92,24 +92,7 @@ where mkj.model_kuesioner_id = ".$model_kuesioner_id;
 	
 	}
     
-	public function isExistKode($kode=null){	
-        if ($kode!=null)//utk update
-            $this->db->where('alumni_id',$kode); //buat validasi
-
-        $this->db->select('*');
-        $this->db->from('alumni');
-
-        $query = $this->db->get();
-        $rs = $query->num_rows() ;		
-        $query->free_result();
-        return ($rs>0);
-    }
-	    
-    function tampildata()
-    {       
-        return $this->db->query("select k.*,i.tanggal_buat as instansi from kuesioner r left join instansi i on k.keterangan = i.keterangan order by kuesioner_id");    
-    }
-
+ 
    
 	function simpan($data){
 		$this->db->trans_start();

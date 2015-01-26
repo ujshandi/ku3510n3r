@@ -197,14 +197,14 @@
 				
 				$(klone).find('.jawab').each(function(){
 					//$(this).val(pendapatCounter);
-					$(this).attr('name','pendapat['+(pendapatCounter-1)+'][jawab][]');
+					$(this).attr('name','pendapat['+(pendapatCounter-1)+'][jawab][id][]');
 				
 				});
 				$(klone).find('input:text').each(function(){
 					$(this).val('');
 					$(this).css('padding-top','10px');
 					$(this).trigger("change");
-					$(this).attr('name','pendapat['+(pendapatCounter-1)+'][pendapat][]');
+					$(this).attr('name','pendapat['+(pendapatCounter-1)+'][jawab][pendapat][]');
 				
 				});
 				//$(klone).find('.label-floatlabel ').css('display','none');//hide();

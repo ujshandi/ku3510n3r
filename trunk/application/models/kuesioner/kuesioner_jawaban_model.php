@@ -16,12 +16,26 @@ class Kuesioner_jawaban_model extends CI_Model
 	
 	function get_preview_data($params){
 		$where = " WHERE 1=1 ";
-		if ($params['kuesioner_id']) $where .= " and kp.kuesioner_id = ".$params['kuesioner_id'];
-		if ($params['responden_id']) $where .= " and kj.responden_id = ".$params['responden_id'];
-		$sql = "SELECT kj.responden_id,mk.nama as nama_model,mk.singkatan as singkatan_model, p.tanya,p.tanya_tambahan1, p.tanya_tambahan2,kj.jawaban, kj.jawaban_tambahan1, kj.jawaban_tambahan2
+		$where2 = " WHERE 1=1 ";
+		if ($params['kuesioner_id']) {
+			$where .= " and kp.kuesioner_id = ".$params['kuesioner_id'];
+			$where2 .= " and kp.kuesioner_id = ".$params['kuesioner_id'];
+		}
+		if ($params['responden_id']) {
+			$where .= " and kj.responden_id = ".$params['responden_id'];
+			$where2 .= " and kp.responden_id = ".$params['responden_id'];
+		}
+		$sql = "SELECT kj.responden_id,mk.nama as nama_model,mk.singkatan as singkatan_model, p.tanya,p.tanya_tambahan1, p.tanya_tambahan2,kj.jawaban, kj.jawaban_tambahan1, kj.jawaban_tambahan2,0 as seq,mk.model_kuesioner_id
 FROM kuesioner_jawaban kj inner join kuesioner_pertanyaan kp on kj.kuesioner_pertanyaan_id = kp.kuesioner_pertanyaan_id
 INNER JOIN pertanyaan p ON p.pertanyaan_id = kp.pertanyaan_id INNER JOIN model_kuesioner mk ON kp.model_kuesioner_id = mk.model_kuesioner_id ".$where;
-		$sql .= ' ORDER BY mk.singkatan ';
+		$sql .= "
+union all
+select * from (
+SELECT kp.responden_id,  mk.nama as nama_model, mk.singkatan as singkatan_model, uraian as tanya, '' as tanya_tambahan1, '' as tanya_tambahan2,kp.pendapat as jawaban,
+'' as jawaban_tambahan1, '' as jawaban_tambahan2, kp.seq,mk.model_kuesioner_id
+from kuesioner_pendapat kp LEFT JOIN model_kuesioner mk ON kp.model_kuesioner_id = mk.model_kuesioner_id ".$where2." 
+order by seq ) as t1 ";
+		$sql .= ' ORDER BY singkatan_model ';
 		return $this->db->query($sql)->result();
 	
 	}
@@ -62,59 +76,75 @@ INNER JOIN pertanyaan p ON p.pertanyaan_id = kp.pertanyaan_id INNER JOIN model_k
 		$listpendapat = $data['pendapat'];
 		unset($data['pertanyaan']);
 		unset($data['pendapat']);
-		// var_dump( $listpendapat );die;
-		if (isset($listjawaban)){
-			$this->db->flush_cache();			
-			 
-			foreach ($listjawaban as $j){
-				$this->db->flush_cache();
-				$this->db->set('kuesioner_pertanyaan_id',$j['id']);
-				$this->db->set('responden_id',$data['responden_id']);
-				if (!isset($j['jawab'])){
-					$this->db->set('jawaban','');
-				}
-				else{
-					$this->db->set('jawaban',$this->ourEkstrakString($j['jawab'],';',1));
-					$this->db->set('jawaban_id',$this->ourEkstrakString($j['jawab'],';',0));
-					
-				}
-				if (isset($j['tambahan1']))
-					$this->db->set('jawaban_tambahan1',$j['tambahan1']);
-				if (isset($j['tambahan2']))
-					$this->db->set('jawaban_tambahan2',$j['tambahan2']);	
-				
-				$this->db->insert('kuesioner_jawaban');				
-			}
-			
+	//	var_dump( $listjawaban );	
+	//	 var_dump( $listpendapat ); 
 			$this->db->flush_cache();
 			$this->db->where('kuesioner_id',$data['kuesioner_id']);	
 			$this->db->where('responden_id',$data['responden_id']);	
 			$this->db->set('status_respon',date('Y-m-d H:i:s'));//$this->session->userdata('user_id').';'.
-			$this->db->update('kuesioner_responden');
+		 	$this->db->update('kuesioner_responden');
+			
+	
+		if (isset($listjawaban)){
+		//	$this->db->flush_cache();			
+			if ($listjawaban) {
+				foreach ($listjawaban as $j){
+					$this->db->flush_cache();
+					$this->db->set('kuesioner_pertanyaan_id',$j['id']);
+					$this->db->set('responden_id',$data['responden_id']);
+					if (!isset($j['jawab'])){
+						$this->db->set('jawaban','');
+					}
+					else{
+						$this->db->set('jawaban',$this->ourEkstrakString($j['jawab'],';',1));
+						$this->db->set('jawaban_id',$this->ourEkstrakString($j['jawab'],';',0));
+						
+					}
+					if (isset($j['tambahan1']))
+						$this->db->set('jawaban_tambahan1',$j['tambahan1']);
+					if (isset($j['tambahan2']))
+						$this->db->set('jawaban_tambahan2',$j['tambahan2']);	
+					
+					$this->db->insert('kuesioner_jawaban');				
+				}
+			}
+			
+			
 		}
 		
 		if (isset($listpendapat)){
-			$this->db->flush_cache();			
+			$model_kuesioner_id = $this->mgeneral->getValue('model_kuesioner_sarandiklat',array('id'=>'1'),'konstanta');  
 			 
 			foreach ($listpendapat as $j){
-				var_dump($j);continue;
+			//	var_dump($j['jawab']);continue;
+				
 				$this->db->flush_cache();
-				$this->db->set('responden_id',$data['responden_id']);
-				$this->db->set('kuesioner_id',$data['kuesioner_id']);
-				if (!isset($j['pendapat'])){
-					$this->db->set('pendapat','');
+				if (isset($j['jawab'])){
+					//foreach ($j['jawab'] as $x){
+						//	var_dump($x);
+						///if (isset($x['id'])){
+							for ($i=0;$i<count($j['jawab']['id']);$i++){
+								$this->db->flush_cache();
+								$this->db->set('kuesioner_id',$data['kuesioner_id']);
+								$this->db->set('responden_id',$data['responden_id']);
+								$this->db->set('seq',$j['seq']);	
+								$this->db->set('model_kuesioner_id',$model_kuesioner_id);
+								
+								$this->db->set('pendapat',$j['jawab']['pendapat'][$i]);
+								$this->db->set('jawaban_id',$this->ourEkstrakString($j['jawab']['id'][$i],';',0));
+								$this->db->set('uraian',$this->ourEkstrakString($j['jawab']['id'][$i],';',1));	
+								$this->db->insert('kuesioner_pendapat');	
+							}
+						//}
+				//	}
+				
 				}
-				else{
-					$this->db->set('pendapat',$j['pendapat']);
-					$this->db->set('jawaban_id',$this->ourEkstrakString($j['jawab'],';',0));
-					$this->db->set('uraian',$this->ourEkstrakString($j['jawab'],';',1));
-					
-				}
+				 
 				  	
 				
-				//$this->db->insert('kuesioner_pendapat');				
+							
 			}
-			
+			//die;
 		 
 		}
 		

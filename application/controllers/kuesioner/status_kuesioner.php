@@ -94,13 +94,15 @@ class status_kuesioner extends CI_Controller {
 				<th  style="vertical-align:middle;text-align:center" width="230" >Pertanyaan / Pernyataan / Uraian</th>';
 				
 			 
-				$rs .= '<th style="vertical-align:middle;text-align:center" width="100" >Jawaban</th>
+				$rs .= '<th style="vertical-align:middle;text-align:center" width="100" >Jawaban / Pendapat</th>
 			</tr>';				
 			 
 			$rs .= 	'</thead>';	
 			$rs .= '<tbody>';		
 			$i=1;
 			$model = '';
+			$seq ='';
+			$model_pendapat = $this->mgeneral->getValue('model_kuesioner_sarandiklat',array('id'=>'1'),'konstanta');  
 			foreach($respons as $r){
 				if ($model!=$r->nama_model){
 					$model=$r->nama_model;
@@ -108,6 +110,17 @@ class status_kuesioner extends CI_Controller {
 					$rs .= '<td colspan="3"><b>'.$r->nama_model.' ('.$r->singkatan_model.')'.'</b></td>';
 					$rs .= '</tr>';
 					$i=1;
+					
+				}
+				
+				if ($model_pendapat==$r->model_kuesioner_id){
+					if ($seq!=$r->seq){
+						$seq = $r->seq;
+						$rs .= '<tr>';
+						$rs .= '<td colspan="3"><b>Saran/Pendapat ke - '.$seq.'</b></td>';
+						$rs .= '</tr>';
+						$i=1;
+					}
 				}
 				$rs .= '<tr>';
 				$rs .= '<td>'.$i++.'</td>';

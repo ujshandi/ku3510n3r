@@ -161,7 +161,7 @@ class Publish extends CI_Controller {
 									foreach ($listjawab as $jawab){
 										switch ($jawab->tipe){
 											case 'radio':
-												 $component .=' <label class="control-label">                                    <input  type="radio"  name="pertanyaan['.$idx.'][jawab]" value="'.$jawab->jawab_id.';'.$jawab->singkatan.'"/>'.$jawab->nama.'</label>&nbsp;&nbsp;';
+												 $component .=' <label class="control-label">                                    <input  type="radio"  name="pertanyaan['.$idx.'][jawab]" value="'.$jawab->jawab_id.';'.$jawab->nama.'"/>'.$jawab->nama.'</label>&nbsp;&nbsp;';
 											break;
 											default : $component .= '';
 										}
@@ -185,7 +185,7 @@ class Publish extends CI_Controller {
 											if ($jawab->parent_id != $parent->parent_id) continue;
 											switch ($jawab->tipe){
 												case 'radio':
-													 $component .=' <label class="control-label">                                    <input  type="radio"  name="pertanyaan['.$idx.'][jawab]" value="'.$jawab->jawab_id.';'.$jawab->singkatan.'"/>'.$jawab->nama.'</label>&nbsp;&nbsp;';
+													 $component .=' <label class="control-label">                                    <input  type="radio"  name="pertanyaan['.$idx.'][jawab]" value="'.$jawab->jawab_id.';'.$jawab->nama.'"/>'.$jawab->nama.'</label>&nbsp;&nbsp;';
 												break;
 												default : $component .= '';
 											}
@@ -243,11 +243,12 @@ class Publish extends CI_Controller {
 												<label id="labelPendapat-1" class="col-sm-12 control-label"><h4 color="#3c763d">Pendapat ke-1</h4></label>
 												<input type="hidden" id="seq-1" class="seq" name="pendapat['.$idxPendapat.'][seq]" value="1"/>
 												<div class="col-lg-12" style="border:1px solid;border-radius:10px;padding-top:10px;border-color:#dddddd;padding-bottom:20px">';    
+													
 						foreach ($listjawab as $jawab){
 							 
 							$component .= ' <div class="form-group" style="margin-left:20px">
-											<input type="hidden" class="jawab" name="pendapat['.$idxPendapat.'][jawab][]" value="'.$jawab->jawab_id.';'.$jawab->nama.'"/>
-												<div class="col-sm-12"><input name="pendapat['.$idxPendapat.'][pendapat][]" type="text"   placeholder="'.$jawab->nama.'" data-label="'.$jawab->nama.'" class="floatlabel" size="100"/>';
+											<input type="hidden" class="jawab" name="pendapat['.$idxPendapat.'][jawab][id][]" value="'.$jawab->jawab_id.';'.$jawab->nama.'"/>
+												<div class="col-sm-12"><input name="pendapat['.$idxPendapat.'][jawab][pendapat][]" type="text"   placeholder="'.$jawab->nama.'" data-label="'.$jawab->nama.'" class="floatlabel" size="100"/>';
 							$component .= '</div></div>' ;
 						}//endforeacch listjawab
 						$component .= '</div></div><br><br>';

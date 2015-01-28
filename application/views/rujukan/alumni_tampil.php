@@ -97,6 +97,8 @@
         </form>
         </div>
     </div>
+
+    
 	<style type="text/css">
 	select {width:100%;}
 </style>
@@ -212,8 +214,8 @@
 		}
 
 		alumniImport =function(){
-			$("#alumni_title_form").html('<i class="fa fa-plus-square"></i>  Import Data alumni');
-			$("#alumni-form").attr("action",'<?=base_url()?>rujukan/alumni/importdata');
+			$("#alumni_title_form").html('<i class="fa fa-plus-square"></i>  Import  alumni');
+			$("#alumni-form").attr("action",'<?=base_url()?>rujukan/alumni/do_upload');
 			$.ajax({
 				url:'<?=base_url()?>rujukan/alumni/import',
 					success:function(result) {
@@ -221,6 +223,7 @@
 						$('#alumni_form_konten').html(result);
 					}
 			});
+			
 		}
 		
 		 alumniEdit = function(id){

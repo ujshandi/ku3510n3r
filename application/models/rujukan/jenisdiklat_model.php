@@ -18,7 +18,7 @@ class Jenisdiklat_model extends CI_Model
 		if (isset($params)){
 			//if (isset($params['kode_e1'])) $where .= " and kode_e1='".$params['kode_e1']."'";
 		}
-		$sql = "select distinct nama from jenis_diklat ";
+		$sql = "select distinct jenis_id,nama from jenis_diklat ";
 		
 		
 		$result = $this->mgeneral->run_sql($sql);
@@ -29,7 +29,7 @@ class Jenisdiklat_model extends CI_Model
 			$list["-1"] = 'Pilih Jenis Diklat';
 		if (isset($result))
 			foreach ($result as $i) {
-				$list[$i->nama] = $i->nama;
+				$list[$i->jenis_id] = $i->nama;
 			}
 		return $list;
 	}

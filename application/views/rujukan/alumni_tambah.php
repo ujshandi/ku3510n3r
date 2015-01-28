@@ -4,11 +4,9 @@
 <script>
 	$(document).ready(function(){
 		$('select').select2({minimumResultsForSearch: -1, width:'resolve'});		
-		
 	});
 </script>								
             <input type="hidden" name="alumni_id" value="<?=$data[0]->alumni_id?>"  />
-			 
             <div class="form-group">
                 <label class="col-sm-4 control-label">Nama <span class="text-danger">*</span></label>
                 <div class="col-sm-8">
@@ -24,7 +22,7 @@
            <div class="form-group">
                 <label class="col-sm-4 control-label">Instansi <span class="text-danger">*</span></label>
                 <div class="col-sm-8">
-					 <?=form_dropdown('instansi_id',$list_instansi,'0','id="instansi_id" class="populate" style="width:100%"')?>
+					<?=form_dropdown('instansi_id',$list_instansi,$data[0]->instansi_id,'id="instansi_id" class="populate" style="width:100%"')?>
                 </div>
             </div>
           

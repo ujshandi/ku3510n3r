@@ -145,6 +145,11 @@ class alumni extends CI_Controller
 
 	function importdata()
     {   
+        
+    	$config['upload_path'] = './temp_upload/';
+		$config['allowed_types'] = 'xls';
+        $this->load->library('upload', $config);
+
         include_once ( APPPATH."libraries/excel_reader2.php");
             try{
             	$excel = new Spreadsheet_Excel_Reader($_FILES['fileexcel']['tmp_name']);
@@ -177,4 +182,43 @@ class alumni extends CI_Controller
 			echo $msg;
 
 	}
+
+
+		public function do_upload()
+		{
+			$config['upload_path'] = "./temp_upload/";
+			$config['allowed_types'] = 'xls';
+             
+			$this->load->library('upload', $config);
+            $this->upload->initialize($config);
+			if ( ! $this->upload->do_upload())
+				{
+					$error = array('error' => $this->upload->display_errors());
+					echo $error;
+				}
+			else { echo "Berhasil"; }	 
+			
+			
+            	
+				/*$upload_data = $this->upload->data();
+            	$this->load->library('excel_reader');
+				$this->excel_reader->setOutputEncoding('230787');
+				$file =  $upload_data['full_path'];
+				$this->excel_reader->read($file);
+				error_reporting(E_ALL ^ E_NOTICE);
+				// Sheet 1
+				$data = $this->excel_reader->sheets[0] ;
+                $dataexcel = Array();
+				for ($i = 1; $i <= $data['numRows']; $i++) 
+				{
+                            if($data['cells'][$i][1] == '') break;
+                            $dataexcel[$i-1]['nama'] = $data['cells'][$i][1];
+                            $dataexcel[$i-1]['email'] = $data['cells'][$i][2];
+                            $dataexcel[$i-1]['instansi_id'] = $data['cells'][$i][3];
+                }        
+            	delete_files($upload_data['file_path']);
+            	$this->load->model('alumni_model');
+            	$this->alumni_model->import($dataexcel);*/
+					
+		}
 }

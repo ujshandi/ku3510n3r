@@ -29,22 +29,25 @@ class diklat extends CI_Controller {
 
     function index()
     {
-        $setting['sd_left']	= array('cur_menu'	=> "MASTER");
+       
+
+		$setting['sd_left']	= array('cur_menu'	=> "MASTER");
 		$setting['page']	= array('pg_aktif'	=> "datatables");
 		$template			= $this->template->load($setting); #load static template file
-		     
-		//ga jadi $data['list_tahun'] =$this->diklat_model->get_list_tahun(true);
+		    
+		$data["isi"]  = 'rujukan/diklat_tambah';
+		$data['result'] = $this->diklat_model->tampildata();
+		$data["ket"]  = 'tambah';
 		$data['list_jenisdiklat'] =$this->jenisdiklat_model->get_list_jenis(true);
 		$template['konten']	= $this->load->view('rujukan/diklat_tampil',$data,true); #load konten template file
 		#load container for template view
 		$this->load->view('template/container',$template);
-            //$this->load->view('admin/index', $data);  
     }
 
 	function initFormData(){
 		$data[0]->diklat_id = '';
 		$data[0]->nama = '';
-		$data[0]->jenis_diklat = '';
+		$data[0]->jenis_id = '';
 		$data[0]->kategori_kuesioner = '';
 		$data[0]->tahun = '';
 		return $data;
@@ -55,9 +58,9 @@ class diklat extends CI_Controller {
     {
             $data['isi'] = 'rujukan/diklat_tambah';
             $data["ket"]  = 'tambah';
-			$data["data"] = $this->initFormData();
-			$data['list_jenisdiklat'] =$this->jenisdiklat_model->get_list_jenis(false);
-			$data['list_peruntukkan'] =$this->peruntukkan_model->get_list_peruntukkan(false);
+            $data["data"] = $this->initFormData();
+			$data['list_jenisdiklat'] =$this->jenisdiklat_model->get_list_jenis();
+			//$data['list_peruntukkan'] =$this->peruntukkan_model->get_list_peruntukkan(false);
 			$this->load->view('rujukan/diklat_tambah',$data);
             //$this->load->view('admin/index',$data);  
     }
@@ -67,7 +70,7 @@ class diklat extends CI_Controller {
             $data['isi'] = 'rujukan/diklat_tambah';
             $data["ket"]  = 'edit';
 			$data['list_jenisdiklat'] =$this->jenisdiklat_model->get_list_jenis(false);
-			$data['list_peruntukkan'] =$this->peruntukkan_model->get_list_peruntukkan(false);
+			//$data['list_peruntukkan'] =$this->peruntukkan_model->get_list_peruntukkan(false);
 			$data['data']		= $this->diklat_model->pilihdata(array('diklat_id'=>$id));
 			if (!isset($data['data'])){
 				$data['data'] = $this->initFormData( );
@@ -76,7 +79,7 @@ class diklat extends CI_Controller {
 				$data['data'][0]->diklat_id= $data['data'][0]->diklat_id;
 				$data['data'][0]->tahun = $data['data'][0]->tahun;
 				$data['data'][0]->nama = $data['data'][0]->nama;
-				$data['data'][0]->jenis_diklat = $data['data'][0]->jenis_diklat;
+				$data['data'][0]->jenis_id = $data['data'][0]->jenis_id;
 				$data['data'][0]->kategori_kuesioner = $data['data'][0]->kategori_kuesioner;
 			}
 			  
@@ -94,7 +97,7 @@ class diklat extends CI_Controller {
 	
 	function get_form_values(){
 		$data['nama']=$this->input->post('nama');
-		$data['jenis_diklat']=$this->input->post('jenis_diklat');
+		$data['jenis_id']=$this->input->post('jenis_id');
 		$data['tahun']=$this->input->post('tahun');
 		$data['kategori_kuesioner']=$this->input->post('ref');
 		return $data;

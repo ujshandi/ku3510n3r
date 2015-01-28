@@ -50,23 +50,38 @@
 					<table class="display table table-bordered table-striped" id="diklat-tbl" width="100%">
 					<thead>
 						<tr> 
-							  <th>No.</th>
+							  <th>No</th> 
+							  <th>Nama diklat</th>
+							  <th>Kategori Kuesioner</th>
 							  <th>Tahun</th>
-							  <th>Judul Diklat</th>
-							  <th>Jenis Diklat</th>
-							  <th>Referensi di Kuesioner</th>
-							  <th style="width:80px;">Aksi</th>
+							  <th>Aksi</th>
 						</tr>
 					</thead>
-					<tbody>					 
+					<tbody>
+					  <?php $no=1; 					 
+						if ($result->result() != null){
+						   foreach($result->result() as $datafield){ ?>
 							<tr class="odd gradeX">
-							   <td>&nbsp;</td>
-							   <td>&nbsp;</td>
-							   <td>&nbsp;</td>
-							   <td>&nbsp;</td>
-							   <td>&nbsp;</td>
-							  <td>&nbsp;</td>
-							</tr>				 
+							   <td><?php echo $no; ?></td>
+							   <td><?php echo $datafield->nama; ?></td>
+							   <td><?php echo $datafield->kategori_kuesioner; ?></td>
+							   <td><?php echo $datafield->tahun; ?></td>
+							  <td>
+								 
+								<a href="#diklatModal" data-toggle="modal"  class="btn btn-info btn-xs" title="Edit"  onclick="diklatEdit('<?php echo $datafield->diklat_id;?>')"><i class="fa fa-pencil"></i></a>
+								</span> 
+								<span class="tip">
+								<a id="delete_row" class="btn btn-danger btn-xs" href="#" onclick="diklatDelete('<?php echo $datafield->diklat_id;?>')" title="Delete"><i class="fa fa-times"></i></a>
+								
+							  </td>
+							</tr>
+							<?php $no++; } 
+						}else { ?>
+							<tr class="odd gradeX">
+							   <td colspan="5">Data tidak ditemukan</td>
+							  
+							  </tr>
+						<? }?>
 					  </tbody>
 					</table>
 					</div>
@@ -106,36 +121,20 @@
 	refreshTable = function(){
 		if (oTable)
             oTable.fnDestroy();
-		var tahun = "0";//ga jadi dipake $('#fil_tahun').val();	
-		var jenis_diklat = $('#fil_jenis_diklat').val();	
+	 
 		oTable= $('#diklat-tbl').dataTable({
             "bProcessing": true,
             "searching": false,
 			"autoWidth": false,
 			"sDom": 't<"bottom"plri>',
-            "bServerSide": false,
-			"aoColumns" : [
-					{ sWidth: '1%'  },					
-					{ sWidth: '30%' },
-					{ sWidth: '20%' },
-					{ sWidth: '20%' },
-					{ sWidth: '10%' } 
-				],
+            "bServerSide": true,
             "sAjaxSource": '<?php echo base_url(); ?>rujukan/diklat/datatable',
             "bJQueryUI": true,
           //  "sPaginationType": "full_numbers",
             "iDisplayStart ": 20,
-			"aoColumnDefs": [{ 'bSortable': false, 'aTargets': [ 0 ] }],
-			'fnRowCallback':function(nRow, aData, iDisplayIndex, iDisplayIndexFull){
-				var index = iDisplayIndexFull  +1;
-				$('td:eq(0)',nRow).html(index);
-				return nRow;
-			},
+			
 			"fnServerParams": function (aoData) {
-				aoData.push(
-				{ "name": "tahun", "value": tahun },
-				{ "name": "jenis_diklat", "value": jenis_diklat }
-				);
+				 
 			},
             // "oLanguage": {
                 // "sProcessing": "<img src='<php echo base_url(); ?>assets/images/ajax-loader_dark.gif'>"

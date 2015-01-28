@@ -73,11 +73,11 @@ class Diklat_model extends CI_Model
 	    
     function tampildata()
     {       
-        return $this->db->query("select d.*,j.nama as nama_jenis from diklat d left join jenis_diklat j on d.jenis_diklat = j.jenis_id order by diklat_id");    
+        return $this->db->query("select * from diklat order by diklat_id");    
     }
 
    function get_datatables(){
-		//$this->datatables->add_column('NOMOR','');
+		/*//$this->datatables->add_column('NOMOR','');
 		$this->datatables->select("'' as No, d.diklat_id,d.tahun,d.nama, d.jenis_diklat,j.nama as nama_jenis,d.kategori_kuesioner ",false)
 		->unset_column('d.diklat_id')
 		->unset_column('d.jenis_diklat')
@@ -113,6 +113,19 @@ class Diklat_model extends CI_Model
 		}*/
 		//$this->datatables->join('anev_eselon1 e1', 'e1.kode_e1=e2.kode_e1 and e1.tahun_renstra=e2.tahun_renstra', 'left');
 		//$this->datatables->add_column('aksi', '$1','e2_action(e2.kode_e2)');
+		//return $this->datatables->generate();*/
+
+
+		$this->datatables->select('*')
+		->unset_column('diklat_id')
+		->add_column('Actions', diklat_action('$1'), 'diklat_id')
+		->from('diklat');
+		  
+	 
+		$aOrder =isset($_POST['iSortCol_0'])?$_POST['iSortCol_0']:0;
+		$aOrderDir =isset($_POST['sSortDir_0'])?$_POST['sSortDir_0']:"ASC";
+		$sOrder = "";
+	
 		return $this->datatables->generate();
 	
 	}

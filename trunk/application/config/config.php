@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-	$config['base_url'] = "http://".$_SERVER['HTTP_HOST']."/e-kuesioner/";
+	$config['base_url'] = "http://".$_SERVER['HTTP_HOST']."/ku3510n3r/";
 
 /*
 |--------------------------------------------------------------------------
@@ -224,7 +224,7 @@ $config['cache_path'] = '';
 | MUST set an encryption key.  See the user guide for info.
 |
 */
-$config['encryption_key'] = 'minerbaekuesioner';
+$config['encryption_key'] = 'minerba_ekuesioner';
 
 /*
 |--------------------------------------------------------------------------

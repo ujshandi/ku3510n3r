@@ -7,12 +7,11 @@
 		
 	});
 </script>								
-            <input type="hidden" name="alumni_id" value="<?=$data[0]->alumni_id?>"  />
-			 
+            
             <div class="form-group">
                 <label class="col-sm-4 control-label"> Pilih File Excel* :  <span class="text-danger"></span></label>
                  <div class="col-sm-8">
-                    <input type="file" class="fileupload" name="fileexcel" class="validate[required] large"/>
+                    <input type="file" class="fileupload" name="userfile" class="validate[required] large"/>
                 </div>
                  <label> * file yang bisa di import adalah .xls (Excel 2003-2007) . Download template excel : <a href="<?=base_url()?>temp_upload/alumni.xls" class="red" title="Download template excel alumni"> alumni.xls </a> <span class="f_help"> </span></label>
                

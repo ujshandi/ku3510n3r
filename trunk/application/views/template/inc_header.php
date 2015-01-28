@@ -8,7 +8,7 @@
     
     <link rel="shortcut icon" href="<?=base_url()?>/favicon.ico?v=2">
     <title>.:: e-Kuesioner - Pusdiklat Minerba ::.</title>
-    <link href="<?=base_url("static")?>/bs3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<? echo base_url();?>static/bs3/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?=base_url("static")?>/js/jquery-ui/jquery-ui-1.10.1.custom.min.css" rel="stylesheet">
     <link href="<?=base_url("static")?>/js/select2/select2.css" rel="stylesheet">
     <link href="<?=base_url("static")?>/js/gritter/css/jquery.gritter.css" rel="stylesheet" type="text/css" />

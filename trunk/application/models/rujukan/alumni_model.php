@@ -51,9 +51,20 @@ class Alumni_model extends CI_Model
 		$this->mgeneral->save($data,'alumni');
 	}
 
-	function import($data){
-		$this->mgeneral->import($data,'alumni');
-	}
+	
+		function import($dataarray)
+    {
+        for($i=0;$i<count($dataarray);$i++)
+        {
+            $data = array(
+                'nama'=>$dataarray[$i]['nama'],
+                'email'=>$dataarray[$i]['email'],
+                'instansi_id'=>$dataarray[$i]['instansi_id']
+            );
+            $this->db->insert('alumni', $data);
+        }
+    }     
+	
 
    function edit($data,$whereData){
 		

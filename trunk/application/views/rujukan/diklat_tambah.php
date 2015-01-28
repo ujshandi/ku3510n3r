@@ -22,9 +22,9 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-4 control-label">Jenis Diklat <span class="text-danger">*</span></label>
-                <div class="col-sm-5">
-                  <?=form_dropdown('jenis_diklat',$list_jenisdiklat,$data[0]->jenis_diklat,'id="jenis_diklat" class="populate" style="width:100%"')?>
+                <label class="col-sm-4 control-label">Instansi <span class="text-danger">*</span></label>
+                <div class="col-sm-8">
+                    <?=form_dropdown('jenis_id',$list_jenisdiklat,$data[0]->jenis_id,'id="jenis_id" class="populate" style="width:100%"')?>
                 </div>
             </div>
            

@@ -142,7 +142,7 @@ class Publish extends CI_Controller {
 														<div class="checkbox ">';  
 								foreach ($opsijawaban as $jawab){
 										 
-									$component .=' <label class="control-label"> <input  type="checkbox"  name="pertanyaan['.$idx.'][opsijawab]" value="'.$jawab->opsi_id.';'.$jawab->opsi.'"/>'.$jawab->opsi.'</label>&nbsp;&nbsp;';
+									$component .=' <label class="control-label"> <input  type="checkbox"  name="pertanyaan['.$idx.'][opsijawab][]" value="'.$jawab->opsi_id.';'.$jawab->opsi.'"/>'.$jawab->opsi.'</label>&nbsp;&nbsp;';
 							 
 										
 										//$rs .= $component ;

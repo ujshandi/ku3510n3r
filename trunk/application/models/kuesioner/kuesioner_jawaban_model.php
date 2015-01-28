@@ -71,12 +71,12 @@ order by seq ) as t1 ";
    
 	function simpan($data){
 		//$this->mgeneral->save($data,'model_kuesioner');
-		$this->db->trans_start();
+		$this->db->trans_begin();
 		$listjawaban = $data['pertanyaan'];
 		$listpendapat = $data['pendapat'];
 		unset($data['pertanyaan']);
 		unset($data['pendapat']);
-	//	var_dump( $listjawaban );	
+		//var_dump( $listjawaban );	die;
 	//	 var_dump( $listpendapat ); 
 			$this->db->flush_cache();
 			$this->db->where('kuesioner_id',$data['kuesioner_id']);	
@@ -92,7 +92,16 @@ order by seq ) as t1 ";
 					$this->db->flush_cache();
 					$this->db->set('kuesioner_pertanyaan_id',$j['id']);
 					$this->db->set('responden_id',$data['responden_id']);
-					if (!isset($j['jawab'])){
+					if (isset($j['opsijawab'])){
+					
+						$opsi ='';
+					
+						foreach ($j['opsijawab'] as $o){
+							$opsi .= $this->ourEkstrakString($o,';',1).', ';
+						}					
+						$this->db->set('jawaban',substr($opsi,0,strlen($opsi)-1));	
+					}
+					else if (!isset($j['jawab'])){
 						$this->db->set('jawaban','');
 					}
 					else{
@@ -150,8 +159,15 @@ order by seq ) as t1 ";
 		
 		//echo $this->db->last_query();
 		
-		 $this->db->trans_complete();
-		return $this->db->trans_status();
+		 if ($this->db->trans_status() === FALSE){
+				$this->db->trans_rollback();
+				return false;
+		}
+		else
+		{
+				$this->db->trans_commit();
+				return true;
+		}
 	}
 
     

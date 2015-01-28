@@ -24,7 +24,7 @@
             <!-- user login dropdown start-->
             <li class="dropdown">
                 <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                    <img alt="" src="<?=base_url("static")?>/images/photo_not_avail.jpeg">
+                    <img alt="" src="<?=base_url("static")?>/images/user_.png">
                     <span class="username"><?=$this->session->userdata('full_name')?></span>
                     <b class="caret"></b>
                 </a>
